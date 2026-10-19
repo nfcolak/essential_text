@@ -1,0 +1,67 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{microtype}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2.6pt}
+\emergencystretch=3em
+
+\titleformat{\section}{\normalsize\bfseries}{\thesection}{0em}{}
+\titlespacing*{\section}{0pt}{4pt}{1pt}
+
+\begin{document}
+
+\begin{center}
+    {\Large\textbf{Evaluating Domain Adaptation in Financial Sentiment Analysis}}\\[2pt]
+    {\normalsize FinBERT vs.\ Traditional NLP Baselines}\\[3pt]
+    {\normalsize Qiyao Zheng \quad Benjamin Donick \quad Necati Furkan Colak}
+\end{center}
+\vspace{-4pt}
+
+\section*{Motivation and Research Questions}
+Sentiment analysis is widely used in computational finance to extract market-relevant signals from financial news and corporate disclosures. However, general-domain sentiment models often perform poorly on financial language because word polarity depends strongly on domain context. Terms such as \textit{cost}, \textit{liability}, \textit{debt}, or \textit{depreciation}, for example, carry negative prior polarity in general sentiment resources [2, 6] while serving as neutral descriptive accounting terminology in financial reporting [1, 2].
+
+This project investigates how strongly such \textbf{domain mismatch} affects 3-class financial sentiment classification (\textit{positive}, \textit{neutral}, \textit{negative}) and isolates the measurable benefit of financial domain adaptation from general Transformer architecture gains. We address three research questions mapped to our experimental design:
+\begin{enumerate}[topsep=1pt,itemsep=1pt,parsep=0pt,leftmargin=1.5em]
+    \item \textbf{RQ1 (Domain Polarity Mismatch):} To what extent do general-purpose sentiment methods misclassify financial language, particularly by falsely assigning \textit{negative} polarity to \textit{neutral} descriptive statements?
+    \item \textbf{RQ2 (Controlled Architecture vs.\ Domain Adaptation):} Under a strictly leakage-free evaluation protocol, how much classification improvement stems from domain-adaptive pretraining (FinBERT) versus general-domain BERT-base and traditional machine-learning baselines?
+    \item \textbf{RQ3 (Linguistic Phenomenon Attribution):} Which linguistic phenomena---financial terminology, negation, hedging, numerical comparisons, or context-dependent expressions---drive model divergence?
+\end{enumerate}
+The main contribution is not only a rigorous, leakage-free comparison of model performance, but also an interpretable phenomenon-level attribution of \textit{when and why} domain adaptation matters in financial NLP.
+
+\section*{Data and Experimental Setup}
+\textbf{Accessible Datasets.} All datasets and lexicons are publicly available and immediately accessible in Python. Our primary in-domain corpus is the \textbf{Financial PhraseBank} [1] (Hugging Face \texttt{financial\_phrasebank}), containing 4,845 financial-news sentences annotated by 16 finance experts as \textit{positive} ($\sim$28\%), \textit{neutral} ($\sim$59\%), or \textit{negative} ($\sim$13\%). To test robustness across annotator consensus tiers, we evaluate on the 100\%-agreement subset (\texttt{sentences\_allagree}, 2,264 sentences), the $\ge$75\%-agreement subset (\texttt{sentences\_75agree}, 3,453 sentences), and the full 4,845-sentence corpus. We pair this with the \textbf{Loughran--McDonald Master Dictionary} [2] and an external out-of-distribution (OOD) holdout set, \textbf{SEntFiN 1.0} [5] (10,753 entity-sentiment annotations over financial headlines, plus FiQA headlines), filtered to unambiguous single-entity 3-class sentences and deduplicated against PhraseBank via normalized token Jaccard similarity ($< 0.8$).
+
+\textbf{Three-Tier Baseline Hierarchy.} In Python (\texttt{PyTorch}, \texttt{transformers}, \texttt{scikit-learn}), we compare three levels:
+\begin{itemize}[topsep=1pt,itemsep=1pt,parsep=0pt,leftmargin=1.5em]
+    \item \textbf{Lexicon-based methods (RQ1):} General-domain \textbf{VADER} [6] valence rules versus the domain-specific \textbf{Loughran--McDonald} financial sentiment lexicon [2], with thresholds tuned strictly on validation splits.
+    \item \textbf{Traditional machine learning (RQ1, RQ2):} \textbf{TF-IDF} word and n-gram features with class-weighted \textbf{Logistic Regression} and \textbf{Linear Support Vector Machines (SVM)} (1--3-grams, \texttt{sublinear\_tf=True}, \texttt{fit\_transform} on train folds).
+    \item \textbf{Transformer models (RQ2, RQ3):} General-domain \textbf{BERT} (\texttt{bert-base-uncased} [4]) and finance-adapted \textbf{FinBERT} [3], sharing an identical 12-layer architecture to isolate domain pretraining.
+\end{itemize}
+
+\textbf{Two-Stage Leakage-Free FinBERT Protocol.} Off-the-shelf \texttt{ProsusAI/finbert} [3] was fine-tuned directly on Financial PhraseBank [1]; evaluating that checkpoint on arbitrary PhraseBank splits leaks training instances into the test set. We eliminate data leakage via a two-stage protocol: (1) \textbf{Controlled In-Domain Fine-Tuning:} On Financial PhraseBank, rather than evaluating pre-fine-tuned \texttt{ProsusAI/finbert}, we initialize from the \textbf{pre-sentiment domain-pretrained FinBERT masked language model} (pretrained only via self-supervised MLM on financial corpora prior to sentiment supervision, e.g., \texttt{yiyanghkust/finbert-pretrain} / Araci's MLM checkpoint [3]) and \texttt{bert-base-uncased} [4]. Both encoders and the TF-IDF baselines are trained, validated, and tested on the \textbf{exact same stratified 70\%/15\%/15\% train/validation/test split} (locked via SHA-256 sentence hashes) and 5-fold stratified cross-validation under identical AdamW settings and validation Macro-F1 early stopping. (2) \textbf{External OOD Holdout Check:} To evaluate off-the-shelf \texttt{ProsusAI/finbert} alongside our Stage 1 models without training overlap, we test all models zero-shot on deduplicated \textbf{SEntFiN 1.0} [5].
+
+\textbf{Classification Metrics and Statistical Robustness.} Because this is an imbalanced 3-class classification task, we evaluate strictly with classification metrics: \textbf{Macro-F1} (primary metric), \textbf{Accuracy}, \textbf{per-class Precision, Recall, and F1-score} (focusing on false-negative confusion between the \textit{neutral} and \textit{negative} classes), \textbf{3$\times$3 Confusion Matrices}, and \textbf{Expected Calibration Error (ECE)}. Pairwise differences on identical test splits are verified via paired \textbf{McNemar's test} (with continuity correction) and \textbf{paired bootstrap resampling} ($B = 10{,}000$ resamples for 95\% CIs on $\Delta\text{Macro-F1}$).
+
+\section*{Error Analysis and Expected Contribution}
+\textbf{Phenomenon-Stratified Error Analysis \& Attribution (RQ3).} Beyond aggregate metrics, we construct a \textbf{300-sentence stratified diagnostic subset} from the locked test split. Using deterministic lexical/dependency pre-tagging and double-annotation by two team members (reporting inter-annotator \textbf{Cohen's $\kappa$}), sentences are grouped into \textbf{five linguistic phenomena}: (1) \textit{finance-specific terminology} (e.g., \textit{liability}, \textit{depreciation}, \textit{amortization}), (2) \textit{negation and scope inversion} (e.g., \textit{did not result in a loss}), (3) \textit{hedging and modal uncertainty} (e.g., \textit{may}, \textit{projected to}), (4) \textit{numerical and directional comparisons} (e.g., \textit{margin narrowed from 12\% to 9\%}), and (5) \textit{context-dependent expressions}. For each category $c$, we decompose gains into the \textbf{architecture effect}, $\Delta_{\text{arch}}(c) = \text{F1}_{\text{BERT-base}}(c) - \text{F1}_{\text{TF-IDF+SVM}}(c)$, and the \textbf{domain-adaptation effect}, $\Delta_{\text{domain}}(c) = \text{F1}_{\text{FinBERT-MLM}}(c) - \text{F1}_{\text{BERT-base}}(c)$, isolating domain lexicon mastery from general capacity.
+
+\textbf{Reusable Value Produced.} We will release three open-source deliverables on GitHub: (i) \textbf{leakage-free benchmark split manifests} (SHA-256 sentence hashes and PhraseBank--SEntFiN deduplication scripts), (ii) the \textbf{300-sentence phenomenon-annotated financial sentiment diagnostic dataset} with annotation guidelines, and (iii) a \textbf{reproducible Python evaluation pipeline} running all baselines, statistical tests, and error analyses.
+
+\section*{References}
+\begin{enumerate}[label={[}\arabic*{]},topsep=1pt,itemsep=0.5pt,parsep=0pt,leftmargin=1.5em]
+    \item P. Malo, A. Sinha, P. Korhonen, J. Wallenius, and P. Takala, ``Good Debt or Bad Debt: Detecting Semantic Orientations in Economic Texts,'' \textit{Journal of the Association for Information Science and Technology}, vol. 65, no. 4, pp. 782--796, 2014.
+    \item T. Loughran and B. McDonald, ``When Is a Liability Not a Liability? Textual Analysis, Dictionaries, and 10-Ks,'' \textit{The Journal of Finance}, vol. 66, no. 1, pp. 35--65, 2011.
+    \item D. Araci, ``FinBERT: Financial Sentiment Analysis with Pre-trained Language Models,'' \textit{arXiv preprint arXiv:1908.10063}, 2019.
+    \item J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova, ``BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding,'' in \textit{Proceedings of NAACL-HLT}, pp. 4171--4186, 2019.
+    \item A. Sinha, S. Kedas, R. Kumar, and P. Malo, ``SEntFiN 1.0: Entity-Aware Sentiment Analysis for Financial News,'' \textit{J.\ Assoc.\ Inf.\ Sci.\ Technol.}, vol. 73, no. 9, pp. 1314--1335, 2022.
+    \item C. J. Hutto and E. Gilbert, ``VADER: A Parsimonious Rule-Based Model for Sentiment Analysis of Social Media Text,'' in \textit{Proc.\ Int.\ AAAI Conf.\ Web and Social Media (ICWSM)}, vol. 8, no. 1, pp. 216--225, 2014.
+\end{enumerate}
+
+\end{document}
