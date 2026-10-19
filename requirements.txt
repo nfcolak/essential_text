@@ -1,0 +1,18 @@
+# Core numerical and scientific libraries
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.2.0
+
+# NLP and Hugging Face ecosystem
+datasets>=2.14.0
+huggingface_hub>=0.17.0
+vaderSentiment>=3.3.2
+
+# Data manipulation and visualization
+pandas>=2.0.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+requests>=2.28.0
+tqdm>=4.65.0
