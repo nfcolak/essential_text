@@ -1,0 +1,165 @@
+{
+  "metadata": {
+    "test_size": 339,
+    "bootstrap_samples": 10000,
+    "seed": 42
+  },
+  "comparisons": {
+    "VADER vs Loughran-McDonald": {
+      "model_a": "VADER",
+      "model_b": "Loughran-McDonald",
+      "mcnemar": {
+        "n10": 41,
+        "n01": 12,
+        "n11": 237,
+        "n00": 49,
+        "chi2": 14.79245283018868,
+        "statistic": 14.79245283018868,
+        "p_value": 8.171334999262925e-05
+      },
+      "bootstrap": {
+        "delta_macro_f1": 0.11784881154750448,
+        "ci_low": 0.06094890689013214,
+        "ci_high": 0.1775574360772273,
+        "ci_95": [
+          0.06094890689013214,
+          0.1775574360772273
+        ],
+        "p_value": 0.0,
+        "b_samples": 10000,
+        "f1_a": 0.7533605792043593,
+        "f1_b": 0.6355117676568548
+      }
+    },
+    "VADER vs TF-IDF + Logistic Regression": {
+      "model_a": "VADER",
+      "model_b": "TF-IDF + Logistic Regression",
+      "mcnemar": {
+        "n10": 24,
+        "n01": 49,
+        "n11": 254,
+        "n00": 12,
+        "chi2": 7.890410958904109,
+        "statistic": 7.890410958904109,
+        "p_value": 0.004626293921895512
+      },
+      "bootstrap": {
+        "delta_macro_f1": -0.10335549215591477,
+        "ci_low": -0.17723489321711514,
+        "ci_high": -0.028457030585606342,
+        "ci_95": [
+          -0.17723489321711514,
+          -0.028457030585606342
+        ],
+        "p_value": 0.007,
+        "b_samples": 10000,
+        "f1_a": 0.7533605792043593,
+        "f1_b": 0.8567160713602741
+      }
+    },
+    "VADER vs TF-IDF + Linear SVM": {
+      "model_a": "VADER",
+      "model_b": "TF-IDF + Linear SVM",
+      "mcnemar": {
+        "n10": 23,
+        "n01": 52,
+        "n11": 255,
+        "n00": 9,
+        "chi2": 10.453333333333333,
+        "statistic": 10.453333333333333,
+        "p_value": 0.0010795155066662817
+      },
+      "bootstrap": {
+        "delta_macro_f1": -0.12570431280480654,
+        "ci_low": -0.19991322358256972,
+        "ci_high": -0.05098633668927184,
+        "ci_95": [
+          -0.19991322358256972,
+          -0.05098633668927184
+        ],
+        "p_value": 0.0007,
+        "b_samples": 10000,
+        "f1_a": 0.7533605792043593,
+        "f1_b": 0.8790648920091658
+      }
+    },
+    "Loughran-McDonald vs TF-IDF + Logistic Regression": {
+      "model_a": "Loughran-McDonald",
+      "model_b": "TF-IDF + Logistic Regression",
+      "mcnemar": {
+        "n10": 28,
+        "n01": 82,
+        "n11": 221,
+        "n00": 8,
+        "chi2": 25.536363636363635,
+        "statistic": 25.536363636363635,
+        "p_value": 2.519412514630622e-07
+      },
+      "bootstrap": {
+        "delta_macro_f1": -0.22120430370341926,
+        "ci_low": -0.30983234749633815,
+        "ci_high": -0.1344788712402902,
+        "ci_95": [
+          -0.30983234749633815,
+          -0.1344788712402902
+        ],
+        "p_value": 0.0,
+        "b_samples": 10000,
+        "f1_a": 0.6355117676568548,
+        "f1_b": 0.8567160713602741
+      }
+    },
+    "Loughran-McDonald vs TF-IDF + Linear SVM": {
+      "model_a": "Loughran-McDonald",
+      "model_b": "TF-IDF + Linear SVM",
+      "mcnemar": {
+        "n10": 26,
+        "n01": 84,
+        "n11": 223,
+        "n00": 6,
+        "chi2": 29.536363636363635,
+        "statistic": 29.536363636363635,
+        "p_value": 2.6140393458029345e-08
+      },
+      "bootstrap": {
+        "delta_macro_f1": -0.24355312435231102,
+        "ci_low": -0.33099733938156567,
+        "ci_high": -0.15730666972656662,
+        "ci_95": [
+          -0.33099733938156567,
+          -0.15730666972656662
+        ],
+        "p_value": 0.0,
+        "b_samples": 10000,
+        "f1_a": 0.6355117676568548,
+        "f1_b": 0.8790648920091658
+      }
+    },
+    "TF-IDF + Logistic Regression vs TF-IDF + Linear SVM": {
+      "model_a": "TF-IDF + Logistic Regression",
+      "model_b": "TF-IDF + Linear SVM",
+      "mcnemar": {
+        "n10": 3,
+        "n01": 7,
+        "n11": 300,
+        "n00": 29,
+        "chi2": 0.9,
+        "statistic": 0.9,
+        "p_value": 0.34375
+      },
+      "bootstrap": {
+        "delta_macro_f1": -0.022348820648891765,
+        "ci_low": -0.05116701171682595,
+        "ci_high": 0.0037690444404205625,
+        "ci_95": [
+          -0.05116701171682595,
+          0.0037690444404205625
+        ],
+        "p_value": 0.1064,
+        "b_samples": 10000,
+        "f1_a": 0.8567160713602741,
+        "f1_b": 0.8790648920091658
+      }
+    }
+  }
+}
