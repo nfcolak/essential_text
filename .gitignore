@@ -1,0 +1,26 @@
+# Python & Environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/
+
+# OpenSpec & Agent state
+openspec/
+.agents/
+.claude/
+.gsd/
+.bg-shell/
+.mcp.json
+
+# Model checkpoints & raw data cache
+models/
+data/raw/
+data/cache/
+wandb/
