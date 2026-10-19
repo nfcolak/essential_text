@@ -1,0 +1,30 @@
+Evaluating Domain Adaptation in Financial Sentiment Analysis
+FinBERT vs. Traditional NLP Baselines
+Qiyao Zheng   Benjamin Donick   Necati Furkan Colak
+
+Motivation and Research Questions
+Sentiment analysis is widely used in computational finance to extract market-relevant information from financial news and corporate disclosures. However, general-domain models may perform poorly on financial language because word polarity often depends strongly on domain context. Terms such as cost, liability, or depreciation, for example, may appear negative in general sentiment resources while serving as neutral descriptive terminology in financial reporting.
+This project investigates how strongly such domain mismatch affects financial sentiment classification and whether domain-specific models provide measurable advantages over general-purpose NLP approaches. We address three research questions:
+1. To what extent do general-purpose sentiment methods misclassify financial language?
+2. Does domain adaptation improve classification performance compared with traditional machine-learning and general-domain Transformer baselines?
+3. Which linguistic phenomena—such as financial terminology, negation, hedging, and comparative statements—cause the largest differences between models?
+The main contribution is not only a comparison of model performance, but also an interpretable analysis of when and why domain adaptation matters in financial NLP.
+
+Data and Experimental Setup
+We will use the Financial PhraseBank [1], containing approximately 4,845 financial-news sentences annotated by finance experts as positive, neutral, or negative. We will compare three levels of NLP methods:
+• Lexicon-based methods: VADER and the domain-specific Loughran–McDonald financial sentiment lexicon [2].
+• Traditional machine learning: TF-IDF word and n-gram features with Logistic Regression and Support Vector Machines.
+• Transformer models: general-domain BERT and finance-adapted FinBERT [3], using consistent data splits and comparable settings where applicable.
+Performance will be evaluated using BLEU, ROUGE, METEOR, accuracy, macro-F1, precision, recall, and confusion matrices, with particular attention to class-specific errors and the neutral class. Where appropriate, we will use paired or resampling-based tests to assess whether observed differences are robust.
+
+Error Analysis and Expected Contribution
+Beyond aggregate metrics, we will perform a structured error analysis. Misclassified sentences will be grouped into categories including finance-specific terminology, negation, hedging, numerical comparisons, and context-dependent expressions. We will compare how frequently different model families fail on each category.
+This analysis will help determine whether FinBERT’s advantage, if observed, is specifically associated with better handling of financial language or mainly reflects the general strength of Transformer models. The final output will include a reproducible evaluation pipeline, documented error categories, and experiment code in a GitHub repository. Key challenges include fair comparison across heterogeneous models, avoiding data leakage, and defining systematic error categories.
+
+Work Plan
+We will first prepare the dataset and implement the lexicon and TF-IDF baselines, then evaluate BERT and FinBERT. Finally, we will conduct the error analysis, test the robustness of the findings, clean and document the codebase, and prepare the final report.
+
+References
+[1] P. Malo, A. Sinha, P. Korhonen, J. Wallenius, and P. Takala, “Good Debt or Bad Debt: Detecting Semantic Orientations in Economic Texts,” Journal of the Association for Information Science and Technology, vol. 65, no. 4, pp. 782–796, 2014.
+[2] T. Loughran and B. McDonald, “When Is a Liability Not a Liability? Textual Analysis, Dictionaries, and 10-Ks,” The Journal of Finance, vol. 66, no. 1, pp. 35–65, 2011.
+[3] D. Araci, “FinBERT: Financial Sentiment Analysis with Pre-trained Language Models,” arXiv preprint arXiv:1908.10063, 2019.
