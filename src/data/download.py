@@ -7,11 +7,42 @@ testing without network calls, and an --execute-gated loader for full datasets
 
 from __future__ import annotations
 
+import ast
+import csv
+import hashlib
+import io
+import json
 import os
 import random
+import re
+import urllib.request
+import zipfile
 from typing import Any
 
+from src.data.dedup import sentence_sha256
 from src.data.splits import ID_TO_LABEL, LABEL_TO_ID
+
+# Pinned primary-source URLs and SHA-256 checksums (verified via nlp-dataset-audits)
+FPB_COMMIT_SHA = "8d3fe0c36d5feec6b3cc5e455b0fcb4820fb9964"
+FPB_ZIP_URL = (
+    f"https://huggingface.co/datasets/takala/financial_phrasebank/resolve/"
+    f"{FPB_COMMIT_SHA}/data/FinancialPhraseBank-v1.0.zip"
+)
+FPB_ZIP_SHA256 = "0e1a06c4900fdae46091d031068601e3773ba067c7cecb5b0da1dcba5ce989a6"
+
+FPB_CONFIG_TO_FILENAME: dict[str, str] = {
+    "sentences_allagree": "FinancialPhraseBank-v1.0/Sentences_AllAgree.txt",
+    "sentences_75agree": "FinancialPhraseBank-v1.0/Sentences_75Agree.txt",
+    "sentences_66agree": "FinancialPhraseBank-v1.0/Sentences_66Agree.txt",
+    "sentences_50agree": "FinancialPhraseBank-v1.0/Sentences_50Agree.txt",
+}
+
+SENTFIN_COMMIT_SHA = "eba43610fe3cb57a3e5773cd6c037da1f8992ad5"
+SENTFIN_CSV_URL = (
+    f"https://raw.githubusercontent.com/pyRis/SEntFiN/"
+    f"{SENTFIN_COMMIT_SHA}/SEntFiN.csv"
+)
+SENTFIN_CSV_SHA256 = "570af7ba58f724f3fcc414dd5ba80da5b1a3b342134d76c6ebdf53a32c54a92f"
 
 # Seed sentences for generating realistic synthetic financial sentiment data
 SYNTHETIC_TEMPLATES: dict[int, list[str]] = {
@@ -103,7 +134,6 @@ def generate_synthetic_dataset(
         base_text = pb_texts[i]
         lbl = pb_labels[i]
         ent = entities[i % len(entities)]
-        overlap_text = f"{ent} reports: {base_text}"  # Near duplicate / overlap
         sentfin_records.append({
             "id": f"sentfin_synth_overlap_{i:03d}",
             "text": base_text,  # exact overlap
@@ -150,65 +180,177 @@ def generate_synthetic_dataset(
     }
 
 
+def parse_sentfin_decisions(raw_decisions: str) -> dict[str, str]:
+    """Parse SEntFiN 1.0 entity-sentiment `Decisions` column into a clean dict.
+
+    Handles both JSON-formatted strings (`{"Nokia": "positive"}`) and Python-literal
+    single-quoted dicts including the 6 upstream rows with unescaped apostrophes in
+    entity names (e.g. `{'Tata Steel UK': 'negative', 'Moody's': 'neutral'}`).
+    """
+    if not raw_decisions or not raw_decisions.strip():
+        return {}
+    val = raw_decisions.strip()
+    if val in LABEL_TO_ID:
+        return {"_sentence": val}
+    try:
+        parsed = json.loads(val)
+    except Exception:
+        try:
+            parsed = ast.literal_eval(val)
+        except (ValueError, SyntaxError):
+            pattern = r"\"([^\"]+)\"\s*:\s*\"(positive|neutral|negative)\"|'(.*?)'\s*:\s*'(positive|neutral|negative)'(?=\s*[,}])"
+            matches = re.findall(pattern, val)
+            parsed = {(m[0] or m[2]).strip(): (m[1] or m[3]).strip() for m in matches if (m[0] or m[2])}
+    if not isinstance(parsed, dict):
+        return {}
+    clean: dict[str, str] = {}
+    for k, v in parsed.items():
+        v_norm = str(v).strip().lower()
+        if str(k).strip() and v_norm in LABEL_TO_ID:
+            clean[str(k).strip()] = v_norm
+    return clean
+
+
+def _download_with_sha256(url: str, dest_path: str, expected_sha256: str | None = None) -> str:
+    """Download a file from `url` to `dest_path` if not already cached and verify SHA-256."""
+    if os.path.exists(dest_path):
+        with open(dest_path, "rb") as f:
+            existing_sha = hashlib.sha256(f.read()).hexdigest()
+        if expected_sha256 is None or existing_sha == expected_sha256:
+            return existing_sha
+
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        data = resp.read()
+
+    actual_sha = hashlib.sha256(data).hexdigest()
+    if expected_sha256 is not None and actual_sha != expected_sha256:
+        raise ValueError(
+            f"SHA-256 mismatch for {url}: expected {expected_sha256}, got {actual_sha}"
+        )
+
+    os.makedirs(os.path.dirname(dest_path) or ".", exist_ok=True)
+    with open(dest_path, "wb") as f:
+        f.write(data)
+    return actual_sha
+
+
 def load_real_datasets(
     cache_dir: str = "data/raw",
     execute: bool = False,
 ) -> dict[str, Any]:
-    """Load real financial sentiment datasets (Financial PhraseBank, SEntFiN 1.0, Loughran-McDonald).
+    """Load real financial sentiment datasets (Financial PhraseBank v1.0 & SEntFiN 1.0).
 
     Gated execution: raises RuntimeError if execute is False to ensure real dataset
-    downloads and processing only run in Google Colab per project rules.
+    downloads and processing only run when explicitly invoked (e.g., in Google Colab).
 
-    Args:
-        cache_dir: Directory where downloaded datasets are cached.
-        execute: Boolean gate; must be True to execute downloads.
-
-    Returns:
-        Dictionary containing loaded real datasets.
+    Downloads from pinned upstream commits and verifies SHA-256 hashes:
+    1. Financial PhraseBank v1.0 (`takala/financial_phrasebank` @ `8d3fe0c36d5feec6b3cc5e455b0fcb4820fb9964`)
+       parsed directly from `FinancialPhraseBank-v1.0.zip` (`iso-8859-1`, `@` delimiter) so it
+       never fails on `datasets >= 3.0` where legacy dataset loading scripts are disabled.
+    2. SEntFiN 1.0 (`pyRis/SEntFiN` @ `eba43610fe3cb57a3e5773cd6c037da1f8992ad5`), parsing
+       entity-level `Decisions` JSON/dicts, retaining unambiguous single-polarity headlines
+       (9,520 of 10,753 rows; 9,460 unique normalized headlines) and recording full audit counts.
     """
     if not execute:
         raise RuntimeError(
             "Real dataset download requires --execute (run in Google Colab)."
         )
 
-    # Execution path for Google Colab
     os.makedirs(cache_dir, exist_ok=True)
-    results: dict[str, Any] = {}
+    results: dict[str, Any] = {
+        "provenance": {
+            "financial_phrasebank": {
+                "repo": "takala/financial_phrasebank",
+                "revision": FPB_COMMIT_SHA,
+                "url": FPB_ZIP_URL,
+                "expected_sha256": FPB_ZIP_SHA256,
+            },
+            "sentfin": {
+                "repo": "pyRis/SEntFiN",
+                "revision": SENTFIN_COMMIT_SHA,
+                "url": SENTFIN_CSV_URL,
+                "expected_sha256": SENTFIN_CSV_SHA256,
+            },
+        }
+    }
 
-    # 1. Financial PhraseBank via Hugging Face datasets
-    try:
-        from datasets import load_dataset  # type: ignore
+    # 1. Financial PhraseBank v1.0 (direct pinned ZIP download + ISO-8859-1 parsing)
+    fpb_zip_path = os.path.join(cache_dir, "FinancialPhraseBank-v1.0.zip")
+    fpb_sha = _download_with_sha256(FPB_ZIP_URL, fpb_zip_path, FPB_ZIP_SHA256)
+    results["provenance"]["financial_phrasebank"]["actual_sha256"] = fpb_sha
 
-        fpb_configs = ["sentences_allagree", "sentences_75agree", "sentences_50agree"]
-        results["financial_phrasebank"] = {}
-        for cfg in fpb_configs:
-            ds = load_dataset("financial_phrasebank", cfg, split="train", cache_dir=cache_dir)
+    results["financial_phrasebank"] = {}
+    with zipfile.ZipFile(fpb_zip_path, mode="r") as zf:
+        for cfg, member_name in FPB_CONFIG_TO_FILENAME.items():
+            raw_lines = zf.read(member_name).decode("iso-8859-1").splitlines()
+            texts: list[str] = []
+            labels: list[int] = []
+            for line in raw_lines:
+                if "@" not in line:
+                    continue
+                sentence, label_str = line.rsplit("@", 1)
+                sentence = sentence.strip()
+                label_norm = label_str.strip().lower()
+                if sentence and label_norm in LABEL_TO_ID:
+                    texts.append(sentence)
+                    labels.append(LABEL_TO_ID[label_norm])
             results["financial_phrasebank"][cfg] = {
-                "texts": [item["sentence"] for item in ds],
-                "labels": [item["label"] for item in ds],  # 0: neg, 1: neu, 2: pos in HF
+                "texts": texts,
+                "labels": labels,
             }
-    except Exception as exc:
-        results["financial_phrasebank_error"] = str(exc)
 
-    # 2. SEntFiN 1.0
+    # 2. SEntFiN 1.0 (direct pinned CSV download + entity-decision parsing)
     sentfin_path = os.path.join(cache_dir, "SEntFiN.csv")
-    if os.path.exists(sentfin_path):
-        import csv
+    sentfin_sha = _download_with_sha256(SENTFIN_CSV_URL, sentfin_path, SENTFIN_CSV_SHA256)
+    results["provenance"]["sentfin"]["actual_sha256"] = sentfin_sha
 
-        records = []
-        with open(sentfin_path, mode="r", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                records.append(row)
-        results["sentfin"] = records
-    else:
-        results["sentfin"] = {"note": f"SEntFiN.csv not found at {sentfin_path}"}
+    sentfin_records: list[dict[str, Any]] = []
+    seen_hashes: set[str] = set()
+    total_raw_rows = 0
+    mixed_multi_entity_rows = 0
+    duplicate_internal_rows = 0
 
-    # 3. Loughran-McDonald Master Dictionary
+    with open(sentfin_path, mode="r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for idx, row in enumerate(reader):
+            total_raw_rows += 1
+            title = (row.get("Title") or row.get("text") or "").strip()
+            if not title:
+                continue
+            decisions_raw = row.get("Decisions") or row.get("Sentiment") or ""
+            decisions = parse_sentfin_decisions(decisions_raw)
+            polarities = set(decisions.values())
+            if len(polarities) != 1:
+                mixed_multi_entity_rows += 1
+                continue
+            lbl_str = next(iter(polarities))
+            lbl_id = LABEL_TO_ID[lbl_str]
+            h = sentence_sha256(title)
+            if h in seen_hashes:
+                duplicate_internal_rows += 1
+                continue
+            seen_hashes.add(h)
+            sentfin_records.append({
+                "id": f"sentfin_{idx:05d}",
+                "text": title,
+                "sha256": h,
+                "label": lbl_id,
+                "label_name": ID_TO_LABEL[lbl_id],
+                "entities": decisions,
+            })
+
+    results["sentfin"] = sentfin_records
+    results["sentfin_audit"] = {
+        "total_raw_rows": total_raw_rows,
+        "mixed_multi_entity_excluded": mixed_multi_entity_rows,
+        "internal_duplicates_excluded": duplicate_internal_rows,
+        "unambiguous_unique_kept": len(sentfin_records),
+    }
+
+    # 3. Loughran-McDonald Master Dictionary (embedded in src.baselines.lexicon + optional CSV override)
     lm_path = os.path.join(cache_dir, "Loughran-McDonald_MasterDictionary_1993-2023.csv")
-    if os.path.exists(lm_path):
-        results["loughran_mcdonald_path"] = lm_path
-    else:
-        results["loughran_mcdonald_path"] = None
+    results["loughran_mcdonald_path"] = lm_path if os.path.exists(lm_path) else "embedded_curated_lm_v2023"
 
     return results
+

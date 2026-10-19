@@ -352,22 +352,38 @@ def run_step1(args: argparse.Namespace) -> dict[str, Any]:
         # External SEntFiN deduplication
         raw_sentfin = real_data.get("sentfin", [])
         if isinstance(raw_sentfin, list) and len(raw_sentfin) > 0:
+            from src.data.download import parse_sentfin_decisions
+
             sentfin_norm_records: list[dict[str, Any]] = []
             for idx, item in enumerate(raw_sentfin):
-                t = item.get("Title", "") or item.get("text", "")
-                lbl_str = (item.get("Sentiment") or item.get("Decisions") or "").strip().lower()
-                lbl_id = LABEL_TO_ID.get(lbl_str, 1)
-                sentfin_norm_records.append({
-                    "id": f"sentfin_{idx:05d}",
-                    "text": t,
-                    "label": lbl_id,
-                    "label_name": ID_TO_LABEL[lbl_id],
-                })
+                if "label" in item and "text" in item and isinstance(item["label"], int):
+                    sentfin_norm_records.append(item)
+                else:
+                    t = (item.get("Title") or item.get("text") or "").strip()
+                    if not t:
+                        continue
+                    decisions = parse_sentfin_decisions(
+                        item.get("Decisions") or item.get("Sentiment") or ""
+                    )
+                    pols = set(decisions.values())
+                    if len(pols) != 1:
+                        continue
+                    lbl_str = next(iter(pols))
+                    lbl_id = LABEL_TO_ID[lbl_str]
+                    sentfin_norm_records.append({
+                        "id": f"sentfin_{idx:05d}",
+                        "text": t,
+                        "label": lbl_id,
+                        "label_name": ID_TO_LABEL[lbl_id],
+                        "entities": decisions,
+                    })
             filtered_holdout_records, holdout_stats = deduplicate_external_holdout(
                 external_records=sentfin_norm_records,
-                reference_texts=all_pb_texts,
+                reference_texts=list(set(all_pb_texts)),
                 threshold=0.80,
             )
+            if "sentfin_audit" in real_data:
+                holdout_stats["upstream_audit"] = real_data["sentfin_audit"]
         else:
             filtered_holdout_records = []
             holdout_stats = {"total_input": 0, "removed_overlap": 0, "kept": 0}

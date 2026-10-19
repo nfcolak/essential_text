@@ -1,0 +1,58 @@
+{
+  "audit_date": "2026-10-19",
+  "verdict": "USABLE_WITH_PINNED_REVISIONS",
+  "datasets": {
+    "financial_phrasebank": {
+      "source_id": "takala/financial_phrasebank",
+      "pinned_revision": "8d3fe0c36d5feec6b3cc5e455b0fcb4820fb9964",
+      "archive_url": "https://huggingface.co/datasets/takala/financial_phrasebank/resolve/8d3fe0c36d5feec6b3cc5e455b0fcb4820fb9964/data/FinancialPhraseBank-v1.0.zip",
+      "archive_sha256": "0e1a06c4900fdae46091d031068601e3773ba067c7cecb5b0da1dcba5ce989a6",
+      "encoding": "iso-8859-1",
+      "license": "CC BY-NC-SA 3.0",
+      "subsets": {
+        "sentences_allagree": {
+          "raw_rows": 2264,
+          "unique_normalized_rows": 2259,
+          "label_counts": {"negative": 303, "neutral": 1391, "positive": 570},
+          "locked_splits_70_15_15": {"train": 1585, "val": 340, "test": 339},
+          "max_cross_split_jaccard": 0.7857
+        },
+        "sentences_75agree": {
+          "raw_rows": 3453,
+          "unique_normalized_rows": 3447,
+          "label_counts": {"negative": 420, "neutral": 2146, "positive": 887},
+          "locked_splits_70_15_15": {"train": 2417, "val": 518, "test": 518},
+          "max_cross_split_jaccard": 0.7895
+        },
+        "sentences_66agree": {
+          "raw_rows": 4217,
+          "unique_normalized_rows": 4209,
+          "label_counts": {"negative": 514, "neutral": 2535, "positive": 1168}
+        },
+        "sentences_50agree": {
+          "raw_rows": 4846,
+          "unique_normalized_rows": 4835,
+          "label_counts": {"negative": 604, "neutral": 2879, "positive": 1363},
+          "locked_splits_70_15_15": {"train": 3392, "val": 728, "test": 726},
+          "max_cross_split_jaccard": 0.7917
+        }
+      }
+    },
+    "sentfin_1_0": {
+      "source_id": "pyRis/SEntFiN",
+      "pinned_revision": "eba43610fe3cb57a3e5773cd6c037da1f8992ad5",
+      "csv_url": "https://raw.githubusercontent.com/pyRis/SEntFiN/eba43610fe3cb57a3e5773cd6c037da1f8992ad5/SEntFiN.csv",
+      "csv_sha256": "570af7ba58f724f3fcc414dd5ba80da5b1a3b342134d76c6ebdf53a32c54a92f",
+      "license": "MIT",
+      "schema": ["S No.", "Title", "Decisions", "Words"],
+      "raw_rows": 10753,
+      "unambiguous_single_polarity_rows": 9520,
+      "unambiguous_label_counts": {"negative": 2711, "neutral": 3446, "positive": 3363},
+      "mixed_multi_entity_excluded": 1233,
+      "internal_duplicates_excluded": 60,
+      "unique_unambiguous_kept": 9460,
+      "overlap_with_financial_phrasebank_jaccard_080": 0,
+      "unescaped_apostrophe_rows_repaired": 6
+    }
+  }
+}

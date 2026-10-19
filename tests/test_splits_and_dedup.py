@@ -26,6 +26,7 @@ from src.data.dedup import (
 from src.data.download import (
     generate_synthetic_dataset,
     load_real_datasets,
+    parse_sentfin_decisions,
 )
 from src.data.splits import (
     ID_TO_LABEL,
@@ -278,6 +279,20 @@ class TestSplitsAndLeakageVerification(unittest.TestCase):
         with self.assertRaises(RuntimeError) as ctx:
             load_real_datasets(execute=False)
         self.assertIn("--execute", str(ctx.exception))
+
+    def test_parse_sentfin_decisions(self):
+        # Standard JSON dict
+        d1 = parse_sentfin_decisions('{"Nokia": "positive"}')
+        self.assertEqual(d1, {"Nokia": "positive"})
+
+        # Single-quoted Python literal dict with unescaped apostrophe in entity name
+        d2 = parse_sentfin_decisions("{'Tata Steel UK': 'negative', 'Moody's': 'neutral'}")
+        self.assertEqual(d2, {"Tata Steel UK": "negative", "Moody's": "neutral"})
+
+        # Multi-entity unanimous
+        d3 = parse_sentfin_decisions("{'Sun Pharma': 'positive', 'Dr Reddy's Labs': 'positive'}")
+        self.assertEqual(d3, {"Sun Pharma": "positive", "Dr Reddy's Labs": "positive"})
+        self.assertEqual(len(set(d3.values())), 1)
 
 
 if __name__ == "__main__":
