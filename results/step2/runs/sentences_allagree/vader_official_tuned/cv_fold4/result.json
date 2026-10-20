@@ -1,0 +1,86 @@
+{
+  "status": "completed",
+  "stage": "cv",
+  "config": "sentences_allagree",
+  "model_key": "vader_official_tuned",
+  "model_name": "VADER (official lexicon, val-tuned thresholds)",
+  "seed": 42,
+  "fold": 4,
+  "hyperparams": {
+    "threshold_neg": -0.02,
+    "threshold_pos": 0.4404,
+    "val_macro_f1": 0.5121054420417478,
+    "tuned": true,
+    "lexicon": "vaderSentiment 3.3.2",
+    "lexicon_size": 7506,
+    "negation": false
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6435331230283912,
+      "macro_f1": 0.5121054420417478,
+      "per_class": {
+        "negative": {
+          "precision": 0.3125,
+          "recall": 0.23809523809523808,
+          "f1": 0.2702702702702703,
+          "support": 42
+        },
+        "neutral": {
+          "precision": 0.7451923076923077,
+          "recall": 0.7948717948717948,
+          "f1": 0.7692307692307693,
+          "support": 195
+        },
+        "positive": {
+          "precision": 0.5064935064935064,
+          "recall": 0.4875,
+          "f1": 0.4968152866242038,
+          "support": 80
+        }
+      },
+      "confusion_matrix": [
+        [
+          10,
+          21,
+          11
+        ],
+        [
+          13,
+          155,
+          27
+        ],
+        [
+          9,
+          32,
+          39
+        ]
+      ],
+      "neutral_to_negative_rate": 0.06666666666666667,
+      "ece": 0.31260759023837864
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1268,
+    "val": 317,
+    "test": null,
+    "external": null
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 0.029335975646972656,
+  "timestamp": "2026-10-20T20:20:32.797902+00:00"
+}

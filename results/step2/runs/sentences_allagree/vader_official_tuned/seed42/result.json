@@ -1,0 +1,170 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_allagree",
+  "model_key": "vader_official_tuned",
+  "model_name": "VADER (official lexicon, val-tuned thresholds)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "threshold_neg": -0.3,
+    "threshold_pos": 0.3,
+    "val_macro_f1": 0.4732389961003019,
+    "tuned": true,
+    "lexicon": "vaderSentiment 3.3.2",
+    "lexicon_size": 7506,
+    "negation": false
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6352941176470588,
+      "macro_f1": 0.4732389961003019,
+      "per_class": {
+        "negative": {
+          "precision": 0.3076923076923077,
+          "recall": 0.08888888888888889,
+          "f1": 0.13793103448275862,
+          "support": 45
+        },
+        "neutral": {
+          "precision": 0.7373271889400922,
+          "recall": 0.7655502392344498,
+          "f1": 0.7511737089201878,
+          "support": 209
+        },
+        "positive": {
+          "precision": 0.4727272727272727,
+          "recall": 0.6046511627906976,
+          "f1": 0.5306122448979592,
+          "support": 86
+        }
+      },
+      "confusion_matrix": [
+        [
+          4,
+          27,
+          14
+        ],
+        [
+          5,
+          160,
+          44
+        ],
+        [
+          4,
+          30,
+          52
+        ]
+      ],
+      "neutral_to_negative_rate": 0.023923444976076555,
+      "ece": 0.2848161008428125
+    },
+    "test": {
+      "accuracy": 0.6312684365781711,
+      "macro_f1": 0.5071104522198566,
+      "per_class": {
+        "negative": {
+          "precision": 0.42105263157894735,
+          "recall": 0.17391304347826086,
+          "f1": 0.24615384615384617,
+          "support": 46
+        },
+        "neutral": {
+          "precision": 0.7450980392156863,
+          "recall": 0.7307692307692307,
+          "f1": 0.7378640776699029,
+          "support": 208
+        },
+        "positive": {
+          "precision": 0.46551724137931033,
+          "recall": 0.6352941176470588,
+          "f1": 0.5373134328358209,
+          "support": 85
+        }
+      },
+      "confusion_matrix": [
+        [
+          8,
+          24,
+          14
+        ],
+        [
+          8,
+          152,
+          48
+        ],
+        [
+          3,
+          28,
+          54
+        ]
+      ],
+      "neutral_to_negative_rate": 0.038461538461538464,
+      "ece": 0.2879516375100014
+    },
+    "external": {
+      "accuracy": 0.5002114164904863,
+      "macro_f1": 0.4814134843241462,
+      "per_class": {
+        "negative": {
+          "precision": 0.7039413382218148,
+          "recall": 0.28444444444444444,
+          "f1": 0.4051701398048008,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.42926239419588874,
+          "recall": 0.728952772073922,
+          "f1": 0.5403348554033486,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.5732558139534883,
+          "recall": 0.44136078782453,
+          "f1": 0.49873545776428935,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          768,
+          1564,
+          368
+        ],
+        [
+          191,
+          2485,
+          733
+        ],
+        [
+          132,
+          1740,
+          1479
+        ]
+      ],
+      "neutral_to_negative_rate": 0.056028160750953356,
+      "ece": 0.42003259312904917
+    }
+  },
+  "n": {
+    "train": 1585,
+    "val": 340,
+    "test": 339,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.9830992221832275,
+  "timestamp": "2026-10-20T20:20:10.750713+00:00"
+}

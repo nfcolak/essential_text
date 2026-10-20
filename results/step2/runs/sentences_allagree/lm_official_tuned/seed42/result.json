@@ -1,0 +1,173 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_allagree",
+  "model_key": "lm_official_tuned",
+  "model_name": "Loughran-McDonald (official Master Dictionary, negation + val-tuned thresholds)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "threshold_neg": -0.05,
+    "threshold_pos": 0.05,
+    "val_macro_f1": 0.4837774035008384,
+    "tuned": true,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    },
+    "negation": true
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6411764705882353,
+      "macro_f1": 0.4837774035008384,
+      "per_class": {
+        "negative": {
+          "precision": 0.40816326530612246,
+          "recall": 0.4444444444444444,
+          "f1": 0.425531914893617,
+          "support": 45
+        },
+        "neutral": {
+          "precision": 0.696969696969697,
+          "recall": 0.8803827751196173,
+          "f1": 0.7780126849894292,
+          "support": 209
+        },
+        "positive": {
+          "precision": 0.5185185185185185,
+          "recall": 0.16279069767441862,
+          "f1": 0.24778761061946902,
+          "support": 86
+        }
+      },
+      "confusion_matrix": [
+        [
+          20,
+          22,
+          3
+        ],
+        [
+          15,
+          184,
+          10
+        ],
+        [
+          14,
+          58,
+          14
+        ]
+      ],
+      "neutral_to_negative_rate": 0.07177033492822966,
+      "ece": 0.3549931540208704
+    },
+    "test": {
+      "accuracy": 0.6519174041297935,
+      "macro_f1": 0.5051015245277489,
+      "per_class": {
+        "negative": {
+          "precision": 0.5757575757575758,
+          "recall": 0.41304347826086957,
+          "f1": 0.4810126582278481,
+          "support": 46
+        },
+        "neutral": {
+          "precision": 0.6750902527075813,
+          "recall": 0.8990384615384616,
+          "f1": 0.7711340206185567,
+          "support": 208
+        },
+        "positive": {
+          "precision": 0.5172413793103449,
+          "recall": 0.17647058823529413,
+          "f1": 0.2631578947368421,
+          "support": 85
+        }
+      },
+      "confusion_matrix": [
+        [
+          19,
+          26,
+          1
+        ],
+        [
+          8,
+          187,
+          13
+        ],
+        [
+          6,
+          64,
+          15
+        ]
+      ],
+      "neutral_to_negative_rate": 0.038461538461538464,
+      "ece": 0.34405174807461314
+    },
+    "external": {
+      "accuracy": 0.5020084566596195,
+      "macro_f1": 0.46890252702357976,
+      "per_class": {
+        "negative": {
+          "precision": 0.6955128205128205,
+          "recall": 0.40185185185185185,
+          "f1": 0.5093896713615024,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4245067200457535,
+          "recall": 0.8709298914637724,
+          "f1": 0.5707968855137941,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.7671081677704195,
+          "recall": 0.20740077588779468,
+          "f1": 0.3265210241954428,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1085,
+          1546,
+          69
+        ],
+        [
+          298,
+          2969,
+          142
+        ],
+        [
+          177,
+          2479,
+          695
+        ]
+      ],
+      "neutral_to_negative_rate": 0.08741566441771781,
+      "ece": 0.4943444168970902
+    }
+  },
+  "n": {
+    "train": 1585,
+    "val": 340,
+    "test": 339,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.20086908340454102,
+  "timestamp": "2026-10-20T20:20:11.010886+00:00"
+}

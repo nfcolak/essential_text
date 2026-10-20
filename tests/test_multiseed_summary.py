@@ -68,7 +68,7 @@ def build_full_matrix(runs_dir, logreg_val=0.9, svm_val=0.8, svm_test_acc=0.99, 
     test_ids = np.array([f"t{i}" for i in range(N_ROWS)])
     ext_ids = np.array([f"e{i}" for i in range(N_ROWS)])
     val_ids = np.array([f"v{i}" for i in range(N_ROWS)])
-    accs = {"vader_official": 0.35, "lm_official": 0.38, "vader": 0.4, "loughran_mcdonald": 0.45, "tfidf_logreg": logreg_test_acc, "tfidf_svm": svm_test_acc,
+    accs = {"vader_official": 0.35, "vader_official_tuned": 0.37, "lm_official": 0.38, "lm_official_tuned": 0.41, "vader": 0.4, "loughran_mcdonald": 0.45, "tfidf_logreg": logreg_test_acc, "tfidf_svm": svm_test_acc,
             "bert_base": 0.8, "finbert_mlm": 0.9}
 
     def splits(model, with_val=True):
@@ -109,6 +109,32 @@ class HolmTests(unittest.TestCase):
         self.assertEqual(mean_sd([0.5]), {"mean": 0.5, "sd": 0.0, "n": 1})
         stats = mean_sd([1.0, 3.0])
         self.assertAlmostEqual(stats["sd"], 2 ** 0.5)
+
+
+class BoundaryMetricTests(unittest.TestCase):
+    def test_hand_made_confusion_matrix(self):
+        # rows = gold, cols = predicted; neutral recall 6/8, negative precision 3/5
+        cells = {(0, 0): 3, (0, 1): 1, (1, 0): 2, (1, 1): 6, (1, 2): 0, (2, 2): 4}
+        y, a = [], []
+        for (gold, pred), count in cells.items():
+            y += [gold] * count
+            a += [pred] * count
+        y, a = np.array(y), np.array(a)
+        b = y.copy()  # perfect: R_neu = 1, P_neg = 1
+        for metric, expected in (("neutral_recall", 6 / 8 - 1.0), ("negative_precision", 3 / 5 - 1.0)):
+            for fn in (seed_averaged_bootstrap, seed_sentence_bootstrap):
+                res = fn(y, [a], [b], metric=metric, B=20)
+                self.assertAlmostEqual(res["delta"], expected, msg=f"{fn.__name__} {metric}")
+
+    def test_zero_denominator_is_zero(self):
+        y = np.array([0, 2, 2, 0])
+        never_neg = np.array([2, 2, 2, 2])
+        # no gold neutral -> R_neu 0 for both; model never predicts negative -> P_neg 0
+        for metric in ("neutral_recall", "negative_precision"):
+            res = seed_averaged_bootstrap(y, [never_neg], [never_neg], metric=metric, B=10)
+            self.assertEqual(res["delta"], 0.0)
+        res = seed_sentence_bootstrap(y, [y], [never_neg], metric="negative_precision", B=10)
+        self.assertEqual(res["delta"], 1.0)
 
 
 class BootstrapTests(unittest.TestCase):
@@ -206,11 +232,11 @@ class SeedSentenceBootstrapTests(unittest.TestCase):
 
 
 class FamilyAndFormatTests(unittest.TestCase):
-    def test_models_list_has_eight_in_design_order(self):
+    def test_models_list_has_ten_in_design_order(self):
         self.assertEqual(
             list(summ.MODELS),
-            ["vader_official", "lm_official", "vader", "loughran_mcdonald",
-             "tfidf_logreg", "tfidf_svm", "bert_base", "finbert_mlm"],
+            ["vader_official", "vader_official_tuned", "lm_official", "lm_official_tuned",
+             "vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm", "bert_base", "finbert_mlm"],
         )
 
     def test_holm_is_applied_per_seed_family(self):
@@ -264,14 +290,14 @@ class SummarizerTests(unittest.TestCase):
         build_full_matrix(self.runs)
         self.assertEqual(self.run_main(), 0)
         for name in ("summary_metrics.json", "statistical_comparisons.json", "attribution.json",
-                     "STEP2_REPORT.md", *summ.FIGURES):
+                     "rq1_boundary.json", "STEP2_REPORT.md", *summ.FIGURES):
             path = os.path.join(self.out, name)
             self.assertTrue(os.path.isfile(path), name)
             self.assertGreater(os.path.getsize(path), 0, name)
         with open(os.path.join(self.out, "statistical_comparisons.json"), encoding="utf-8") as handle:
             comps = json.load(handle)
         test_pairs = comps["configs"]["sentences_allagree"]["test"]["pairs"]
-        self.assertEqual(len(test_pairs), 28)
+        self.assertEqual(len(test_pairs), 45)
         pair = test_pairs["bert_base__vs__finbert_mlm"]
         self.assertEqual(sorted(pair["mcnemar_by_seed"]), ["100", "2026", "42"])
         self.assertNotIn("p_primary", pair)
@@ -282,9 +308,27 @@ class SummarizerTests(unittest.TestCase):
         self.assertEqual(sorted(pair["p_holm_by_seed"]), ["100", "2026", "42"])
         self.assertTrue(0 <= pair["n_seeds_significant"] <= 3)
         self.assertEqual(pair["bootstrap_macro_f1"]["method"], "seed+sentence")
-        self.assertEqual(len(comps["configs"]["sentences_allagree"]["external"]["pairs"]), 36)
+        self.assertEqual(len(comps["configs"]["sentences_allagree"]["external"]["pairs"]), 55)
         with open(os.path.join(self.out, "STEP2_REPORT.md"), encoding="utf-8") as handle:
             report = handle.read()
+        self.assertIn("## RQ1: neutral/negative boundary", report)
+        self.assertIn("restricted to gold-neutral sentences", report)
+        self.assertIn("## Per-class precision / recall / F1", report)
+        with open(os.path.join(self.out, "rq1_boundary.json"), encoding="utf-8") as handle:
+            boundary = json.load(handle)
+        for config in summ.CONFIGS:
+            self.assertEqual(len(boundary["configs"][config]["test"]["pairs"]), 4)
+            self.assertEqual(len(boundary["configs"][config]["external"]["pairs"]), 6)
+        bpair = boundary["configs"]["sentences_allagree"]["external"]["pairs"]["prosus_finbert__vs__bert_base"]
+        self.assertEqual(bpair["delta_neutral_recall"]["metric"], "neutral_recall")
+        self.assertEqual(bpair["delta_negative_precision"]["method"], "seed+sentence")
+        self.assertLessEqual(bpair["p_min"], bpair["p_max"])
+        self.assertGreater(bpair["n_neutral"], 0)
+        with open(os.path.join(self.out, "summary_metrics.json"), encoding="utf-8") as handle:
+            summary = json.load(handle)
+        cell = summary["configs"]["sentences_allagree"]["bert_base"]["test"]["per_class"]["neutral"]
+        self.assertEqual(sorted(cell), ["f1", "precision", "recall"])
+        self.assertEqual(cell["recall"]["n"], 3)
         self.assertIn("## Protocol", report)
         self.assertIn("prosus_finbert", report)
         self.assertIn("never mixed across levels", report)
@@ -305,7 +349,8 @@ class SummarizerTests(unittest.TestCase):
         # a baseline-only pair enters every seed family with its single run
         self.assertEqual(pair["n_families"], 3)
         self.assertEqual(pair["p_min"], pair["p_max"])
-        self.assertEqual(len(set(pair["p_holm_by_seed"].values())), 1)
+        # the raw p is the same in every family; Holm ranks it against seed-dependent transformer pairs
+        self.assertEqual(sorted(pair["p_holm_by_seed"]), ["100", "2026", "42"])
 
     def test_tfidf_best_chosen_by_validation_not_test(self):
         # svm is far better on test, logreg is better on validation: validation must win.

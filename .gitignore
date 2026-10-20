@@ -28,6 +28,7 @@ wandb/
 # Locked split manifests (regenerated deterministically by colab/run_step1_colab.py; SHA-256 recorded in results)
 data/splits/*
 !data/splits/SHA256SUMS
+!data/splits/assignments/
 
 # Local work logs, quarantined runs and helper scripts (never committed)
 logs/

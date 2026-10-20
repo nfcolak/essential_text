@@ -1,0 +1,173 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_50agree",
+  "model_key": "lm_official_tuned",
+  "model_name": "Loughran-McDonald (official Master Dictionary, negation + val-tuned thresholds)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "threshold_neg": -0.05,
+    "threshold_pos": 0.05,
+    "val_macro_f1": 0.4967732103024509,
+    "tuned": true,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    },
+    "negation": true
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6208791208791209,
+      "macro_f1": 0.4967732103024509,
+      "per_class": {
+        "negative": {
+          "precision": 0.4090909090909091,
+          "recall": 0.391304347826087,
+          "f1": 0.4,
+          "support": 92
+        },
+        "neutral": {
+          "precision": 0.6636363636363637,
+          "recall": 0.8449074074074074,
+          "f1": 0.7433808553971487,
+          "support": 432
+        },
+        "positive": {
+          "precision": 0.5666666666666667,
+          "recall": 0.25,
+          "f1": 0.3469387755102041,
+          "support": 204
+        }
+      },
+      "confusion_matrix": [
+        [
+          36,
+          53,
+          3
+        ],
+        [
+          31,
+          365,
+          36
+        ],
+        [
+          21,
+          132,
+          51
+        ]
+      ],
+      "neutral_to_negative_rate": 0.07175925925925926,
+      "ece": 0.3753939799882553
+    },
+    "test": {
+      "accuracy": 0.6143250688705234,
+      "macro_f1": 0.5031713214930601,
+      "per_class": {
+        "negative": {
+          "precision": 0.4157303370786517,
+          "recall": 0.4111111111111111,
+          "f1": 0.4134078212290503,
+          "support": 90
+        },
+        "neutral": {
+          "precision": 0.6573556797020484,
+          "recall": 0.8209302325581396,
+          "f1": 0.7300930713547052,
+          "support": 430
+        },
+        "positive": {
+          "precision": 0.56,
+          "recall": 0.27184466019417475,
+          "f1": 0.3660130718954248,
+          "support": 206
+        }
+      },
+      "confusion_matrix": [
+        [
+          37,
+          52,
+          1
+        ],
+        [
+          34,
+          353,
+          43
+        ],
+        [
+          18,
+          132,
+          56
+        ]
+      ],
+      "neutral_to_negative_rate": 0.07906976744186046,
+      "ece": 0.38202609807334986
+    },
+    "external": {
+      "accuracy": 0.5020084566596195,
+      "macro_f1": 0.46890252702357976,
+      "per_class": {
+        "negative": {
+          "precision": 0.6955128205128205,
+          "recall": 0.40185185185185185,
+          "f1": 0.5093896713615024,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4245067200457535,
+          "recall": 0.8709298914637724,
+          "f1": 0.5707968855137941,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.7671081677704195,
+          "recall": 0.20740077588779468,
+          "f1": 0.3265210241954428,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1085,
+          1546,
+          69
+        ],
+        [
+          298,
+          2969,
+          142
+        ],
+        [
+          177,
+          2479,
+          695
+        ]
+      ],
+      "neutral_to_negative_rate": 0.08741566441771781,
+      "ece": 0.4943444168970902
+    }
+  },
+  "n": {
+    "train": 3392,
+    "val": 728,
+    "test": 726,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "d11c912d24b8ea2db5c553bd042d204a96e9ed21d61459b1719d47dde4e195e2",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.20241403579711914,
+  "timestamp": "2026-10-20T20:20:23.196108+00:00"
+}

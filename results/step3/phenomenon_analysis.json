@@ -54,7 +54,63 @@
               "small_n": false
             }
           },
+          "vader_official_tuned": {
+            "tag1": {
+              "error_rate": 0.6923076923076923,
+              "ci_low": 0.46153846153846156,
+              "ci_high": 0.9230769230769231,
+              "balanced_error": 0.6944444444444443,
+              "balanced_ci_low": 0.38888888888888884,
+              "balanced_ci_high": 0.9444444444444445,
+              "per_seed": [
+                0.6923076923076923
+              ],
+              "n": 13,
+              "small_n": true
+            },
+            "tag0": {
+              "error_rate": 0.40418118466898956,
+              "ci_low": 0.34843205574912894,
+              "ci_high": 0.45993031358885017,
+              "balanced_error": 0.47552852211080054,
+              "balanced_ci_low": 0.40887572741014927,
+              "balanced_ci_high": 0.5399784523322754,
+              "per_seed": [
+                0.40418118466898956
+              ],
+              "n": 287,
+              "small_n": false
+            }
+          },
           "lm_official": {
+            "tag1": {
+              "error_rate": 0.6153846153846154,
+              "ci_low": 0.3076923076923077,
+              "ci_high": 0.8461538461538461,
+              "balanced_error": 0.5555555555555555,
+              "balanced_ci_low": 0.3333333333333333,
+              "balanced_ci_high": 0.6666666666666666,
+              "per_seed": [
+                0.6153846153846154
+              ],
+              "n": 13,
+              "small_n": true
+            },
+            "tag0": {
+              "error_rate": 0.37282229965156793,
+              "ci_low": 0.3170731707317073,
+              "ci_high": 0.42857142857142855,
+              "balanced_error": 0.5242581328657278,
+              "balanced_ci_low": 0.4591600613807905,
+              "balanced_ci_high": 0.5863246011184255,
+              "per_seed": [
+                0.37282229965156793
+              ],
+              "n": 287,
+              "small_n": false
+            }
+          },
+          "lm_official_tuned": {
             "tag1": {
               "error_rate": 0.6153846153846154,
               "ci_low": 0.3076923076923077,
@@ -303,7 +359,63 @@
               "small_n": false
             }
           },
+          "vader_official_tuned": {
+            "tag1": {
+              "error_rate": 0.1,
+              "ci_low": 0.0,
+              "ci_high": 0.3,
+              "balanced_error": 0.041666666666666664,
+              "balanced_ci_low": 0.0,
+              "balanced_ci_high": 0.2,
+              "per_seed": [
+                0.1
+              ],
+              "n": 10,
+              "small_n": true
+            },
+            "tag0": {
+              "error_rate": 0.42758620689655175,
+              "ci_low": 0.3689655172413793,
+              "ci_high": 0.4827586206896552,
+              "balanced_error": 0.4984126984126984,
+              "balanced_ci_low": 0.4334337340311917,
+              "balanced_ci_high": 0.559812394142395,
+              "per_seed": [
+                0.42758620689655175
+              ],
+              "n": 290,
+              "small_n": false
+            }
+          },
           "lm_official": {
+            "tag1": {
+              "error_rate": 0.4,
+              "ci_low": 0.1,
+              "ci_high": 0.7,
+              "balanced_error": 0.75,
+              "balanced_ci_low": 0.1,
+              "balanced_ci_high": 0.8333333333333334,
+              "per_seed": [
+                0.4
+              ],
+              "n": 10,
+              "small_n": true
+            },
+            "tag0": {
+              "error_rate": 0.38275862068965516,
+              "ci_low": 0.3275862068965517,
+              "ci_high": 0.4379310344827586,
+              "balanced_error": 0.5026766262060379,
+              "balanced_ci_low": 0.4357173291788089,
+              "balanced_ci_high": 0.5655422602439745,
+              "per_seed": [
+                0.38275862068965516
+              ],
+              "n": 290,
+              "small_n": false
+            }
+          },
+          "lm_official_tuned": {
             "tag1": {
               "error_rate": 0.4,
               "ci_low": 0.1,
@@ -552,7 +664,63 @@
               "small_n": false
             }
           },
+          "vader_official_tuned": {
+            "tag1": {
+              "error_rate": 0.3584905660377358,
+              "ci_low": 0.22641509433962265,
+              "ci_high": 0.49056603773584906,
+              "balanced_error": 0.42058371735791084,
+              "balanced_ci_low": 0.2515224974398361,
+              "balanced_ci_high": 0.585721966205837,
+              "per_seed": [
+                0.3584905660377358
+              ],
+              "n": 53,
+              "small_n": false
+            },
+            "tag0": {
+              "error_rate": 0.4291497975708502,
+              "ci_low": 0.3643724696356275,
+              "ci_high": 0.4898785425101215,
+              "balanced_error": 0.5011337868480725,
+              "balanced_ci_low": 0.43070939370665584,
+              "balanced_ci_high": 0.5653855955872086,
+              "per_seed": [
+                0.4291497975708502
+              ],
+              "n": 247,
+              "small_n": false
+            }
+          },
           "lm_official": {
+            "tag1": {
+              "error_rate": 0.33962264150943394,
+              "ci_low": 0.20754716981132076,
+              "ci_high": 0.4716981132075472,
+              "balanced_error": 0.48110599078341015,
+              "balanced_ci_low": 0.32095738833167675,
+              "balanced_ci_high": 0.6243229056182776,
+              "per_seed": [
+                0.33962264150943394
+              ],
+              "n": 53,
+              "small_n": false
+            },
+            "tag0": {
+              "error_rate": 0.39271255060728744,
+              "ci_low": 0.3319838056680162,
+              "ci_high": 0.4534412955465587,
+              "balanced_error": 0.5138321995464853,
+              "balanced_ci_low": 0.4418965481136692,
+              "balanced_ci_high": 0.5835825574792682,
+              "per_seed": [
+                0.39271255060728744
+              ],
+              "n": 247,
+              "small_n": false
+            }
+          },
+          "lm_official_tuned": {
             "tag1": {
               "error_rate": 0.33962264150943394,
               "ci_low": 0.20754716981132076,
@@ -801,7 +969,63 @@
               "small_n": false
             }
           },
+          "vader_official_tuned": {
+            "tag1": {
+              "error_rate": 0.66,
+              "ci_low": 0.52,
+              "ci_high": 0.78,
+              "balanced_error": 0.4527777777777778,
+              "balanced_ci_low": 0.3888888888888889,
+              "balanced_ci_high": 0.7597402597402598,
+              "per_seed": [
+                0.66
+              ],
+              "n": 50,
+              "small_n": false
+            },
+            "tag0": {
+              "error_rate": 0.368,
+              "ci_low": 0.308,
+              "ci_high": 0.428,
+              "balanced_error": 0.3380631609445169,
+              "balanced_ci_low": 0.24456156707763954,
+              "balanced_ci_high": 0.44019585734132277,
+              "per_seed": [
+                0.368
+              ],
+              "n": 250,
+              "small_n": false
+            }
+          },
           "lm_official": {
+            "tag1": {
+              "error_rate": 0.82,
+              "ci_low": 0.7,
+              "ci_high": 0.92,
+              "balanced_error": 0.5566666666666666,
+              "balanced_ci_low": 0.4891379310344828,
+              "balanced_ci_high": 0.9095287698412697,
+              "per_seed": [
+                0.82
+              ],
+              "n": 50,
+              "small_n": false
+            },
+            "tag0": {
+              "error_rate": 0.296,
+              "ci_low": 0.24,
+              "ci_high": 0.352,
+              "balanced_error": 0.4050412863972186,
+              "balanced_ci_low": 0.30541423710389226,
+              "balanced_ci_high": 0.5105472658715017,
+              "per_seed": [
+                0.296
+              ],
+              "n": 250,
+              "small_n": false
+            }
+          },
+          "lm_official_tuned": {
             "tag1": {
               "error_rate": 0.82,
               "ci_low": 0.7,
@@ -1050,7 +1274,63 @@
               "small_n": false
             }
           },
+          "vader_official_tuned": {
+            "tag1": {
+              "error_rate": 0.5957446808510638,
+              "ci_low": 0.44680851063829785,
+              "ci_high": 0.7446808510638298,
+              "balanced_error": 0.6522556390977443,
+              "balanced_ci_low": 0.5476061076604556,
+              "balanced_ci_high": 0.7575757575757576,
+              "per_seed": [
+                0.5957446808510638
+              ],
+              "n": 47,
+              "small_n": false
+            },
+            "tag0": {
+              "error_rate": 0.383399209486166,
+              "ci_low": 0.3241106719367589,
+              "ci_high": 0.4426877470355731,
+              "balanced_error": 0.40699126092384513,
+              "balanced_ci_low": 0.31452541699241643,
+              "balanced_ci_high": 0.500511269684591,
+              "per_seed": [
+                0.383399209486166
+              ],
+              "n": 253,
+              "small_n": false
+            }
+          },
           "lm_official": {
+            "tag1": {
+              "error_rate": 0.8297872340425532,
+              "ci_low": 0.723404255319149,
+              "ci_high": 0.9361702127659575,
+              "balanced_error": 0.831766917293233,
+              "balanced_ci_low": 0.7148148148148148,
+              "balanced_ci_high": 0.936491935483871,
+              "per_seed": [
+                0.8297872340425532
+              ],
+              "n": 47,
+              "small_n": false
+            },
+            "tag0": {
+              "error_rate": 0.30039525691699603,
+              "ci_low": 0.2450592885375494,
+              "ci_high": 0.3557312252964427,
+              "balanced_error": 0.4178548743894693,
+              "balanced_ci_low": 0.3292914375309426,
+              "balanced_ci_high": 0.5095562528907605,
+              "per_seed": [
+                0.30039525691699603
+              ],
+              "n": 253,
+              "small_n": false
+            }
+          },
+          "lm_official_tuned": {
             "tag1": {
               "error_rate": 0.8297872340425532,
               "ci_low": 0.723404255319149,
@@ -1438,6 +1718,29 @@
           "ci_high": 0.96
         }
       },
+      "vader_official_tuned": {
+        "term1": {
+          "rate": 0.3333333333333333,
+          "ci_low": 0.0,
+          "ci_high": 1.0,
+          "n": 3,
+          "small_n": true,
+          "na": true
+        },
+        "term0": {
+          "rate": 0.02857142857142857,
+          "ci_low": 0.005714285714285714,
+          "ci_high": 0.05714285714285714,
+          "n": 175,
+          "small_n": false,
+          "na": false
+        },
+        "difference": {
+          "delta": 0.30476190476190473,
+          "ci_low": -0.045714285714285714,
+          "ci_high": 0.96
+        }
+      },
       "lm_official": {
         "term1": {
           "rate": 0.3333333333333333,
@@ -1459,6 +1762,29 @@
           "delta": 0.2704761904761904,
           "ci_low": -0.08571428571428572,
           "ci_high": 0.9314285714285714
+        }
+      },
+      "lm_official_tuned": {
+        "term1": {
+          "rate": 0.3333333333333333,
+          "ci_low": 0.0,
+          "ci_high": 1.0,
+          "n": 3,
+          "small_n": true,
+          "na": true
+        },
+        "term0": {
+          "rate": 0.05142857142857143,
+          "ci_low": 0.022857142857142857,
+          "ci_high": 0.08571428571428572,
+          "n": 175,
+          "small_n": false,
+          "na": false
+        },
+        "difference": {
+          "delta": 0.2819047619047619,
+          "ci_low": -0.07428571428571429,
+          "ci_high": 0.9428571428571428
         }
       },
       "vader": {
@@ -1650,7 +1976,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5555555555555556,
+                  "ci_low": 0.37037037037037035,
+                  "ci_high": 0.7407407407407407,
+                  "balanced_error": 0.5334295334295335,
+                  "balanced_ci_low": 0.341656746031746,
+                  "balanced_ci_high": 0.7333333333333333,
+                  "per_seed": [
+                    0.5555555555555556
+                  ],
+                  "n": 27,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3525641025641026,
+                  "ci_low": 0.30128205128205127,
+                  "ci_high": 0.40384615384615385,
+                  "balanced_error": 0.49202920235913156,
+                  "balanced_ci_low": 0.43359840597209914,
+                  "balanced_ci_high": 0.547078394957789,
+                  "per_seed": [
+                    0.3525641025641026
+                  ],
+                  "n": 312,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.37037037037037035,
+                  "ci_low": 0.18518518518518517,
+                  "ci_high": 0.5555555555555556,
+                  "balanced_error": 0.37421837421837423,
+                  "balanced_ci_low": 0.25,
+                  "balanced_ci_high": 0.5160278379028379,
+                  "per_seed": [
+                    0.37037037037037035
+                  ],
+                  "n": 27,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.34615384615384615,
+                  "ci_low": 0.2948717948717949,
+                  "ci_high": 0.3974358974358974,
+                  "balanced_error": 0.5527163680345142,
+                  "balanced_ci_low": 0.4920978126471974,
+                  "balanced_ci_high": 0.6079443401580725,
+                  "per_seed": [
+                    0.34615384615384615
+                  ],
+                  "n": 312,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.37037037037037035,
                   "ci_low": 0.18518518518518517,
@@ -1899,7 +2281,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.2222222222222222,
+                  "ci_low": 0.05555555555555555,
+                  "ci_high": 0.4444444444444444,
+                  "balanced_error": 0.2222222222222222,
+                  "balanced_ci_low": 0.05555555555555555,
+                  "balanced_ci_high": 0.4444444444444444,
+                  "per_seed": [
+                    0.2222222222222222
+                  ],
+                  "n": 18,
+                  "small_n": true
+                },
+                "tag0": {
+                  "error_rate": 0.37694704049844235,
+                  "ci_low": 0.32398753894080995,
+                  "ci_high": 0.42990654205607476,
+                  "balanced_error": 0.4881590164669987,
+                  "balanced_ci_low": 0.4327481558312385,
+                  "balanced_ci_high": 0.542150119200469,
+                  "per_seed": [
+                    0.37694704049844235
+                  ],
+                  "n": 321,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.4444444444444444,
+                  "ci_low": 0.2222222222222222,
+                  "ci_high": 0.6666666666666666,
+                  "balanced_error": 0.4444444444444444,
+                  "balanced_ci_low": 0.2222222222222222,
+                  "balanced_ci_high": 0.6666666666666666,
+                  "per_seed": [
+                    0.4444444444444444
+                  ],
+                  "n": 18,
+                  "small_n": true
+                },
+                "tag0": {
+                  "error_rate": 0.3426791277258567,
+                  "ci_low": 0.2897196261682243,
+                  "ci_high": 0.3956386292834891,
+                  "balanced_error": 0.4929689953784718,
+                  "balanced_ci_low": 0.43618271781026985,
+                  "balanced_ci_high": 0.5488883821200824,
+                  "per_seed": [
+                    0.3426791277258567
+                  ],
+                  "n": 321,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.4444444444444444,
                   "ci_low": 0.2222222222222222,
@@ -2148,7 +2586,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.30952380952380953,
+                  "ci_low": 0.16666666666666666,
+                  "ci_high": 0.4523809523809524,
+                  "balanced_error": 0.3824786324786325,
+                  "balanced_ci_low": 0.17049388142938335,
+                  "balanced_ci_high": 0.5967432950191571,
+                  "per_seed": [
+                    0.30952380952380953
+                  ],
+                  "n": 42,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3771043771043771,
+                  "ci_low": 0.31986531986531985,
+                  "ci_high": 0.43097643097643096,
+                  "balanced_error": 0.49601083847659194,
+                  "balanced_ci_low": 0.4376240141541784,
+                  "balanced_ci_high": 0.5492079357070012,
+                  "per_seed": [
+                    0.3771043771043771
+                  ],
+                  "n": 297,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.21428571428571427,
+                  "ci_low": 0.09523809523809523,
+                  "ci_high": 0.3333333333333333,
+                  "balanced_error": 0.36111111111111116,
+                  "balanced_ci_low": 0.15384615384615385,
+                  "balanced_ci_high": 0.5666666666666667,
+                  "per_seed": [
+                    0.21428571428571427
+                  ],
+                  "n": 42,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.367003367003367,
+                  "ci_low": 0.31313131313131315,
+                  "ci_high": 0.4208754208754209,
+                  "balanced_error": 0.5245454697509492,
+                  "balanced_ci_low": 0.4650241619784014,
+                  "balanced_ci_high": 0.5817930854697887,
+                  "per_seed": [
+                    0.367003367003367
+                  ],
+                  "n": 297,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.21428571428571427,
                   "ci_low": 0.09523809523809523,
@@ -2397,7 +2891,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5842696629213483,
+                  "ci_low": 0.48314606741573035,
+                  "ci_high": 0.6853932584269663,
+                  "balanced_error": 0.48109161793372324,
+                  "balanced_ci_low": 0.3836431203931204,
+                  "balanced_ci_high": 0.6229176879084968,
+                  "per_seed": [
+                    0.5842696629213483
+                  ],
+                  "n": 89,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.292,
+                  "ci_low": 0.236,
+                  "ci_high": 0.348,
+                  "balanced_error": 0.34075907590759075,
+                  "balanced_ci_low": 0.20918114361129067,
+                  "balanced_ci_high": 0.47831408629441624,
+                  "per_seed": [
+                    0.292
+                  ],
+                  "n": 250,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.7865168539325843,
+                  "ci_low": 0.6966292134831461,
+                  "ci_high": 0.8651685393258427,
+                  "balanced_error": 0.5553606237816764,
+                  "balanced_ci_low": 0.49961013645224167,
+                  "balanced_ci_high": 0.6060606060606061,
+                  "per_seed": [
+                    0.7865168539325843
+                  ],
+                  "n": 89,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.192,
+                  "ci_low": 0.144,
+                  "ci_high": 0.24,
+                  "balanced_error": 0.25965346534653466,
+                  "balanced_ci_low": 0.20632165343262843,
+                  "balanced_ci_high": 0.3097669200530453,
+                  "per_seed": [
+                    0.192
+                  ],
+                  "n": 250,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.7865168539325843,
                   "ci_low": 0.6966292134831461,
@@ -2646,7 +3196,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5319148936170213,
+                  "ci_low": 0.3829787234042553,
+                  "ci_high": 0.6808510638297872,
+                  "balanced_error": 0.6666666666666666,
+                  "balanced_ci_low": 0.5882352941176471,
+                  "balanced_ci_high": 0.75,
+                  "per_seed": [
+                    0.5319148936170213
+                  ],
+                  "n": 47,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3424657534246575,
+                  "ci_low": 0.2876712328767123,
+                  "ci_high": 0.3972602739726027,
+                  "balanced_error": 0.4679487179487179,
+                  "balanced_ci_low": 0.3964379743587284,
+                  "balanced_ci_high": 0.5368610330662809,
+                  "per_seed": [
+                    0.3424657534246575
+                  ],
+                  "n": 292,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.8297872340425532,
+                  "ci_low": 0.7021276595744681,
+                  "ci_high": 0.9361702127659575,
+                  "balanced_error": 0.8376623376623377,
+                  "balanced_ci_low": 0.7086387844611529,
+                  "balanced_ci_high": 0.9411764705882353,
+                  "per_seed": [
+                    0.8297872340425532
+                  ],
+                  "n": 47,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.2705479452054795,
+                  "ci_low": 0.2191780821917808,
+                  "ci_high": 0.3219178082191781,
+                  "balanced_error": 0.4655448717948718,
+                  "balanced_ci_low": 0.39640391907924866,
+                  "balanced_ci_high": 0.5352203056408683,
+                  "per_seed": [
+                    0.2705479452054795
+                  ],
+                  "n": 292,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.8297872340425532,
                   "ci_low": 0.7021276595744681,
@@ -3034,6 +3640,29 @@
               "ci_high": 0.3688699360341151
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.14285714285714285,
+              "ci_low": 0.0,
+              "ci_high": 0.42857142857142855,
+              "n": 7,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.03482587064676617,
+              "ci_low": 0.009950248756218905,
+              "ci_high": 0.06467661691542288,
+              "n": 201,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.10803127221037667,
+              "ci_low": -0.05472636815920398,
+              "ci_high": 0.4036958066808813
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.14285714285714285,
@@ -3055,6 +3684,29 @@
               "delta": 0.07320540156361051,
               "ci_low": -0.0945273631840796,
               "ci_high": 0.3688699360341151
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.14285714285714285,
+              "ci_low": 0.0,
+              "ci_high": 0.42857142857142855,
+              "n": 7,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.03482587064676617,
+              "ci_low": 0.009950248756218905,
+              "ci_high": 0.05970149253731343,
+              "n": 201,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.10803127221037667,
+              "ci_low": -0.05472636815920398,
+              "ci_high": 0.4036958066808813
             }
           },
           "vader": {
@@ -3207,7 +3859,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -3254,7 +3916,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -3301,7 +3973,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -3348,7 +4030,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -3395,7 +4087,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -3457,6 +4159,29 @@
               "ci_high": 0.3688699360341151
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.14285714285714285,
+              "ci_low": 0.0,
+              "ci_high": 0.42857142857142855,
+              "n": 7,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.03482587064676617,
+              "ci_low": 0.009950248756218905,
+              "ci_high": 0.06467661691542288,
+              "n": 201,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.10803127221037667,
+              "ci_low": -0.05472636815920398,
+              "ci_high": 0.4036958066808813
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.14285714285714285,
@@ -3478,6 +4203,29 @@
               "delta": 0.07320540156361051,
               "ci_low": -0.0945273631840796,
               "ci_high": 0.3688699360341151
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.14285714285714285,
+              "ci_low": 0.0,
+              "ci_high": 0.42857142857142855,
+              "n": 7,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.03482587064676617,
+              "ci_low": 0.009950248756218905,
+              "ci_high": 0.05970149253731343,
+              "n": 201,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.10803127221037667,
+              "ci_low": -0.05472636815920398,
+              "ci_high": 0.4036958066808813
             }
           },
           "vader": {
@@ -3667,6 +4415,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5160714285714286,
+                  "ci_low": 0.475,
+                  "ci_high": 0.5571428571428572,
+                  "balanced_error": 0.5762234574877877,
+                  "balanced_ci_low": 0.5340091170969615,
+                  "balanced_ci_high": 0.6174655387281217,
+                  "per_seed": [
+                    0.5160714285714286
+                  ],
+                  "n": 560,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4987640449438202,
+                  "ci_low": 0.4881994382022472,
+                  "ci_high": 0.5091011235955056,
+                  "balanced_error": 0.5217366481619804,
+                  "balanced_ci_low": 0.5121933183823766,
+                  "balanced_ci_high": 0.5312330313210653,
+                  "per_seed": [
+                    0.4987640449438202
+                  ],
+                  "n": 8900,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.4642857142857143,
@@ -3690,6 +4466,34 @@
                   "balanced_ci_high": 0.5242474210553735,
                   "per_seed": [
                     0.5021348314606742
+                  ],
+                  "n": 8900,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.4642857142857143,
+                  "ci_low": 0.4232142857142857,
+                  "ci_high": 0.5071428571428571,
+                  "balanced_error": 0.5496257209326322,
+                  "balanced_ci_low": 0.5099016597578006,
+                  "balanced_ci_high": 0.588727724693976,
+                  "per_seed": [
+                    0.4642857142857143
+                  ],
+                  "n": 560,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.5001123595505618,
+                  "ci_low": 0.4895505617977528,
+                  "ci_high": 0.5104494382022472,
+                  "balanced_error": 0.513133886914268,
+                  "balanced_ci_low": 0.5044170791867508,
+                  "balanced_ci_high": 0.5218381982244344,
+                  "per_seed": [
+                    0.5001123595505618
                   ],
                   "n": 8900,
                   "small_n": false
@@ -3944,6 +4748,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.48014440433212996,
+                  "ci_low": 0.4223826714801444,
+                  "ci_high": 0.5379061371841155,
+                  "balanced_error": 0.5427594813793822,
+                  "balanced_ci_low": 0.47095809283309287,
+                  "balanced_ci_high": 0.6113255248335893,
+                  "per_seed": [
+                    0.48014440433212996
+                  ],
+                  "n": 277,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.500381139061309,
+                  "ci_low": 0.4900359359686377,
+                  "ci_high": 0.5106174452793205,
+                  "balanced_error": 0.5160483172619948,
+                  "balanced_ci_low": 0.5065410460601544,
+                  "balanced_ci_high": 0.5254134349428263,
+                  "per_seed": [
+                    0.500381139061309
+                  ],
+                  "n": 9183,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.5451263537906137,
@@ -3954,6 +4786,34 @@
                   "balanced_ci_high": 0.6887147559462146,
                   "per_seed": [
                     0.5451263537906137
+                  ],
+                  "n": 277,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4985298921920941,
+                  "ci_low": 0.48807579222476316,
+                  "ci_high": 0.5088750952847654,
+                  "balanced_error": 0.5045490067114308,
+                  "balanced_ci_low": 0.4958257981013396,
+                  "balanced_ci_high": 0.5132211964969569,
+                  "per_seed": [
+                    0.4985298921920941
+                  ],
+                  "n": 9183,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.48014440433212996,
+                  "ci_low": 0.4187725631768953,
+                  "ci_high": 0.5379061371841155,
+                  "balanced_error": 0.5532925370897158,
+                  "balanced_ci_low": 0.48318061651964156,
+                  "balanced_ci_high": 0.6191490776672864,
+                  "per_seed": [
+                    0.48014440433212996
                   ],
                   "n": 277,
                   "small_n": false
@@ -4221,6 +5081,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5192850423330198,
+                  "ci_low": 0.4891815616180621,
+                  "ci_high": 0.5493885230479775,
+                  "balanced_error": 0.5403922080239761,
+                  "balanced_ci_low": 0.5127796887295338,
+                  "balanced_ci_high": 0.5676933784552662,
+                  "per_seed": [
+                    0.5192850423330198
+                  ],
+                  "n": 1063,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.49732047159699894,
+                  "ci_low": 0.48672144813623913,
+                  "ci_high": 0.5082767655114921,
+                  "balanced_error": 0.5117348113143545,
+                  "balanced_ci_low": 0.5019534031916465,
+                  "balanced_ci_high": 0.5218956510501318,
+                  "per_seed": [
+                    0.49732047159699894
+                  ],
+                  "n": 8397,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.49858889934148637,
@@ -4244,6 +5132,34 @@
                   "balanced_ci_high": 0.5158548171188162,
                   "per_seed": [
                     0.5000595450756222
+                  ],
+                  "n": 8397,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.49576669802445905,
+                  "ci_low": 0.4656632173095014,
+                  "ci_high": 0.5258701787394168,
+                  "balanced_error": 0.5194646616515673,
+                  "balanced_ci_low": 0.4943418661176739,
+                  "balanced_ci_high": 0.5448304489602135,
+                  "per_seed": [
+                    0.49576669802445905
+                  ],
+                  "n": 1063,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.49827319280695487,
+                  "ci_low": 0.48755507919495056,
+                  "ci_high": 0.5091133738239847,
+                  "balanced_error": 0.5048331047470219,
+                  "balanced_ci_low": 0.4960294092774612,
+                  "balanced_ci_high": 0.5138949311943355,
+                  "per_seed": [
+                    0.49827319280695487
                   ],
                   "n": 8397,
                   "small_n": false
@@ -4498,6 +5414,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6531751570132589,
+                  "ci_low": 0.6287508722958828,
+                  "ci_high": 0.677599441730635,
+                  "balanced_error": 0.5396049353431392,
+                  "balanced_ci_low": 0.502031752699535,
+                  "balanced_ci_high": 0.5787854329074492,
+                  "per_seed": [
+                    0.6531751570132589
+                  ],
+                  "n": 1433,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.47240563099539057,
+                  "ci_low": 0.46119347203189237,
+                  "ci_high": 0.483368630870811,
+                  "balanced_error": 0.5054101267729986,
+                  "balanced_ci_low": 0.4950289378087039,
+                  "balanced_ci_high": 0.5159996196505731,
+                  "per_seed": [
+                    0.47240563099539057
+                  ],
+                  "n": 8027,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.7885554780181437,
@@ -4521,6 +5465,34 @@
                   "balanced_ci_high": 0.49912760010082874,
                   "per_seed": [
                     0.44836177899588886
+                  ],
+                  "n": 8027,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.7885554780181437,
+                  "ci_low": 0.7669225401256106,
+                  "ci_high": 0.8101884159106769,
+                  "balanced_error": 0.5488398517317847,
+                  "balanced_ci_low": 0.5277740766704064,
+                  "balanced_ci_high": 0.5726633519756509,
+                  "per_seed": [
+                    0.7885554780181437
+                  ],
+                  "n": 1433,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.44611934720318924,
+                  "ci_low": 0.43503176778372993,
+                  "ci_high": 0.45720692662264856,
+                  "balanced_error": 0.4863481901749145,
+                  "balanced_ci_low": 0.47650958174632607,
+                  "balanced_ci_high": 0.49641858766485314,
+                  "per_seed": [
+                    0.44611934720318924
                   ],
                   "n": 8027,
                   "small_n": false
@@ -4775,6 +5747,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5240506329113924,
+                  "ci_low": 0.4759493670886076,
+                  "ci_high": 0.5746835443037974,
+                  "balanced_error": 0.5251382876382876,
+                  "balanced_ci_low": 0.40470800835907533,
+                  "balanced_ci_high": 0.6420631490856209,
+                  "per_seed": [
+                    0.5240506329113924
+                  ],
+                  "n": 395,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.49873138444567017,
+                  "ci_low": 0.4883618312189741,
+                  "ci_high": 0.5092112520683949,
+                  "balanced_error": 0.5200460728199195,
+                  "balanced_ci_low": 0.5103332313469975,
+                  "balanced_ci_high": 0.5297191950814238,
+                  "per_seed": [
+                    0.49873138444567017
+                  ],
+                  "n": 9065,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.6531645569620254,
@@ -4798,6 +5798,34 @@
                   "balanced_ci_high": 0.519366660535394,
                   "per_seed": [
                     0.49321566464423605
+                  ],
+                  "n": 9065,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6506329113924051,
+                  "ci_low": 0.6025316455696202,
+                  "ci_high": 0.6987341772151898,
+                  "balanced_error": 0.5269781144781145,
+                  "balanced_ci_low": 0.4407244141800758,
+                  "balanced_ci_high": 0.6390814302950537,
+                  "per_seed": [
+                    0.6506329113924051
+                  ],
+                  "n": 395,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4913403199117485,
+                  "ci_low": 0.4809707666850524,
+                  "ci_high": 0.5014892443463872,
+                  "balanced_error": 0.5083823637920526,
+                  "balanced_ci_low": 0.49956402889005747,
+                  "balanced_ci_high": 0.5172150701254685,
+                  "per_seed": [
+                    0.4913403199117485
                   ],
                   "n": 9065,
                   "small_n": false
@@ -5191,6 +6219,29 @@
               "ci_high": 0.576878473165285
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.4507042253521127,
+              "ci_low": 0.3732394366197183,
+              "ci_high": 0.5352112676056338,
+              "n": 142,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.03887358432812978,
+              "ci_low": 0.03213957759412305,
+              "ci_high": 0.045607591062136514,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.4118306410239829,
+              "ci_low": 0.3306753514660045,
+              "ci_high": 0.49512091680785647
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.4788732394366197,
@@ -5212,6 +6263,29 @@
               "delta": 0.4054113477929099,
               "ci_low": 0.3230469440456636,
               "ci_high": 0.48838793397052044
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.4788732394366197,
+              "ci_low": 0.39436619718309857,
+              "ci_high": 0.5633802816901409,
+              "n": 142,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07040097949188859,
+              "ci_low": 0.0618304254667891,
+              "ci_high": 0.07927762473217019,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.40847225994473113,
+              "ci_low": 0.32610785619748484,
+              "ci_high": 0.4917527817655859
             }
           },
           "vader": {
@@ -5387,7 +6461,17 @@
                 "ci_low": 0.9361702127659575,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.9361702127659575,
+                "ci_low": 0.851063829787234,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -5439,7 +6523,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.038461538461538464,
+                "ci_low": 0.0,
+                "ci_high": 0.11538461538461539
+              },
+              "lm_official_tuned": {
                 "rate": 0.038461538461538464,
                 "ci_low": 0.0,
                 "ci_high": 0.11538461538461539
@@ -5491,7 +6585,17 @@
                 "ci_low": 0.4375,
                 "ci_high": 0.875
               },
+              "vader_official_tuned": {
+                "rate": 0.1875,
+                "ci_low": 0.0,
+                "ci_high": 0.375
+              },
               "lm_official": {
+                "rate": 0.0625,
+                "ci_low": 0.0,
+                "ci_high": 0.1875
+              },
+              "lm_official_tuned": {
                 "rate": 0.0625,
                 "ci_low": 0.0,
                 "ci_high": 0.1875
@@ -5543,7 +6647,17 @@
                 "ci_low": 0.4,
                 "ci_high": 0.8666666666666667
               },
+              "vader_official_tuned": {
+                "rate": 0.6,
+                "ci_low": 0.3333333333333333,
+                "ci_high": 0.8666666666666667
+              },
               "lm_official": {
+                "rate": 0.13333333333333333,
+                "ci_low": 0.0,
+                "ci_high": 0.3333333333333333
+              },
+              "lm_official_tuned": {
                 "rate": 0.13333333333333333,
                 "ci_low": 0.0,
                 "ci_high": 0.3333333333333333
@@ -5595,7 +6709,17 @@
                 "ci_low": 0.2,
                 "ci_high": 0.8
               },
+              "vader_official_tuned": {
+                "rate": 0.1,
+                "ci_low": 0.0,
+                "ci_high": 0.3
+              },
               "lm_official": {
+                "rate": 0.1,
+                "ci_low": 0.0,
+                "ci_high": 0.3
+              },
+              "lm_official_tuned": {
                 "rate": 0.1,
                 "ci_low": 0.0,
                 "ci_high": 0.3
@@ -5647,7 +6771,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.5
               },
+              "vader_official_tuned": {
+                "rate": 0.2,
+                "ci_low": 0.0,
+                "ci_high": 0.5
+              },
               "lm_official": {
+                "rate": 0.9,
+                "ci_low": 0.7,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.9,
                 "ci_low": 0.7,
                 "ci_high": 1.0
@@ -5699,7 +6833,17 @@
                 "ci_low": 0.16666666666666666,
                 "ci_high": 0.8333333333333334
               },
+              "vader_official_tuned": {
+                "rate": 0.16666666666666666,
+                "ci_low": 0.0,
+                "ci_high": 0.5
+              },
               "lm_official": {
+                "rate": 0.3333333333333333,
+                "ci_low": 0.0,
+                "ci_high": 0.6666666666666666
+              },
+              "lm_official_tuned": {
                 "rate": 0.3333333333333333,
                 "ci_low": 0.0,
                 "ci_high": 0.6666666666666666
@@ -5751,7 +6895,17 @@
                 "ci_low": 0.4,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.6,
+                "ci_low": 0.2,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.8,
+                "ci_low": 0.4,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.8,
                 "ci_low": 0.4,
                 "ci_high": 1.0
@@ -5803,7 +6957,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.75
               },
+              "vader_official_tuned": {
+                "rate": 0.25,
+                "ci_low": 0.0,
+                "ci_high": 0.75
+              },
               "lm_official": {
+                "rate": 0.25,
+                "ci_low": 0.0,
+                "ci_high": 0.75
+              },
+              "lm_official_tuned": {
                 "rate": 0.25,
                 "ci_low": 0.0,
                 "ci_high": 0.75
@@ -5855,7 +7019,17 @@
                 "ci_low": 0.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -5907,7 +7081,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -5959,7 +7143,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -6011,7 +7205,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -6078,6 +7282,29 @@
               "ci_high": 0.39469290442301797
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.20833333333333334,
+              "ci_low": 0.13541666666666666,
+              "ci_high": 0.2916666666666667,
+              "n": 96,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.03887358432812978,
+              "ci_low": 0.03213957759412305,
+              "ci_high": 0.045607591062136514,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.16945974900520355,
+              "ci_low": 0.09225780532598714,
+              "ci_high": 0.25432353841444755
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.22916666666666666,
@@ -6099,6 +7326,29 @@
               "delta": 0.15570477502295682,
               "ci_low": 0.07145316804407714,
               "ci_high": 0.24362947658402204
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.22916666666666666,
+              "ci_low": 0.14583333333333334,
+              "ci_high": 0.3125,
+              "n": 96,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07040097949188859,
+              "ci_low": 0.0618304254667891,
+              "ci_high": 0.07927762473217019,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.15876568717477807,
+              "ci_low": 0.07420798898071626,
+              "ci_high": 0.24669038873584329
             }
           },
           "vader": {
@@ -6314,7 +7564,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6363636363636364,
+                  "ci_low": 0.45454545454545453,
+                  "ci_high": 0.7878787878787878,
+                  "balanced_error": 0.648962148962149,
+                  "balanced_ci_low": 0.4705176767676768,
+                  "balanced_ci_high": 0.8095238095238096,
+                  "per_seed": [
+                    0.6363636363636364
+                  ],
+                  "n": 33,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3525773195876289,
+                  "ci_low": 0.30927835051546393,
+                  "ci_high": 0.3958762886597938,
+                  "balanced_error": 0.46369083498378255,
+                  "balanced_ci_low": 0.41038483527703057,
+                  "balanced_ci_high": 0.5152045299442746,
+                  "per_seed": [
+                    0.3525773195876289
+                  ],
+                  "n": 485,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.5151515151515151,
+                  "ci_low": 0.3333333333333333,
+                  "ci_high": 0.696969696969697,
+                  "balanced_error": 0.5238095238095238,
+                  "balanced_ci_low": 0.3611111111111111,
+                  "balanced_ci_high": 0.6875,
+                  "per_seed": [
+                    0.5151515151515151
+                  ],
+                  "n": 33,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3216494845360825,
+                  "ci_low": 0.2804123711340206,
+                  "ci_high": 0.3628865979381443,
+                  "balanced_error": 0.5230976778897213,
+                  "balanced_ci_low": 0.4720742839850257,
+                  "balanced_ci_high": 0.5727897417464959,
+                  "per_seed": [
+                    0.3216494845360825
+                  ],
+                  "n": 485,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.5151515151515151,
                   "ci_low": 0.3333333333333333,
@@ -6563,7 +7869,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.2857142857142857,
+                  "ci_low": 0.09523809523809523,
+                  "ci_high": 0.47619047619047616,
+                  "balanced_error": 0.10526315789473684,
+                  "balanced_ci_low": 0.044444444444444446,
+                  "balanced_ci_high": 0.38095238095238093,
+                  "per_seed": [
+                    0.2857142857142857
+                  ],
+                  "n": 21,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.37424547283702214,
+                  "ci_low": 0.3319919517102616,
+                  "ci_high": 0.4164989939637827,
+                  "balanced_error": 0.45975484645238723,
+                  "balanced_ci_low": 0.4074138062237367,
+                  "balanced_ci_high": 0.5103985065630456,
+                  "per_seed": [
+                    0.37424547283702214
+                  ],
+                  "n": 497,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.3333333333333333,
+                  "ci_low": 0.14285714285714285,
+                  "ci_high": 0.5238095238095238,
+                  "balanced_error": 0.4385964912280702,
+                  "balanced_ci_low": 0.1,
+                  "balanced_ci_high": 0.725,
+                  "per_seed": [
+                    0.3333333333333333
+                  ],
+                  "n": 21,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.33400402414486924,
+                  "ci_low": 0.2917505030181087,
+                  "ci_high": 0.3762575452716298,
+                  "balanced_error": 0.48050208246631115,
+                  "balanced_ci_low": 0.42984683265444784,
+                  "balanced_ci_high": 0.5286172803634337,
+                  "per_seed": [
+                    0.33400402414486924
+                  ],
+                  "n": 497,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.3333333333333333,
                   "ci_low": 0.14285714285714285,
@@ -6812,7 +8174,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.3815789473684211,
+                  "ci_low": 0.27631578947368424,
+                  "ci_high": 0.5,
+                  "balanced_error": 0.46386946386946387,
+                  "balanced_ci_low": 0.3169285714285714,
+                  "balanced_ci_high": 0.6069947914936725,
+                  "per_seed": [
+                    0.3815789473684211
+                  ],
+                  "n": 76,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.36877828054298645,
+                  "ci_low": 0.3235294117647059,
+                  "ci_high": 0.41402714932126694,
+                  "balanced_error": 0.4585470085470085,
+                  "balanced_ci_low": 0.4030471852611768,
+                  "balanced_ci_high": 0.5130150588185043,
+                  "per_seed": [
+                    0.36877828054298645
+                  ],
+                  "n": 442,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.3026315789473684,
+                  "ci_low": 0.19736842105263158,
+                  "ci_high": 0.40789473684210525,
+                  "balanced_error": 0.48310023310023303,
+                  "balanced_ci_low": 0.347088127515759,
+                  "balanced_ci_high": 0.6134512305719736,
+                  "per_seed": [
+                    0.3026315789473684
+                  ],
+                  "n": 76,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3393665158371041,
+                  "ci_low": 0.29411764705882354,
+                  "ci_high": 0.38461538461538464,
+                  "balanced_error": 0.4860636277302944,
+                  "balanced_ci_low": 0.43386887310824646,
+                  "balanced_ci_high": 0.5381429367791888,
+                  "per_seed": [
+                    0.3393665158371041
+                  ],
+                  "n": 442,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.3026315789473684,
                   "ci_low": 0.19736842105263158,
@@ -7061,7 +8479,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5922330097087378,
+                  "ci_low": 0.49514563106796117,
+                  "ci_high": 0.6893203883495146,
+                  "balanced_error": 0.5048840048840049,
+                  "balanced_ci_low": 0.42376087426840653,
+                  "balanced_ci_high": 0.5963637547522996,
+                  "per_seed": [
+                    0.5922330097087378
+                  ],
+                  "n": 103,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3156626506024096,
+                  "ci_low": 0.27228915662650605,
+                  "ci_high": 0.3614457831325301,
+                  "balanced_error": 0.32637476312175107,
+                  "balanced_ci_low": 0.25300491537840214,
+                  "balanced_ci_high": 0.4034076878729787,
+                  "per_seed": [
+                    0.3156626506024096
+                  ],
+                  "n": 415,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.7572815533980582,
+                  "ci_low": 0.6699029126213593,
+                  "ci_high": 0.8349514563106796,
+                  "balanced_error": 0.5879120879120879,
+                  "balanced_ci_low": 0.5235562143170839,
+                  "balanced_ci_high": 0.6614043687650498,
+                  "per_seed": [
+                    0.7572815533980582
+                  ],
+                  "n": 103,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.2289156626506024,
+                  "ci_low": 0.18795180722891566,
+                  "ci_high": 0.26987951807228916,
+                  "balanced_error": 0.38050470279385945,
+                  "balanced_ci_low": 0.30185083594566353,
+                  "balanced_ci_high": 0.4593017283191802,
+                  "per_seed": [
+                    0.2289156626506024
+                  ],
+                  "n": 415,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.7572815533980582,
                   "ci_low": 0.6699029126213593,
@@ -7310,7 +8784,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5208333333333334,
+                  "ci_low": 0.375,
+                  "ci_high": 0.6666666666666666,
+                  "balanced_error": 0.5864197530864197,
+                  "balanced_ci_low": 0.3387334296309956,
+                  "balanced_ci_high": 0.765517316017316,
+                  "per_seed": [
+                    0.5208333333333334
+                  ],
+                  "n": 48,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3553191489361702,
+                  "ci_low": 0.3127659574468085,
+                  "ci_high": 0.39787234042553193,
+                  "balanced_error": 0.44930348814538795,
+                  "balanced_ci_low": 0.3893394875968594,
+                  "balanced_ci_high": 0.5065952106301963,
+                  "per_seed": [
+                    0.3553191489361702
+                  ],
+                  "n": 470,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.7916666666666666,
+                  "ci_low": 0.6666666666666666,
+                  "ci_high": 0.8958333333333334,
+                  "balanced_error": 0.5493827160493827,
+                  "balanced_ci_low": 0.4666666666666666,
+                  "balanced_ci_high": 0.8222222222222222,
+                  "per_seed": [
+                    0.7916666666666666
+                  ],
+                  "n": 48,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.2872340425531915,
+                  "ci_low": 0.24468085106382978,
+                  "ci_high": 0.32978723404255317,
+                  "balanced_error": 0.453344111249121,
+                  "balanced_ci_low": 0.39423498969261006,
+                  "balanced_ci_high": 0.5102870773089371,
+                  "per_seed": [
+                    0.2872340425531915
+                  ],
+                  "n": 470,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.7916666666666666,
                   "ci_low": 0.6666666666666666,
@@ -7698,6 +9228,29 @@
               "ci_high": 0.9525316455696202
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.6666666666666666,
+              "ci_low": 0.3333333333333333,
+              "ci_high": 1.0,
+              "n": 6,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.05379746835443038,
+              "ci_low": 0.03164556962025317,
+              "ci_high": 0.07911392405063292,
+              "n": 316,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.6128691983122363,
+              "ci_low": 0.26054852320675104,
+              "ci_high": 0.9525316455696202
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.5,
@@ -7719,6 +9272,29 @@
               "delta": 0.4240506329113924,
               "ci_low": 0.07172995780590716,
               "ci_high": 0.779535864978903
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.5,
+              "ci_low": 0.16666666666666666,
+              "ci_high": 0.8333333333333334,
+              "n": 6,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.060126582278481014,
+              "ci_low": 0.03481012658227848,
+              "ci_high": 0.08860759493670886,
+              "n": 316,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.439873417721519,
+              "ci_low": 0.09071729957805906,
+              "ci_high": 0.7953586497890296
             }
           },
           "vader": {
@@ -7871,7 +9447,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -7918,7 +9504,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -7965,7 +9561,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -8012,7 +9618,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -8059,7 +9675,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -8106,7 +9732,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -8153,7 +9789,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -8200,7 +9846,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -8262,6 +9918,29 @@
               "ci_high": 0.9525316455696202
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.6666666666666666,
+              "ci_low": 0.3333333333333333,
+              "ci_high": 1.0,
+              "n": 6,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.05379746835443038,
+              "ci_low": 0.03164556962025317,
+              "ci_high": 0.07911392405063292,
+              "n": 316,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.6128691983122363,
+              "ci_low": 0.26054852320675104,
+              "ci_high": 0.9525316455696202
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.5,
@@ -8283,6 +9962,29 @@
               "delta": 0.4240506329113924,
               "ci_low": 0.07172995780590716,
               "ci_high": 0.779535864978903
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.5,
+              "ci_low": 0.16666666666666666,
+              "ci_high": 0.8333333333333334,
+              "n": 6,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.060126582278481014,
+              "ci_low": 0.03481012658227848,
+              "ci_high": 0.08860759493670886,
+              "n": 316,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.439873417721519,
+              "ci_low": 0.09071729957805906,
+              "ci_high": 0.7953586497890296
             }
           },
           "vader": {
@@ -8472,6 +10174,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.4875,
+                  "ci_low": 0.44642857142857145,
+                  "ci_high": 0.5303571428571429,
+                  "balanced_error": 0.5808247084041385,
+                  "balanced_ci_low": 0.5408169942461137,
+                  "balanced_ci_high": 0.6202912781788559,
+                  "per_seed": [
+                    0.4875
+                  ],
+                  "n": 560,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.46831460674157305,
+                  "ci_low": 0.457752808988764,
+                  "ci_high": 0.478876404494382,
+                  "balanced_error": 0.4792091079270622,
+                  "balanced_ci_low": 0.46898594542316985,
+                  "balanced_ci_high": 0.48950736551689056,
+                  "per_seed": [
+                    0.46831460674157305
+                  ],
+                  "n": 8900,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.4642857142857143,
@@ -8495,6 +10225,34 @@
                   "balanced_ci_high": 0.5242474210553735,
                   "per_seed": [
                     0.5021348314606742
+                  ],
+                  "n": 8900,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.4642857142857143,
+                  "ci_low": 0.4232142857142857,
+                  "ci_high": 0.5071428571428571,
+                  "balanced_error": 0.5496257209326322,
+                  "balanced_ci_low": 0.5099016597578006,
+                  "balanced_ci_high": 0.588727724693976,
+                  "per_seed": [
+                    0.4642857142857143
+                  ],
+                  "n": 560,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.5001123595505618,
+                  "ci_low": 0.4895505617977528,
+                  "ci_high": 0.5104494382022472,
+                  "balanced_error": 0.513133886914268,
+                  "balanced_ci_low": 0.5044170791867508,
+                  "balanced_ci_high": 0.5218381982244344,
+                  "per_seed": [
+                    0.5001123595505618
                   ],
                   "n": 8900,
                   "small_n": false
@@ -8749,6 +10507,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.48736462093862815,
+                  "ci_low": 0.4296028880866426,
+                  "ci_high": 0.5451263537906137,
+                  "balanced_error": 0.5520787510875197,
+                  "balanced_ci_low": 0.4796304686206326,
+                  "balanced_ci_high": 0.6222438010504739,
+                  "per_seed": [
+                    0.48736462093862815
+                  ],
+                  "n": 277,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.46890994228465643,
+                  "ci_low": 0.4586736360666449,
+                  "ci_high": 0.478931177175215,
+                  "balanced_error": 0.4751336287628012,
+                  "balanced_ci_low": 0.46511108229973774,
+                  "balanced_ci_high": 0.48488870724715444,
+                  "per_seed": [
+                    0.46890994228465643
+                  ],
+                  "n": 9183,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.5451263537906137,
@@ -8759,6 +10545,34 @@
                   "balanced_ci_high": 0.6887147559462146,
                   "per_seed": [
                     0.5451263537906137
+                  ],
+                  "n": 277,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4985298921920941,
+                  "ci_low": 0.48807579222476316,
+                  "ci_high": 0.5088750952847654,
+                  "balanced_error": 0.5045490067114308,
+                  "balanced_ci_low": 0.4958257981013396,
+                  "balanced_ci_high": 0.5132211964969569,
+                  "per_seed": [
+                    0.4985298921920941
+                  ],
+                  "n": 9183,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.48014440433212996,
+                  "ci_low": 0.4187725631768953,
+                  "ci_high": 0.5379061371841155,
+                  "balanced_error": 0.5532925370897158,
+                  "balanced_ci_low": 0.48318061651964156,
+                  "balanced_ci_high": 0.6191490776672864,
+                  "per_seed": [
+                    0.48014440433212996
                   ],
                   "n": 277,
                   "small_n": false
@@ -9026,6 +10840,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.49106302916274697,
+                  "ci_low": 0.46187676387582316,
+                  "ci_high": 0.5211665098777046,
+                  "balanced_error": 0.5036577454790397,
+                  "balanced_ci_low": 0.47428423447779716,
+                  "balanced_ci_high": 0.5330141737960871,
+                  "per_seed": [
+                    0.49106302916274697
+                  ],
+                  "n": 1063,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.46671430272716447,
+                  "ci_low": 0.45599618911516016,
+                  "ci_high": 0.4775515064904132,
+                  "balanced_error": 0.47212546040470293,
+                  "balanced_ci_low": 0.4617048426772797,
+                  "balanced_ci_high": 0.482815577450045,
+                  "per_seed": [
+                    0.46671430272716447
+                  ],
+                  "n": 8397,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.49858889934148637,
@@ -9049,6 +10891,34 @@
                   "balanced_ci_high": 0.5158548171188162,
                   "per_seed": [
                     0.5000595450756222
+                  ],
+                  "n": 8397,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.49576669802445905,
+                  "ci_low": 0.4656632173095014,
+                  "ci_high": 0.5258701787394168,
+                  "balanced_error": 0.5194646616515673,
+                  "balanced_ci_low": 0.4943418661176739,
+                  "balanced_ci_high": 0.5448304489602135,
+                  "per_seed": [
+                    0.49576669802445905
+                  ],
+                  "n": 1063,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.49827319280695487,
+                  "ci_low": 0.48755507919495056,
+                  "ci_high": 0.5091133738239847,
+                  "balanced_error": 0.5048331047470219,
+                  "balanced_ci_low": 0.4960294092774612,
+                  "balanced_ci_high": 0.5138949311943355,
+                  "per_seed": [
+                    0.49827319280695487
                   ],
                   "n": 8397,
                   "small_n": false
@@ -9303,6 +11173,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6099092812281927,
+                  "ci_low": 0.5854849965108164,
+                  "ci_high": 0.6350314026517795,
+                  "balanced_error": 0.5172651352255614,
+                  "balanced_ci_low": 0.4773535716008281,
+                  "balanced_ci_high": 0.558194769130333,
+                  "per_seed": [
+                    0.6099092812281927
+                  ],
+                  "n": 1433,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.44437523358664505,
+                  "ci_low": 0.4335368132552635,
+                  "ci_high": 0.45521365391802665,
+                  "balanced_error": 0.46192039478689456,
+                  "balanced_ci_low": 0.451053827537676,
+                  "balanced_ci_high": 0.4730565612162219,
+                  "per_seed": [
+                    0.44437523358664505
+                  ],
+                  "n": 8027,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.7885554780181437,
@@ -9326,6 +11224,34 @@
                   "balanced_ci_high": 0.49912760010082874,
                   "per_seed": [
                     0.44836177899588886
+                  ],
+                  "n": 8027,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.7885554780181437,
+                  "ci_low": 0.7669225401256106,
+                  "ci_high": 0.8101884159106769,
+                  "balanced_error": 0.5488398517317847,
+                  "balanced_ci_low": 0.5277740766704064,
+                  "balanced_ci_high": 0.5726633519756509,
+                  "per_seed": [
+                    0.7885554780181437
+                  ],
+                  "n": 1433,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.44611934720318924,
+                  "ci_low": 0.43503176778372993,
+                  "ci_high": 0.45720692662264856,
+                  "balanced_error": 0.4863481901749145,
+                  "balanced_ci_low": 0.47650958174632607,
+                  "balanced_ci_high": 0.49641858766485314,
+                  "per_seed": [
+                    0.44611934720318924
                   ],
                   "n": 8027,
                   "small_n": false
@@ -9580,6 +11506,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.4278481012658228,
+                  "ci_low": 0.379746835443038,
+                  "ci_high": 0.4759493670886076,
+                  "balanced_error": 0.5357202982202982,
+                  "balanced_ci_low": 0.42258720141807105,
+                  "balanced_ci_high": 0.6252265057159534,
+                  "per_seed": [
+                    0.4278481012658228
+                  ],
+                  "n": 395,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4712630998345284,
+                  "ci_low": 0.461003861003861,
+                  "ci_high": 0.4816326530612245,
+                  "balanced_error": 0.4814099597401495,
+                  "balanced_ci_low": 0.47134025480594893,
+                  "balanced_ci_high": 0.49142106847408507,
+                  "per_seed": [
+                    0.4712630998345284
+                  ],
+                  "n": 9065,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.6531645569620254,
@@ -9603,6 +11557,34 @@
                   "balanced_ci_high": 0.519366660535394,
                   "per_seed": [
                     0.49321566464423605
+                  ],
+                  "n": 9065,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6506329113924051,
+                  "ci_low": 0.6025316455696202,
+                  "ci_high": 0.6987341772151898,
+                  "balanced_error": 0.5269781144781145,
+                  "balanced_ci_low": 0.4407244141800758,
+                  "balanced_ci_high": 0.6390814302950537,
+                  "per_seed": [
+                    0.6506329113924051
+                  ],
+                  "n": 395,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4913403199117485,
+                  "ci_low": 0.4809707666850524,
+                  "ci_high": 0.5014892443463872,
+                  "balanced_error": 0.5083823637920526,
+                  "balanced_ci_low": 0.49956402889005747,
+                  "balanced_ci_high": 0.5172150701254685,
+                  "per_seed": [
+                    0.4913403199117485
                   ],
                   "n": 9065,
                   "small_n": false
@@ -9996,6 +11978,29 @@
               "ci_high": 0.576878473165285
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.5774647887323944,
+              "ci_low": 0.49295774647887325,
+              "ci_high": 0.6619718309859155,
+              "n": 142,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07927762473217019,
+              "ci_low": 0.06978879706152434,
+              "ci_high": 0.08846036118763391,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.49818716400022417,
+              "ci_low": 0.4146004970748889,
+              "ci_high": 0.5814677397103774
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.4788732394366197,
@@ -10017,6 +12022,29 @@
               "delta": 0.4054113477929099,
               "ci_low": 0.3230469440456636,
               "ci_high": 0.48838793397052044
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.4788732394366197,
+              "ci_low": 0.39436619718309857,
+              "ci_high": 0.5633802816901409,
+              "n": 142,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07040097949188859,
+              "ci_low": 0.0618304254667891,
+              "ci_high": 0.07927762473217019,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.40847225994473113,
+              "ci_low": 0.32610785619748484,
+              "ci_high": 0.4917527817655859
             }
           },
           "vader": {
@@ -10192,7 +12220,17 @@
                 "ci_low": 0.9361702127659575,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.9787234042553191,
+                "ci_low": 0.9361702127659575,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -10244,7 +12282,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.038461538461538464,
+                "ci_low": 0.0,
+                "ci_high": 0.11538461538461539
+              },
+              "lm_official_tuned": {
                 "rate": 0.038461538461538464,
                 "ci_low": 0.0,
                 "ci_high": 0.11538461538461539
@@ -10296,7 +12344,17 @@
                 "ci_low": 0.4375,
                 "ci_high": 0.875
               },
+              "vader_official_tuned": {
+                "rate": 0.6875,
+                "ci_low": 0.4375,
+                "ci_high": 0.875
+              },
               "lm_official": {
+                "rate": 0.0625,
+                "ci_low": 0.0,
+                "ci_high": 0.1875
+              },
+              "lm_official_tuned": {
                 "rate": 0.0625,
                 "ci_low": 0.0,
                 "ci_high": 0.1875
@@ -10348,7 +12406,17 @@
                 "ci_low": 0.4,
                 "ci_high": 0.8666666666666667
               },
+              "vader_official_tuned": {
+                "rate": 0.6666666666666666,
+                "ci_low": 0.4,
+                "ci_high": 0.8666666666666667
+              },
               "lm_official": {
+                "rate": 0.13333333333333333,
+                "ci_low": 0.0,
+                "ci_high": 0.3333333333333333
+              },
+              "lm_official_tuned": {
                 "rate": 0.13333333333333333,
                 "ci_low": 0.0,
                 "ci_high": 0.3333333333333333
@@ -10400,7 +12468,17 @@
                 "ci_low": 0.2,
                 "ci_high": 0.8
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.2,
+                "ci_high": 0.8
+              },
               "lm_official": {
+                "rate": 0.1,
+                "ci_low": 0.0,
+                "ci_high": 0.3
+              },
+              "lm_official_tuned": {
                 "rate": 0.1,
                 "ci_low": 0.0,
                 "ci_high": 0.3
@@ -10452,7 +12530,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.5
               },
+              "vader_official_tuned": {
+                "rate": 0.2,
+                "ci_low": 0.0,
+                "ci_high": 0.5
+              },
               "lm_official": {
+                "rate": 0.9,
+                "ci_low": 0.7,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.9,
                 "ci_low": 0.7,
                 "ci_high": 1.0
@@ -10504,7 +12592,17 @@
                 "ci_low": 0.16666666666666666,
                 "ci_high": 0.8333333333333334
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.16666666666666666,
+                "ci_high": 0.8333333333333334
+              },
               "lm_official": {
+                "rate": 0.3333333333333333,
+                "ci_low": 0.0,
+                "ci_high": 0.6666666666666666
+              },
+              "lm_official_tuned": {
                 "rate": 0.3333333333333333,
                 "ci_low": 0.0,
                 "ci_high": 0.6666666666666666
@@ -10556,7 +12654,17 @@
                 "ci_low": 0.4,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.8,
+                "ci_low": 0.4,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.8,
                 "ci_low": 0.4,
                 "ci_high": 1.0
@@ -10608,7 +12716,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.75
               },
+              "vader_official_tuned": {
+                "rate": 0.25,
+                "ci_low": 0.0,
+                "ci_high": 0.75
+              },
               "lm_official": {
+                "rate": 0.25,
+                "ci_low": 0.0,
+                "ci_high": 0.75
+              },
+              "lm_official_tuned": {
                 "rate": 0.25,
                 "ci_low": 0.0,
                 "ci_high": 0.75
@@ -10660,7 +12778,17 @@
                 "ci_low": 0.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -10712,7 +12840,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -10764,7 +12902,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -10816,7 +12964,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -10883,6 +13041,29 @@
               "ci_high": 0.39469290442301797
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.3854166666666667,
+              "ci_low": 0.2916666666666667,
+              "ci_high": 0.4791666666666667,
+              "n": 96,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07927762473217019,
+              "ci_low": 0.06978879706152434,
+              "ci_high": 0.08846036118763391,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.3061390419344965,
+              "ci_low": 0.2096342209978574,
+              "ci_high": 0.40448041016222835
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.22916666666666666,
@@ -10904,6 +13085,29 @@
               "delta": 0.15570477502295682,
               "ci_low": 0.07145316804407714,
               "ci_high": 0.24362947658402204
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.22916666666666666,
+              "ci_low": 0.14583333333333334,
+              "ci_high": 0.3125,
+              "n": 96,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07040097949188859,
+              "ci_low": 0.0618304254667891,
+              "ci_high": 0.07927762473217019,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.15876568717477807,
+              "ci_low": 0.07420798898071626,
+              "ci_high": 0.24669038873584329
             }
           },
           "vader": {
@@ -11119,7 +13323,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6666666666666666,
+                  "ci_low": 0.5238095238095238,
+                  "ci_high": 0.8095238095238095,
+                  "balanced_error": 0.6660130718954248,
+                  "balanced_ci_low": 0.5148440545808967,
+                  "balanced_ci_high": 0.8065519957983193,
+                  "per_seed": [
+                    0.6666666666666666
+                  ],
+                  "n": 42,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3961988304093567,
+                  "ci_low": 0.35964912280701755,
+                  "ci_high": 0.43128654970760233,
+                  "balanced_error": 0.47182459998725057,
+                  "balanced_ci_low": 0.4307039606898345,
+                  "balanced_ci_high": 0.5112080009564884,
+                  "per_seed": [
+                    0.3961988304093567
+                  ],
+                  "n": 684,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.6190476190476191,
+                  "ci_low": 0.47619047619047616,
+                  "ci_high": 0.7619047619047619,
+                  "balanced_error": 0.5333333333333333,
+                  "balanced_ci_low": 0.4444444444444444,
+                  "balanced_ci_high": 0.6153846153846154,
+                  "per_seed": [
+                    0.6190476190476191
+                  ],
+                  "n": 42,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3713450292397661,
+                  "ci_low": 0.3347953216374269,
+                  "ci_high": 0.40789473684210525,
+                  "balanced_error": 0.5100197084634835,
+                  "balanced_ci_low": 0.4663497538537247,
+                  "balanced_ci_high": 0.5530048416619197,
+                  "per_seed": [
+                    0.3713450292397661
+                  ],
+                  "n": 684,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.6190476190476191,
                   "ci_low": 0.47619047619047616,
@@ -11368,7 +13628,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.3333333333333333,
+                  "ci_low": 0.16666666666666666,
+                  "ci_high": 0.5416666666666666,
+                  "balanced_error": 0.25098039215686274,
+                  "balanced_ci_low": 0.08771929824561403,
+                  "balanced_ci_high": 0.5,
+                  "per_seed": [
+                    0.3333333333333333
+                  ],
+                  "n": 24,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.41452991452991456,
+                  "ci_low": 0.37749287749287747,
+                  "ci_high": 0.4515669515669516,
+                  "balanced_error": 0.4933421956353163,
+                  "balanced_ci_low": 0.45245993464535184,
+                  "balanced_ci_high": 0.5324816033865803,
+                  "per_seed": [
+                    0.41452991452991456
+                  ],
+                  "n": 702,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.4166666666666667,
+                  "ci_low": 0.20833333333333334,
+                  "ci_high": 0.625,
+                  "balanced_error": 0.5313725490196078,
+                  "balanced_ci_low": 0.26190476190476186,
+                  "balanced_ci_high": 0.7843137254901961,
+                  "per_seed": [
+                    0.4166666666666667
+                  ],
+                  "n": 24,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.38461538461538464,
+                  "ci_low": 0.349002849002849,
+                  "ci_high": 0.4202279202279202,
+                  "balanced_error": 0.49373229517795814,
+                  "balanced_ci_low": 0.4509415535648708,
+                  "balanced_ci_high": 0.5353888757167992,
+                  "per_seed": [
+                    0.38461538461538464
+                  ],
+                  "n": 702,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.4166666666666667,
                   "ci_low": 0.20833333333333334,
@@ -11617,7 +13933,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.31683168316831684,
+                  "ci_low": 0.22772277227722773,
+                  "ci_high": 0.40594059405940597,
+                  "balanced_error": 0.36807278742762617,
+                  "balanced_ci_low": 0.2489885507887194,
+                  "balanced_ci_high": 0.4889364530397138,
+                  "per_seed": [
+                    0.31683168316831684
+                  ],
+                  "n": 101,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4272,
+                  "ci_low": 0.3888,
+                  "ci_high": 0.4656,
+                  "balanced_error": 0.505173630717109,
+                  "balanced_ci_low": 0.46422998641348734,
+                  "balanced_ci_high": 0.5450287724940246,
+                  "per_seed": [
+                    0.4272
+                  ],
+                  "n": 625,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.3465346534653465,
+                  "ci_low": 0.25742574257425743,
+                  "ci_high": 0.44554455445544555,
+                  "balanced_error": 0.48428453267162946,
+                  "balanced_ci_low": 0.3661407602813853,
+                  "balanced_ci_high": 0.5976194896481781,
+                  "per_seed": [
+                    0.3465346534653465
+                  ],
+                  "n": 101,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.392,
+                  "ci_low": 0.3536,
+                  "ci_high": 0.4304,
+                  "balanced_error": 0.50084384214819,
+                  "balanced_ci_low": 0.45631885746501333,
+                  "balanced_ci_high": 0.5451318710566907,
+                  "per_seed": [
+                    0.392
+                  ],
+                  "n": 625,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.3465346534653465,
                   "ci_low": 0.25742574257425743,
@@ -11866,7 +14238,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5827338129496403,
+                  "ci_low": 0.49640287769784175,
+                  "ci_high": 0.6618705035971223,
+                  "balanced_error": 0.5580378250591017,
+                  "balanced_ci_low": 0.4793371487912362,
+                  "balanced_ci_high": 0.6402562259843697,
+                  "per_seed": [
+                    0.5827338129496403
+                  ],
+                  "n": 139,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.37137989778534924,
+                  "ci_low": 0.3321976149914821,
+                  "ci_high": 0.41056218057921634,
+                  "balanced_error": 0.393765997014361,
+                  "balanced_ci_low": 0.3349923488081382,
+                  "balanced_ci_high": 0.45072380719280114,
+                  "per_seed": [
+                    0.37137989778534924
+                  ],
+                  "n": 587,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.7410071942446043,
+                  "ci_low": 0.6690647482014388,
+                  "ci_high": 0.8129496402877698,
+                  "balanced_error": 0.5871158392434989,
+                  "balanced_ci_low": 0.5251596676711717,
+                  "balanced_ci_high": 0.6551758136127485,
+                  "per_seed": [
+                    0.7410071942446043
+                  ],
+                  "n": 139,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.30153321976149916,
+                  "ci_low": 0.26405451448040884,
+                  "ci_high": 0.3390119250425894,
+                  "balanced_error": 0.4094657173576248,
+                  "balanced_ci_low": 0.3511621187061409,
+                  "balanced_ci_high": 0.4674171315908646,
+                  "per_seed": [
+                    0.30153321976149916
+                  ],
+                  "n": 587,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.7410071942446043,
                   "ci_low": 0.6690647482014388,
@@ -12115,7 +14543,63 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.5555555555555556,
+                  "ci_low": 0.4444444444444444,
+                  "ci_high": 0.6666666666666666,
+                  "balanced_error": 0.7301587301587302,
+                  "balanced_ci_low": 0.553728949478749,
+                  "balanced_ci_high": 0.791062801932367,
+                  "per_seed": [
+                    0.5555555555555556
+                  ],
+                  "n": 72,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.39602446483180426,
+                  "ci_low": 0.35932721712538224,
+                  "ci_high": 0.43425076452599387,
+                  "balanced_error": 0.46668982894230515,
+                  "balanced_ci_low": 0.41886397996590863,
+                  "balanced_ci_high": 0.5141583245430015,
+                  "per_seed": [
+                    0.39602446483180426
+                  ],
+                  "n": 654,
+                  "small_n": false
+                }
+              },
               "lm_official": {
+                "tag1": {
+                  "error_rate": 0.7916666666666666,
+                  "ci_low": 0.6944444444444444,
+                  "ci_high": 0.8888888888888888,
+                  "balanced_error": 0.6984126984126983,
+                  "balanced_ci_low": 0.4893372830872831,
+                  "balanced_ci_high": 0.906667714884696,
+                  "per_seed": [
+                    0.7916666666666666
+                  ],
+                  "n": 72,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.3409785932721712,
+                  "ci_low": 0.3058103975535168,
+                  "ci_high": 0.37767584097859325,
+                  "balanced_error": 0.4616290555428919,
+                  "balanced_ci_low": 0.4120318826255714,
+                  "balanced_ci_high": 0.5113592486991927,
+                  "per_seed": [
+                    0.3409785932721712
+                  ],
+                  "n": 654,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
                 "tag1": {
                   "error_rate": 0.7916666666666666,
                   "ci_low": 0.6944444444444444,
@@ -12503,6 +14987,29 @@
               "ci_high": 0.2779116465863454
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.13333333333333333,
+              "ci_low": 0.0,
+              "ci_high": 0.3333333333333333,
+              "n": 15,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.05542168674698795,
+              "ci_low": 0.033734939759036145,
+              "ci_high": 0.07710843373493977,
+              "n": 415,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.07791164658634539,
+              "ci_low": -0.06506024096385542,
+              "ci_high": 0.2779116465863454
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.4,
@@ -12524,6 +15031,29 @@
               "delta": 0.32530120481927716,
               "ci_low": 0.08273092369477911,
               "ci_high": 0.5895582329317268
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.4,
+              "ci_low": 0.13333333333333333,
+              "ci_high": 0.6666666666666666,
+              "n": 15,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.06746987951807229,
+              "ci_low": 0.043373493975903614,
+              "ci_high": 0.09397590361445783,
+              "n": 415,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.33253012048192776,
+              "ci_low": 0.08995983935742971,
+              "ci_high": 0.5967871485943774
             }
           },
           "vader": {
@@ -12676,7 +15206,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -12723,7 +15263,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.6666666666666666,
+                "ci_low": 0.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.6666666666666666,
                 "ci_low": 0.0,
                 "ci_high": 1.0
@@ -12770,7 +15320,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -12817,7 +15377,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -12864,7 +15434,17 @@
                 "ci_low": 0.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -12911,7 +15491,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -12958,7 +15548,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -13005,7 +15605,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -13052,7 +15662,17 @@
                 "ci_low": 1.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -13114,6 +15734,29 @@
               "ci_high": 0.2993115318416523
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.14285714285714285,
+              "ci_low": 0.0,
+              "ci_high": 0.35714285714285715,
+              "n": 14,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.05542168674698795,
+              "ci_low": 0.033734939759036145,
+              "ci_high": 0.07710843373493977,
+              "n": 415,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.08743545611015491,
+              "ci_low": -0.06506024096385542,
+              "ci_high": 0.2993115318416523
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.35714285714285715,
@@ -13135,6 +15778,29 @@
               "delta": 0.28244406196213423,
               "ci_low": 0.05611015490533562,
               "ci_high": 0.5609294320137694
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.35714285714285715,
+              "ci_low": 0.14285714285714285,
+              "ci_high": 0.6428571428571429,
+              "n": 14,
+              "small_n": true,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.06746987951807229,
+              "ci_low": 0.043373493975903614,
+              "ci_high": 0.09397590361445783,
+              "n": 415,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.28967297762478483,
+              "ci_low": 0.06333907056798622,
+              "ci_high": 0.56815834767642
             }
           },
           "vader": {
@@ -13324,6 +15990,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.4982142857142857,
+                  "ci_low": 0.45714285714285713,
+                  "ci_high": 0.5410714285714285,
+                  "balanced_error": 0.586229228548259,
+                  "balanced_ci_low": 0.5458157190365631,
+                  "balanced_ci_high": 0.6263188770841329,
+                  "per_seed": [
+                    0.4982142857142857
+                  ],
+                  "n": 560,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.469438202247191,
+                  "ci_low": 0.458876404494382,
+                  "ci_high": 0.48,
+                  "balanced_error": 0.48078315765248814,
+                  "balanced_ci_low": 0.4706467788653661,
+                  "balanced_ci_high": 0.4910685621460241,
+                  "per_seed": [
+                    0.469438202247191
+                  ],
+                  "n": 8900,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.4642857142857143,
@@ -13347,6 +16041,34 @@
                   "balanced_ci_high": 0.5242474210553735,
                   "per_seed": [
                     0.5021348314606742
+                  ],
+                  "n": 8900,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.4642857142857143,
+                  "ci_low": 0.4232142857142857,
+                  "ci_high": 0.5071428571428571,
+                  "balanced_error": 0.5496257209326322,
+                  "balanced_ci_low": 0.5099016597578006,
+                  "balanced_ci_high": 0.588727724693976,
+                  "per_seed": [
+                    0.4642857142857143
+                  ],
+                  "n": 560,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.5001123595505618,
+                  "ci_low": 0.4895505617977528,
+                  "ci_high": 0.5104494382022472,
+                  "balanced_error": 0.513133886914268,
+                  "balanced_ci_low": 0.5044170791867508,
+                  "balanced_ci_high": 0.5218381982244344,
+                  "per_seed": [
+                    0.5001123595505618
                   ],
                   "n": 8900,
                   "small_n": false
@@ -13601,6 +16323,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.49097472924187724,
+                  "ci_low": 0.4332129963898917,
+                  "ci_high": 0.5487364620938628,
+                  "balanced_error": 0.554662730415685,
+                  "balanced_ci_low": 0.4825428351249347,
+                  "balanced_ci_high": 0.6247294188671034,
+                  "per_seed": [
+                    0.49097472924187724
+                  ],
+                  "n": 277,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.47054339540455187,
+                  "ci_low": 0.46030708918654034,
+                  "ci_high": 0.48067080474790375,
+                  "balanced_error": 0.4772478472042718,
+                  "balanced_ci_low": 0.4673347267915459,
+                  "balanced_ci_high": 0.4869963603142202,
+                  "per_seed": [
+                    0.47054339540455187
+                  ],
+                  "n": 9183,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.5451263537906137,
@@ -13611,6 +16361,34 @@
                   "balanced_ci_high": 0.6887147559462146,
                   "per_seed": [
                     0.5451263537906137
+                  ],
+                  "n": 277,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4985298921920941,
+                  "ci_low": 0.48807579222476316,
+                  "ci_high": 0.5088750952847654,
+                  "balanced_error": 0.5045490067114308,
+                  "balanced_ci_low": 0.4958257981013396,
+                  "balanced_ci_high": 0.5132211964969569,
+                  "per_seed": [
+                    0.4985298921920941
+                  ],
+                  "n": 9183,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.48014440433212996,
+                  "ci_low": 0.4187725631768953,
+                  "ci_high": 0.5379061371841155,
+                  "balanced_error": 0.5532925370897158,
+                  "balanced_ci_low": 0.48318061651964156,
+                  "balanced_ci_high": 0.6191490776672864,
+                  "per_seed": [
+                    0.48014440433212996
                   ],
                   "n": 277,
                   "small_n": false
@@ -13878,6 +16656,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.49200376293508935,
+                  "ci_low": 0.4619002822201317,
+                  "ci_high": 0.522107243650047,
+                  "balanced_error": 0.5049909924481969,
+                  "balanced_ci_low": 0.47577420681950683,
+                  "balanced_ci_high": 0.5341917786224816,
+                  "per_seed": [
+                    0.49200376293508935
+                  ],
+                  "n": 1063,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4685006549958318,
+                  "ci_low": 0.4579016315350721,
+                  "ci_high": 0.47945694891032514,
+                  "balanced_error": 0.4743584503949778,
+                  "balanced_ci_low": 0.46397535220616704,
+                  "balanced_ci_high": 0.48503223769641296,
+                  "per_seed": [
+                    0.4685006549958318
+                  ],
+                  "n": 8397,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.49858889934148637,
@@ -13901,6 +16707,34 @@
                   "balanced_ci_high": 0.5158548171188162,
                   "per_seed": [
                     0.5000595450756222
+                  ],
+                  "n": 8397,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.49576669802445905,
+                  "ci_low": 0.4656632173095014,
+                  "ci_high": 0.5258701787394168,
+                  "balanced_error": 0.5194646616515673,
+                  "balanced_ci_low": 0.4943418661176739,
+                  "balanced_ci_high": 0.5448304489602135,
+                  "per_seed": [
+                    0.49576669802445905
+                  ],
+                  "n": 1063,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.49827319280695487,
+                  "ci_low": 0.48755507919495056,
+                  "ci_high": 0.5091133738239847,
+                  "balanced_error": 0.5048331047470219,
+                  "balanced_ci_low": 0.4960294092774612,
+                  "balanced_ci_high": 0.5138949311943355,
+                  "per_seed": [
+                    0.49827319280695487
                   ],
                   "n": 8397,
                   "small_n": false
@@ -14155,6 +16989,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6120027913468249,
+                  "ci_low": 0.5875785066294487,
+                  "ci_high": 0.6371249127704117,
+                  "balanced_error": 0.5190288036558965,
+                  "balanced_ci_low": 0.47922905817157424,
+                  "balanced_ci_high": 0.559925237349242,
+                  "per_seed": [
+                    0.6120027913468249
+                  ],
+                  "n": 1433,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.44599476765915036,
+                  "ci_low": 0.43515634732776876,
+                  "ci_high": 0.4567086084464931,
+                  "balanced_error": 0.4642918800953712,
+                  "balanced_ci_low": 0.4535686813847664,
+                  "balanced_ci_high": 0.4752608454501744,
+                  "per_seed": [
+                    0.44599476765915036
+                  ],
+                  "n": 8027,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.7885554780181437,
@@ -14178,6 +17040,34 @@
                   "balanced_ci_high": 0.49912760010082874,
                   "per_seed": [
                     0.44836177899588886
+                  ],
+                  "n": 8027,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.7885554780181437,
+                  "ci_low": 0.7669225401256106,
+                  "ci_high": 0.8101884159106769,
+                  "balanced_error": 0.5488398517317847,
+                  "balanced_ci_low": 0.5277740766704064,
+                  "balanced_ci_high": 0.5726633519756509,
+                  "per_seed": [
+                    0.7885554780181437
+                  ],
+                  "n": 1433,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.44611934720318924,
+                  "ci_low": 0.43503176778372993,
+                  "ci_high": 0.45720692662264856,
+                  "balanced_error": 0.4863481901749145,
+                  "balanced_ci_low": 0.47650958174632607,
+                  "balanced_ci_high": 0.49641858766485314,
+                  "per_seed": [
+                    0.44611934720318924
                   ],
                   "n": 8027,
                   "small_n": false
@@ -14432,6 +17322,34 @@
                   "small_n": false
                 }
               },
+              "vader_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.43544303797468353,
+                  "ci_low": 0.38734177215189874,
+                  "ci_high": 0.4835443037974684,
+                  "balanced_error": 0.540482202982203,
+                  "balanced_ci_low": 0.42728027974844024,
+                  "balanced_ci_high": 0.6293842485844855,
+                  "per_seed": [
+                    0.43544303797468353
+                  ],
+                  "n": 395,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.47269718698290125,
+                  "ci_low": 0.46232763375620517,
+                  "ci_high": 0.4829564258135687,
+                  "balanced_error": 0.4833652318088162,
+                  "balanced_ci_low": 0.47333364236291087,
+                  "balanced_ci_high": 0.49336527700420707,
+                  "per_seed": [
+                    0.47269718698290125
+                  ],
+                  "n": 9065,
+                  "small_n": false
+                }
+              },
               "lm_official": {
                 "tag1": {
                   "error_rate": 0.6531645569620254,
@@ -14455,6 +17373,34 @@
                   "balanced_ci_high": 0.519366660535394,
                   "per_seed": [
                     0.49321566464423605
+                  ],
+                  "n": 9065,
+                  "small_n": false
+                }
+              },
+              "lm_official_tuned": {
+                "tag1": {
+                  "error_rate": 0.6506329113924051,
+                  "ci_low": 0.6025316455696202,
+                  "ci_high": 0.6987341772151898,
+                  "balanced_error": 0.5269781144781145,
+                  "balanced_ci_low": 0.4407244141800758,
+                  "balanced_ci_high": 0.6390814302950537,
+                  "per_seed": [
+                    0.6506329113924051
+                  ],
+                  "n": 395,
+                  "small_n": false
+                },
+                "tag0": {
+                  "error_rate": 0.4913403199117485,
+                  "ci_low": 0.4809707666850524,
+                  "ci_high": 0.5014892443463872,
+                  "balanced_error": 0.5083823637920526,
+                  "balanced_ci_low": 0.49956402889005747,
+                  "balanced_ci_high": 0.5172150701254685,
+                  "per_seed": [
+                    0.4913403199117485
                   ],
                   "n": 9065,
                   "small_n": false
@@ -14848,6 +17794,29 @@
               "ci_high": 0.576878473165285
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.5704225352112676,
+              "ci_low": 0.4859154929577465,
+              "ci_high": 0.6549295774647887,
+              "n": 142,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07774716865625957,
+              "ci_low": 0.06856443220079583,
+              "ci_high": 0.0869299051117233,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.49267536655500804,
+              "ci_low": 0.4093829351991964,
+              "ci_high": 0.576878473165285
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.4788732394366197,
@@ -14869,6 +17838,29 @@
               "delta": 0.4054113477929099,
               "ci_low": 0.3230469440456636,
               "ci_high": 0.48838793397052044
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.4788732394366197,
+              "ci_low": 0.39436619718309857,
+              "ci_high": 0.5633802816901409,
+              "n": 142,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07040097949188859,
+              "ci_low": 0.0618304254667891,
+              "ci_high": 0.07927762473217019,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.40847225994473113,
+              "ci_low": 0.32610785619748484,
+              "ci_high": 0.4917527817655859
             }
           },
           "vader": {
@@ -15044,7 +18036,17 @@
                 "ci_low": 0.9361702127659575,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.9787234042553191,
+                "ci_low": 0.9361702127659575,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -15096,7 +18098,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.038461538461538464,
+                "ci_low": 0.0,
+                "ci_high": 0.11538461538461539
+              },
+              "lm_official_tuned": {
                 "rate": 0.038461538461538464,
                 "ci_low": 0.0,
                 "ci_high": 0.11538461538461539
@@ -15148,7 +18160,17 @@
                 "ci_low": 0.4375,
                 "ci_high": 0.875
               },
+              "vader_official_tuned": {
+                "rate": 0.6875,
+                "ci_low": 0.4375,
+                "ci_high": 0.875
+              },
               "lm_official": {
+                "rate": 0.0625,
+                "ci_low": 0.0,
+                "ci_high": 0.1875
+              },
+              "lm_official_tuned": {
                 "rate": 0.0625,
                 "ci_low": 0.0,
                 "ci_high": 0.1875
@@ -15200,7 +18222,17 @@
                 "ci_low": 0.4,
                 "ci_high": 0.8666666666666667
               },
+              "vader_official_tuned": {
+                "rate": 0.6666666666666666,
+                "ci_low": 0.4,
+                "ci_high": 0.8666666666666667
+              },
               "lm_official": {
+                "rate": 0.13333333333333333,
+                "ci_low": 0.0,
+                "ci_high": 0.3333333333333333
+              },
+              "lm_official_tuned": {
                 "rate": 0.13333333333333333,
                 "ci_low": 0.0,
                 "ci_high": 0.3333333333333333
@@ -15252,7 +18284,17 @@
                 "ci_low": 0.2,
                 "ci_high": 0.8
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.2,
+                "ci_high": 0.8
+              },
               "lm_official": {
+                "rate": 0.1,
+                "ci_low": 0.0,
+                "ci_high": 0.3
+              },
+              "lm_official_tuned": {
                 "rate": 0.1,
                 "ci_low": 0.0,
                 "ci_high": 0.3
@@ -15304,7 +18346,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.5
               },
+              "vader_official_tuned": {
+                "rate": 0.2,
+                "ci_low": 0.0,
+                "ci_high": 0.5
+              },
               "lm_official": {
+                "rate": 0.9,
+                "ci_low": 0.7,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.9,
                 "ci_low": 0.7,
                 "ci_high": 1.0
@@ -15356,7 +18408,17 @@
                 "ci_low": 0.16666666666666666,
                 "ci_high": 0.8333333333333334
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.16666666666666666,
+                "ci_high": 0.8333333333333334
+              },
               "lm_official": {
+                "rate": 0.3333333333333333,
+                "ci_low": 0.0,
+                "ci_high": 0.6666666666666666
+              },
+              "lm_official_tuned": {
                 "rate": 0.3333333333333333,
                 "ci_low": 0.0,
                 "ci_high": 0.6666666666666666
@@ -15408,7 +18470,17 @@
                 "ci_low": 0.4,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.8,
+                "ci_low": 0.4,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 0.8,
+                "ci_low": 0.4,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.8,
                 "ci_low": 0.4,
                 "ci_high": 1.0
@@ -15460,7 +18532,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.75
               },
+              "vader_official_tuned": {
+                "rate": 0.25,
+                "ci_low": 0.0,
+                "ci_high": 0.75
+              },
               "lm_official": {
+                "rate": 0.25,
+                "ci_low": 0.0,
+                "ci_high": 0.75
+              },
+              "lm_official_tuned": {
                 "rate": 0.25,
                 "ci_low": 0.0,
                 "ci_high": 0.75
@@ -15512,7 +18594,17 @@
                 "ci_low": 0.0,
                 "ci_high": 1.0
               },
+              "vader_official_tuned": {
+                "rate": 0.5,
+                "ci_low": 0.0,
+                "ci_high": 1.0
+              },
               "lm_official": {
+                "rate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0
+              },
+              "lm_official_tuned": {
                 "rate": 1.0,
                 "ci_low": 1.0,
                 "ci_high": 1.0
@@ -15564,7 +18656,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -15616,7 +18718,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -15668,7 +18780,17 @@
                 "ci_low": 0.0,
                 "ci_high": 0.0
               },
+              "vader_official_tuned": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
               "lm_official": {
+                "rate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0
+              },
+              "lm_official_tuned": {
                 "rate": 0.0,
                 "ci_low": 0.0,
                 "ci_high": 0.0
@@ -15735,6 +18857,29 @@
               "ci_high": 0.39469290442301797
             }
           },
+          "vader_official_tuned": {
+            "term1": {
+              "rate": 0.375,
+              "ci_low": 0.28125,
+              "ci_high": 0.46875,
+              "n": 96,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07774716865625957,
+              "ci_low": 0.06856443220079583,
+              "ci_high": 0.0869299051117233,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.2972528313437404,
+              "ci_low": 0.20013582797673707,
+              "ci_high": 0.39469290442301797
+            }
+          },
           "lm_official": {
             "term1": {
               "rate": 0.22916666666666666,
@@ -15756,6 +18901,29 @@
               "delta": 0.15570477502295682,
               "ci_low": 0.07145316804407714,
               "ci_high": 0.24362947658402204
+            }
+          },
+          "lm_official_tuned": {
+            "term1": {
+              "rate": 0.22916666666666666,
+              "ci_low": 0.14583333333333334,
+              "ci_high": 0.3125,
+              "n": 96,
+              "small_n": false,
+              "na": false
+            },
+            "term0": {
+              "rate": 0.07040097949188859,
+              "ci_low": 0.0618304254667891,
+              "ci_high": 0.07927762473217019,
+              "n": 3267,
+              "small_n": false,
+              "na": false
+            },
+            "difference": {
+              "delta": 0.15876568717477807,
+              "ci_low": 0.07420798898071626,
+              "ci_high": 0.24669038873584329
             }
           },
           "vader": {

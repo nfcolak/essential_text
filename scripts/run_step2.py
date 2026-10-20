@@ -52,7 +52,9 @@ STAGES = ("baselines", "finetune", "cv", "zeroshot", "all")
 # model key -> descriptive model name (the factory is src.baselines.registry.make_baseline(key, seed))
 BASELINE_KEYS = {
     "vader_official": "VADER (official vaderSentiment lexicon)",
+    "vader_official_tuned": "VADER (official lexicon, val-tuned thresholds)",
     "lm_official": "Loughran-McDonald (official Master Dictionary)",
+    "lm_official_tuned": "Loughran-McDonald (official Master Dictionary, negation + val-tuned thresholds)",
     "vader": "VADER",
     "loughran_mcdonald": "Loughran-McDonald",
     "tfidf_logreg": "TF-IDF + Logistic Regression",
