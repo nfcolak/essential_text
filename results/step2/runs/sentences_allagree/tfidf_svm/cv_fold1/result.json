@@ -1,0 +1,83 @@
+{
+  "status": "completed",
+  "stage": "cv",
+  "config": "sentences_allagree",
+  "model_key": "tfidf_svm",
+  "model_name": "TF-IDF + Linear SVM",
+  "seed": 42,
+  "fold": 1,
+  "hyperparams": {
+    "model_type": "svm",
+    "C": 1.0,
+    "class_weight": null,
+    "val_macro_f1": 0.8387023675912566
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.889589905362776,
+      "macro_f1": 0.8387023675912566,
+      "per_class": {
+        "negative": {
+          "precision": 0.875,
+          "recall": 0.6511627906976745,
+          "f1": 0.7466666666666667,
+          "support": 43
+        },
+        "neutral": {
+          "precision": 0.9004739336492891,
+          "recall": 0.979381443298969,
+          "f1": 0.9382716049382716,
+          "support": 194
+        },
+        "positive": {
+          "precision": 0.8648648648648649,
+          "recall": 0.8,
+          "f1": 0.8311688311688312,
+          "support": 80
+        }
+      },
+      "confusion_matrix": [
+        [
+          28,
+          7,
+          8
+        ],
+        [
+          2,
+          190,
+          2
+        ],
+        [
+          2,
+          14,
+          64
+        ]
+      ],
+      "neutral_to_negative_rate": 0.010309278350515464,
+      "ece": 0.054790318200264844
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1268,
+    "val": 317,
+    "test": null,
+    "external": null
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 0.2164149284362793,
+  "timestamp": "2026-10-20T12:38:37.084703+00:00"
+}

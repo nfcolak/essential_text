@@ -1,0 +1,2109 @@
+{
+  "config": "sentences_50agree",
+  "seed": 42,
+  "n": 300,
+  "source_split": "test",
+  "manifest_sha256": "d11c912d24b8ea2db5c553bd042d204a96e9ed21d61459b1719d47dde4e195e2",
+  "items": [
+    {
+      "diag_id": "d001",
+      "record_id": "sentences_50agree_0468",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "8a70b3ecb452f3ab8b4b69a4a48502646baa23e5893922859468d0748d33d0ee"
+    },
+    {
+      "diag_id": "d002",
+      "record_id": "sentences_50agree_4827",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "11ee55c7d3c9853fc946e616fbbcff247f0330587e07bb204a126a71b0e6ec19"
+    },
+    {
+      "diag_id": "d003",
+      "record_id": "sentences_50agree_2261",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "4150b832322cad998f76b8341d9804020eef1a94ecd44d2786223ac3d41434f2"
+    },
+    {
+      "diag_id": "d004",
+      "record_id": "sentences_50agree_0975",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "8e71641a374b6ecf1955ead1ed98358089736f43372c787691dba5028e60c39f"
+    },
+    {
+      "diag_id": "d005",
+      "record_id": "sentences_50agree_1091",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "4b04b43e5ef29bf008d7d430e84138db68f411ed9d4b441ce71fbf45b0b87dee"
+    },
+    {
+      "diag_id": "d006",
+      "record_id": "sentences_50agree_2010",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "31646176113c4ef71e76bc36a2875a94dd5cfccc931afad7cc01f2e509925608"
+    },
+    {
+      "diag_id": "d007",
+      "record_id": "sentences_50agree_0257",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "7ba5178c5e46ce17ef2c49dc9c83408cfd8091ee489385ddede9e12714dfc066"
+    },
+    {
+      "diag_id": "d008",
+      "record_id": "sentences_50agree_0026",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "f8dd3446e035bdffacdb01a79d2bb362a27bc4680fea6903d67824efc06825cc"
+    },
+    {
+      "diag_id": "d009",
+      "record_id": "sentences_50agree_1596",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2933c05ccad1906e89622f0465432898bb39ae7db7f54297e7210b6501e63a27"
+    },
+    {
+      "diag_id": "d010",
+      "record_id": "sentences_50agree_3608",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "aa2f67a8594ad632d87817649fea582820ef82a113870c0562a8ef92c26301fd"
+    },
+    {
+      "diag_id": "d011",
+      "record_id": "sentences_50agree_4284",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "75ea4e3a87ab47dc4c5844de46ca35d777ba9b2111426a5ebbe186faf98ec6f6"
+    },
+    {
+      "diag_id": "d012",
+      "record_id": "sentences_50agree_3194",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "dab55c0773aeeb00cb30efb47b6fcbb2c6dbbcc49e28a245971efc894f76663f"
+    },
+    {
+      "diag_id": "d013",
+      "record_id": "sentences_50agree_3894",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5b208816345546960529af348939d37493a7b769c56188196be79caf159b2c6e"
+    },
+    {
+      "diag_id": "d014",
+      "record_id": "sentences_50agree_2979",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "6f74cf8da687ced919701183c3488c1e1e2880f8aafafa12bac94f96228f7e25"
+    },
+    {
+      "diag_id": "d015",
+      "record_id": "sentences_50agree_1456",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "0f46c44f1039479f8b157ddde9c3cc2fc7a64ceb0ab0f06542fc292dd1b6463e"
+    },
+    {
+      "diag_id": "d016",
+      "record_id": "sentences_50agree_4750",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "3d78685b7083e11ebefc3d0540afa1c6b5c83f21fb657f88bb91fbdb363cc9b7"
+    },
+    {
+      "diag_id": "d017",
+      "record_id": "sentences_50agree_0495",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "5d1dde1b7d770acc380a86b38f7d7cb9db783fcef8967b66252d4f761d312c85"
+    },
+    {
+      "diag_id": "d018",
+      "record_id": "sentences_50agree_1844",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1ae61363f5f7d0c92c11dfa7a2a456742b1f3adb453d3bf00df655db7874fcf7"
+    },
+    {
+      "diag_id": "d019",
+      "record_id": "sentences_50agree_1772",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "f530692e407e274c8dc9d7b02904dab2b8fbd4632e9ad7b6c4e010b64e29efd9"
+    },
+    {
+      "diag_id": "d020",
+      "record_id": "sentences_50agree_3226",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "21648f61594a86c9ae63ab5171ff1a6c21d34815a7c5a64f6c6621a29ffa6b3f"
+    },
+    {
+      "diag_id": "d021",
+      "record_id": "sentences_50agree_1900",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "8b68b756d2140388b3108d63ac0eaa39b95e03e8e620018628f61c2fb294655e"
+    },
+    {
+      "diag_id": "d022",
+      "record_id": "sentences_50agree_2430",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "9ef5d18038fff8fc2f382357f38c8fd7f44c0cfaa609451edf9410ff181d7449"
+    },
+    {
+      "diag_id": "d023",
+      "record_id": "sentences_50agree_4687",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "19a59df8d8e6fc2ea7a346a7d8d30ff6e73d9ee6f83b3440be4a4af9de197eae"
+    },
+    {
+      "diag_id": "d024",
+      "record_id": "sentences_50agree_0294",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "477a41a2959aaf863fb666051b6dadff08ddc6a6242047f89711df967c522c28"
+    },
+    {
+      "diag_id": "d025",
+      "record_id": "sentences_50agree_3709",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "46d05227d6a6388ed26f404a19d76fbf18fdb7887d2d2675ad1d12a72a2a1d8f"
+    },
+    {
+      "diag_id": "d026",
+      "record_id": "sentences_50agree_4062",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "8e1107b8ce22dc951817fa6aa9d0b7b72516bac7d92c2390443d5fc62ee3b43c"
+    },
+    {
+      "diag_id": "d027",
+      "record_id": "sentences_50agree_1485",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "dc900c781e4d09931feb7f7739fe2d8173c83570f58452210d094f66d5a46c4c"
+    },
+    {
+      "diag_id": "d028",
+      "record_id": "sentences_50agree_2156",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "af7590ae423abdcfc7eb2271a36f2ce848f42a5c846f60723ce5c99f3257df7b"
+    },
+    {
+      "diag_id": "d029",
+      "record_id": "sentences_50agree_0490",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "78543aa87f1367c3ec3f473632e5bd6aac0c1b3fbe882e68f85fbaf0439bfe19"
+    },
+    {
+      "diag_id": "d030",
+      "record_id": "sentences_50agree_3568",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "0e21300b80884f8bcef05bb2133676aa96d0c883ecb52b58deb3c76310291fdf"
+    },
+    {
+      "diag_id": "d031",
+      "record_id": "sentences_50agree_1090",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "c14e116ec9353bbfa1909bd58ae604d498de63784829f86ce6956533f71d98c3"
+    },
+    {
+      "diag_id": "d032",
+      "record_id": "sentences_50agree_3663",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "9ad682ec863f32e81fc76394eb8c8816a16ad01f5dfaff84a2d77ce813299a3d"
+    },
+    {
+      "diag_id": "d033",
+      "record_id": "sentences_50agree_2403",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a83d1d3571b06e9088e27186dc2682f1f0a54856692f65d1f5ea3acbe6ebb9ac"
+    },
+    {
+      "diag_id": "d034",
+      "record_id": "sentences_50agree_1116",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "280d44ab1e9f79b5cce2dd4f58f5fe91f0fbacdac9f7447dffc318ceb79f2d02"
+    },
+    {
+      "diag_id": "d035",
+      "record_id": "sentences_50agree_0167",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "43cf3442b93e328ac87e75576c3add49c7d16fee6d962b454ef57f45123d3796"
+    },
+    {
+      "diag_id": "d036",
+      "record_id": "sentences_50agree_2708",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "ffd88d4eec605910d0bb703845e320fa6be4066e90645ae2374d0b4ff1ccec60"
+    },
+    {
+      "diag_id": "d037",
+      "record_id": "sentences_50agree_3771",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "c283823e437e53aa45093ef24fb6b608ac30ae07f915b161c1f0a33f3cc48aee"
+    },
+    {
+      "diag_id": "d038",
+      "record_id": "sentences_50agree_2711",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "fd23890adad583ceeb1885d9aacf0ccd715a28019b2911195b772da903c147c9"
+    },
+    {
+      "diag_id": "d039",
+      "record_id": "sentences_50agree_0299",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "43347b83ab6bc034863981a47a70917b4c64b2e94f99d6eaacb1c567eb215926"
+    },
+    {
+      "diag_id": "d040",
+      "record_id": "sentences_50agree_4748",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "51548ba1ece870136a0eafa5bb75e774969fe2525c8a8d22bf1225ca65806ed0"
+    },
+    {
+      "diag_id": "d041",
+      "record_id": "sentences_50agree_2691",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "045200151102b88c3479d13f90566d72b9bb66b1b5ff210634232a26b147589a"
+    },
+    {
+      "diag_id": "d042",
+      "record_id": "sentences_50agree_0138",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "e042be54c612b95f4664a4e815bb2a91fe44929c14c8f773ad042e6ddd03a66a"
+    },
+    {
+      "diag_id": "d043",
+      "record_id": "sentences_50agree_2845",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "adcfe6b031ff02994607ed20236d9e5391590157d954bc46998a08a23d63f31e"
+    },
+    {
+      "diag_id": "d044",
+      "record_id": "sentences_50agree_4505",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "38aa932e9c836116ce130dbcb34ef4bcb64f98fcc29fdf08cfe8add3f9249aef"
+    },
+    {
+      "diag_id": "d045",
+      "record_id": "sentences_50agree_3878",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a4e777450636bd543d3b88a9f64020fb47f6d8c843ebef6e4d49c223c9d3a63f"
+    },
+    {
+      "diag_id": "d046",
+      "record_id": "sentences_50agree_1430",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5a336f1246a7a67b165512de068b4c00899bfe339afd761a29c183f8bac21406"
+    },
+    {
+      "diag_id": "d047",
+      "record_id": "sentences_50agree_1917",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "3a32006954e6ec232e0dcba1157f81a50de61c090fc20ee722cde003b4c907a1"
+    },
+    {
+      "diag_id": "d048",
+      "record_id": "sentences_50agree_1309",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "5c207fd6a07d2e503589150a7fe442b21670bbf36e4caf1abe84a35f072f62be"
+    },
+    {
+      "diag_id": "d049",
+      "record_id": "sentences_50agree_0639",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "c12893abc2c451e76ef39a90c11a5438f0243c8166c04dfdfab354d8562e5356"
+    },
+    {
+      "diag_id": "d050",
+      "record_id": "sentences_50agree_3236",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2507ce36f17e33584de486a53101a998920b30b2c94cfcff10714931b5beae08"
+    },
+    {
+      "diag_id": "d051",
+      "record_id": "sentences_50agree_2613",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "cf4ebb0e08198eddf166a5f148478b9a57fb7fa6a274104061e52710f78a4891"
+    },
+    {
+      "diag_id": "d052",
+      "record_id": "sentences_50agree_2235",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "342f1e948b5b425a830af278d2d736e02149e37a3b1a305041b2865389010295"
+    },
+    {
+      "diag_id": "d053",
+      "record_id": "sentences_50agree_2573",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "ee2b7a62393d50b90534140f7dfd858258954e2cd4b9165c3f6bc23293d7fb79"
+    },
+    {
+      "diag_id": "d054",
+      "record_id": "sentences_50agree_0137",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "a505996636cfdb7e44c86ec12f4041fce8184ed416414692b71d2bb0a84fe0bb"
+    },
+    {
+      "diag_id": "d055",
+      "record_id": "sentences_50agree_1235",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "f160fad42f69c72cfec8acee4431fbb642fbee4870a7bfd991333f3e4f4282fb"
+    },
+    {
+      "diag_id": "d056",
+      "record_id": "sentences_50agree_3107",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "0118e8a34d96faab08f0b4a3af0de6efb89a749e6c621e61d912d34fdddb17c2"
+    },
+    {
+      "diag_id": "d057",
+      "record_id": "sentences_50agree_3326",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "6f88621c21aa74a9f6a04a981df53e24716770cf8efa17e62423b405205814d2"
+    },
+    {
+      "diag_id": "d058",
+      "record_id": "sentences_50agree_3843",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a122e45bfd82f741c89649c4d9557d3de73c35fd3f15c0b94c3f843b0d885ae8"
+    },
+    {
+      "diag_id": "d059",
+      "record_id": "sentences_50agree_3539",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "91c3c81ab37180264323482fcc684e543aeaa20410bf4278104928ea6a89b0f3"
+    },
+    {
+      "diag_id": "d060",
+      "record_id": "sentences_50agree_4751",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "3dc0a6e6f70476719aaa8f9cc85470f9c31b07ea6cddec8e9f73f4343dcbe2f3"
+    },
+    {
+      "diag_id": "d061",
+      "record_id": "sentences_50agree_2853",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "f9c1e33d04c51edf360bfe310302896f7a10aea40f68e8cd37f3cf47738c8efe"
+    },
+    {
+      "diag_id": "d062",
+      "record_id": "sentences_50agree_0408",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "1df48491df59241e11e21df407ff01c5217b532eff9c6f55cc5dacf41bdc96f7"
+    },
+    {
+      "diag_id": "d063",
+      "record_id": "sentences_50agree_4707",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "7ac8f4a7d84dca011dc7f4be4c973022b2e74d19d029bb46a88820265a29c39c"
+    },
+    {
+      "diag_id": "d064",
+      "record_id": "sentences_50agree_4745",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "6525aef8ef964671a36f7ac41e8115db604a4cc079d2ba027dae3ab98bc90562"
+    },
+    {
+      "diag_id": "d065",
+      "record_id": "sentences_50agree_2431",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "ef3f02016ad58cc8a0cda9e0f45df018fcbb4f1b91f83fbb8a728026ce3922e9"
+    },
+    {
+      "diag_id": "d066",
+      "record_id": "sentences_50agree_1650",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5e28530288fe52a52b0708fc7a3475cc097750828cd5c1ca0450bf89f6fc95f5"
+    },
+    {
+      "diag_id": "d067",
+      "record_id": "sentences_50agree_4319",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "54270c8c95c18dafb334dee241a05ecc6041f20c98dab100332b5f87f0cddb01"
+    },
+    {
+      "diag_id": "d068",
+      "record_id": "sentences_50agree_1974",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "25343f4a14d11ce3da40218cebeab82d0e75fce5796062948763cedc67d1c569"
+    },
+    {
+      "diag_id": "d069",
+      "record_id": "sentences_50agree_3289",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "819b53ec914c8d77174e893363c1a5e4e1f7cf22f7060e5e2ca6a3768ce9d6c6"
+    },
+    {
+      "diag_id": "d070",
+      "record_id": "sentences_50agree_2241",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "5d4cea9f4f641e8422161c29450a68d3d6a13ce8cb6df082ae2ec873c6c192fc"
+    },
+    {
+      "diag_id": "d071",
+      "record_id": "sentences_50agree_2484",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "279bd46b92b5fc17b2bcaa047c286dbde8cf218681f8049443128b5402a4b6a8"
+    },
+    {
+      "diag_id": "d072",
+      "record_id": "sentences_50agree_2585",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "983bf6ff9278a0f1fdd2531cc2e2e50978dc2489b610b54e006eb973a4b07982"
+    },
+    {
+      "diag_id": "d073",
+      "record_id": "sentences_50agree_1520",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "d9feed2e35af5d54849377f4ec22301fdb472daf6583f519f2e10d294caaa488"
+    },
+    {
+      "diag_id": "d074",
+      "record_id": "sentences_50agree_2048",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a1a63981e9b6747c240afe44f4466a569ff2f7b23814b1cf3517fb1f49312112"
+    },
+    {
+      "diag_id": "d075",
+      "record_id": "sentences_50agree_3143",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "e637e880a2ca49ee513f0ed059d1e8c5790b3d945b591b3f395d42a7fe4828f1"
+    },
+    {
+      "diag_id": "d076",
+      "record_id": "sentences_50agree_2849",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1f35676500f9bf4b19758219a9b69878805a51e4d3d88004d98a9a0844bc8bda"
+    },
+    {
+      "diag_id": "d077",
+      "record_id": "sentences_50agree_1667",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "aa43298ad19c72ec5b955e378d633f37a08e0fd0958b13193a45818bb19280ba"
+    },
+    {
+      "diag_id": "d078",
+      "record_id": "sentences_50agree_0986",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "9acf714ffb0b29201cd4b1f4d71ae1eebcb31531c02a2b3561f5b63aaffd3d2d"
+    },
+    {
+      "diag_id": "d079",
+      "record_id": "sentences_50agree_4844",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "6b3c722a5c37a21664981f0b015c7ecb255eefe7dfc1abba52fccb6d5873819c"
+    },
+    {
+      "diag_id": "d080",
+      "record_id": "sentences_50agree_4085",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "228717fae8d21d389b50023f6f1a42914e632e134b5f1cb5120e8f7db03fe0c0"
+    },
+    {
+      "diag_id": "d081",
+      "record_id": "sentences_50agree_2862",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5e5bdd3838abeb6dbb25911c398ced87148fd36a2bfa0b2901078082376d29b0"
+    },
+    {
+      "diag_id": "d082",
+      "record_id": "sentences_50agree_1814",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "e921d5a9f5d0167e358d7efbc84a628ce16efdc3f71515ce516d00102eb597ff"
+    },
+    {
+      "diag_id": "d083",
+      "record_id": "sentences_50agree_0128",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "31a73af71befcd10e3bef0e5c6afa0ca490a0c5c2391e69b49cfb1c059e7332b"
+    },
+    {
+      "diag_id": "d084",
+      "record_id": "sentences_50agree_2146",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "76669a47f953fc82980de8a62375ecc9bdd3c9de0e4567a93f2a0cf369358e8d"
+    },
+    {
+      "diag_id": "d085",
+      "record_id": "sentences_50agree_0860",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "f4fdb083da383104b01e3bc389b060f99134dbe822aefaf41e6c51f37128026b"
+    },
+    {
+      "diag_id": "d086",
+      "record_id": "sentences_50agree_0355",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "5cedabc41c75e5782335a236914e9543c661af16b2c4b8f523946a918c66c858"
+    },
+    {
+      "diag_id": "d087",
+      "record_id": "sentences_50agree_4217",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "fd13ad6341534768d0442bc9c06e37994be128bc7a9d95d6c4b85cf4d7c25fc9"
+    },
+    {
+      "diag_id": "d088",
+      "record_id": "sentences_50agree_0801",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "cbb8ad1fd9302a96754167bdcdbbd1afe04935b5ffda12c9ee0799a648445522"
+    },
+    {
+      "diag_id": "d089",
+      "record_id": "sentences_50agree_1565",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2f5f62bba8be44a4073f8cfd4cd1b15c5daf13904329d5c112ea7b3e599ca8f3"
+    },
+    {
+      "diag_id": "d090",
+      "record_id": "sentences_50agree_1508",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "49f3117b2f51c4e883c5d8ca7d78304a6cf00962046552ad9c48a8943dfcb5f7"
+    },
+    {
+      "diag_id": "d091",
+      "record_id": "sentences_50agree_2498",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b34c468c6a300e522f7971fa350f027db01926c5cde22743fafdd9244070c1d3"
+    },
+    {
+      "diag_id": "d092",
+      "record_id": "sentences_50agree_2850",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b3dfe18e0d5d5e822bf671120bc83d0350c6437145b53044273adb6e56d071ad"
+    },
+    {
+      "diag_id": "d093",
+      "record_id": "sentences_50agree_4655",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "ec5d8f595f32546543bb1b35bd0da52eb3159239b0f4c8b79fea010c0f84d549"
+    },
+    {
+      "diag_id": "d094",
+      "record_id": "sentences_50agree_1574",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "ee4097944f8a0c7fb6e6e06c34a89ff292b05067f10a24daa4f6f7713d2cfa77"
+    },
+    {
+      "diag_id": "d095",
+      "record_id": "sentences_50agree_1134",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "959195ad576a8a301ddb2584883f8bd37725b34438b188a6e3f886ac32dc3f41"
+    },
+    {
+      "diag_id": "d096",
+      "record_id": "sentences_50agree_1559",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "f6ea4a6248551b62ccfb4b60bb39d430ab8dff3b5c23170cb30f586a4132553a"
+    },
+    {
+      "diag_id": "d097",
+      "record_id": "sentences_50agree_2927",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2e5ddffdf24452fdb3909412a5e41473a105c4300482aefb5a0fac70a07ea9b1"
+    },
+    {
+      "diag_id": "d098",
+      "record_id": "sentences_50agree_3867",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a9e4f7b81033219c53ac2fa5b72a993b59be377fa6da071ec55305fb3d87fca3"
+    },
+    {
+      "diag_id": "d099",
+      "record_id": "sentences_50agree_2534",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "8f43d046c89d88d7bc1ed0d5f68daead488e3f5c0462474f722f725ad52ab980"
+    },
+    {
+      "diag_id": "d100",
+      "record_id": "sentences_50agree_2637",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "d8315b4e695f16655246af8688a92d1f5c6492946b7ecebf8e92244152d3cb53"
+    },
+    {
+      "diag_id": "d101",
+      "record_id": "sentences_50agree_1810",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1f68e7155b28846f98f6c1ca8ba3ff7391fca7aefda1dddcf40b40be9e742a4c"
+    },
+    {
+      "diag_id": "d102",
+      "record_id": "sentences_50agree_4004",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "b5684d23a0ee7234b3d8dd6111a33439fd62affcfb79acd699758f312740dd8a"
+    },
+    {
+      "diag_id": "d103",
+      "record_id": "sentences_50agree_0879",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "b1cbe3daf075d50d8b6bf7f03ff3379b5c4b176207dd03d57b75252b9bf36d82"
+    },
+    {
+      "diag_id": "d104",
+      "record_id": "sentences_50agree_2596",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "e8072eb7712d99cf5200b3d9e25257b84827be47b9509e9ba09800866e549399"
+    },
+    {
+      "diag_id": "d105",
+      "record_id": "sentences_50agree_1003",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "8b826a82e558ced422ed348bbea3b9e15f23c5304ceefb536b475324dd75e3b0"
+    },
+    {
+      "diag_id": "d106",
+      "record_id": "sentences_50agree_1766",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "3078448cd05a56fe7b5a5f1275b3cf92e67e939cda026392a293a772bc8aa56a"
+    },
+    {
+      "diag_id": "d107",
+      "record_id": "sentences_50agree_3775",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5659333c254a3a151fb355d545ef5683e241c351a5d9142d3eda267c8e8ab779"
+    },
+    {
+      "diag_id": "d108",
+      "record_id": "sentences_50agree_4568",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "2bc74008ba651b04658cc7377657f2062550e644be4a1c462f5efee4202cf92c"
+    },
+    {
+      "diag_id": "d109",
+      "record_id": "sentences_50agree_1399",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "4a030271b154590ece5392dbb0e93422d674396ea4ce8f88963c599270e08ad2"
+    },
+    {
+      "diag_id": "d110",
+      "record_id": "sentences_50agree_0568",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "ac80fb15c61f9f99b04d0dc327df00bd2b4fec5ef0e3c498333e09fd1be00934"
+    },
+    {
+      "diag_id": "d111",
+      "record_id": "sentences_50agree_0575",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "4fbdc225f548260c2d35e60d2896bc50edfea6072c320eb0830a23937c75555a"
+    },
+    {
+      "diag_id": "d112",
+      "record_id": "sentences_50agree_3087",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "9b97d591ea0ee5054b50d37655f839fae68c92154d81450d33da9d52e1495b5e"
+    },
+    {
+      "diag_id": "d113",
+      "record_id": "sentences_50agree_3625",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "213d95208c80066915d9d4ae543879a9d8de8683c9cc50bed13b7a7faf2ada78"
+    },
+    {
+      "diag_id": "d114",
+      "record_id": "sentences_50agree_4757",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "044c82b6c0f3025ec9d33c948557e83f607134212c6ca012487f3b6c65699f11"
+    },
+    {
+      "diag_id": "d115",
+      "record_id": "sentences_50agree_2012",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "bacade63e5baf266ea2e31ebe13368242a5feea15486c45d8c5e7f6668858b84"
+    },
+    {
+      "diag_id": "d116",
+      "record_id": "sentences_50agree_0768",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "797d03f2f656c6c34261e863610268b99e4c45680552528a8440dfba892219b2"
+    },
+    {
+      "diag_id": "d117",
+      "record_id": "sentences_50agree_4407",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "0e39bd13d9e697e70bca666eeacce3667537f6362a5d83f92902934a5377cade"
+    },
+    {
+      "diag_id": "d118",
+      "record_id": "sentences_50agree_2642",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "7997b8d3d478ab0f75375391d781e0a7acf4f2731b023f08c407f9f659dd3c8c"
+    },
+    {
+      "diag_id": "d119",
+      "record_id": "sentences_50agree_4653",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "24f8984e0637e683706d9a12961b27f497e4ad050bf36cf827df76e9405f10cd"
+    },
+    {
+      "diag_id": "d120",
+      "record_id": "sentences_50agree_3192",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "9404cbcfb9e2b27fb0523706c8fe7ef32d55e6ca2d4ef7614469ef0f650532c6"
+    },
+    {
+      "diag_id": "d121",
+      "record_id": "sentences_50agree_4108",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "9fd8df20fbbb828e0517abb1b2fe9eeac7453f3df37f978e71968bd6b7908711"
+    },
+    {
+      "diag_id": "d122",
+      "record_id": "sentences_50agree_1745",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "0a4e2bd14915e663e18839b1382541b0f4b11f3b9f219bed1f577f8e9fbd849d"
+    },
+    {
+      "diag_id": "d123",
+      "record_id": "sentences_50agree_0562",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "6676a6e7c45765fcd696f9e37362c5eda44dab35f73debe5604d3102861cfb84"
+    },
+    {
+      "diag_id": "d124",
+      "record_id": "sentences_50agree_0114",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "e2c06be6f14758eb19e913dd515e128d9c809d419d9d09fae29d5accb1d970d5"
+    },
+    {
+      "diag_id": "d125",
+      "record_id": "sentences_50agree_3686",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1f49ce9c0c13817b459aa7d18765c122f670f129163192142af1c91bdcbd65b1"
+    },
+    {
+      "diag_id": "d126",
+      "record_id": "sentences_50agree_3478",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a4b73c157acf8566ee2654babcc4b4077b1cb92ad90df22ce992e14ad1915092"
+    },
+    {
+      "diag_id": "d127",
+      "record_id": "sentences_50agree_2509",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "83e9627bf2cd9d3c04a562f2ddbf5ab10adb86a572863969c7b7e348f3cd4b85"
+    },
+    {
+      "diag_id": "d128",
+      "record_id": "sentences_50agree_3963",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "99a52fbfd2e0ed113e9483a9b356525357f7186094341e9461a6da5996334816"
+    },
+    {
+      "diag_id": "d129",
+      "record_id": "sentences_50agree_1229",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "818608a5ddb5305cf5f4a6f8374c97666baaa7bbdc2681fd77c563489fbbd7e9"
+    },
+    {
+      "diag_id": "d130",
+      "record_id": "sentences_50agree_3464",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2fa4a955d495c5ac7e65a57452a1a9db664607a6d84a8cf4a9e0dd5103e93ff6"
+    },
+    {
+      "diag_id": "d131",
+      "record_id": "sentences_50agree_0752",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "db6458f24a5adc53ad7adc9d2e4132478e6ed99c72a4553791ebfd582615673e"
+    },
+    {
+      "diag_id": "d132",
+      "record_id": "sentences_50agree_3891",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "180b74905d29eb7581124a3789d48f5d225c4ccd235f483e5cec4168ab67b2ea"
+    },
+    {
+      "diag_id": "d133",
+      "record_id": "sentences_50agree_3267",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "83c8615c51db6d2fb97d7305686dae37ce579d0b1f8e9c82bc3f5fb4ebdeda5e"
+    },
+    {
+      "diag_id": "d134",
+      "record_id": "sentences_50agree_3762",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "04fd01e96bf4ba456e8c7805c53d13aeb141a4f8f460d988e3b3b58d7c087c45"
+    },
+    {
+      "diag_id": "d135",
+      "record_id": "sentences_50agree_0510",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "6667a57e957b13d5430fab7e41d027363a6e0b404056e782abb01a54c750a68f"
+    },
+    {
+      "diag_id": "d136",
+      "record_id": "sentences_50agree_4150",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "3da918f6e447769d360be329a38d243e13dd27e5220d4cdd6b49dbed29e8e24c"
+    },
+    {
+      "diag_id": "d137",
+      "record_id": "sentences_50agree_4668",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "4dbadc74d0d0b41e60a0019f8e056aef6e7799e6e9f94ecc3a807ba40678b079"
+    },
+    {
+      "diag_id": "d138",
+      "record_id": "sentences_50agree_1968",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "189fca3bbc1808d431fc80026b11692370c7a07bcc0248a02770ad35ff347ffc"
+    },
+    {
+      "diag_id": "d139",
+      "record_id": "sentences_50agree_3547",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "0b18ef9da6763205ec7d64f9f782f4ee40bb9aaed454b0e2a2af79314edf6390"
+    },
+    {
+      "diag_id": "d140",
+      "record_id": "sentences_50agree_4626",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "31b12fb42dc11eb54ff56af99976ac93a5e9e53557f6c6928af7a57d58d0ee83"
+    },
+    {
+      "diag_id": "d141",
+      "record_id": "sentences_50agree_4001",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a6fd19eb5ac22376c28ba67ca99020086c57095fccbe3eda6cf3f2f794284990"
+    },
+    {
+      "diag_id": "d142",
+      "record_id": "sentences_50agree_3699",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "bec387a88d71a052c1cff611ab3b4e537f3e17045a9683781f0d14db3249db18"
+    },
+    {
+      "diag_id": "d143",
+      "record_id": "sentences_50agree_2190",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "48ede126d7f860d890fc8a5f06af3fbf9aa3e4504ccd2595c07307ccf99854fa"
+    },
+    {
+      "diag_id": "d144",
+      "record_id": "sentences_50agree_4581",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "7373fc27d0b264a665f13c1edd179b123c41fbae1ba719fad6ad919ac142d355"
+    },
+    {
+      "diag_id": "d145",
+      "record_id": "sentences_50agree_0901",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "82d52b22a7d56b9410b3e2801ddb9cfdf511bf349f43646fca5eff4332a6263e"
+    },
+    {
+      "diag_id": "d146",
+      "record_id": "sentences_50agree_3102",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "d0edaf9c7ad2bda8c71b2db553fa248dbd0dcb71bc619508afc7cea83bc0a74f"
+    },
+    {
+      "diag_id": "d147",
+      "record_id": "sentences_50agree_2192",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "ae41d30601d1567446115b1d53756f6c4a231137b1ab621ad69469f9b9936bcc"
+    },
+    {
+      "diag_id": "d148",
+      "record_id": "sentences_50agree_1382",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "dd111daf481aacbd0fa0a585c8d85bcd284ada3a8435568cc5fe270d4e5d9e06"
+    },
+    {
+      "diag_id": "d149",
+      "record_id": "sentences_50agree_3935",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a6206639341203e4a78d0a9239491b17b14f010bc48d0fb58aaae5e9777e66b0"
+    },
+    {
+      "diag_id": "d150",
+      "record_id": "sentences_50agree_2824",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "24de14f8b140a836ee242328dd92ed2b6ac7f27659a7a437d4ad5ac917836470"
+    },
+    {
+      "diag_id": "d151",
+      "record_id": "sentences_50agree_4441",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "a5dc42ff58531a3e295a4b9e1a156eff0a09d8cf50bad032f77eea468a25854e"
+    },
+    {
+      "diag_id": "d152",
+      "record_id": "sentences_50agree_1225",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "be0ebeed5042c00e2eb785bd3a9279a5f2e56b8b0281e0db6d100dd90c8930ae"
+    },
+    {
+      "diag_id": "d153",
+      "record_id": "sentences_50agree_0123",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "7334e52a4d196967593011c4b21bcf03229cd4027be10aaa39f8aabf58e42cf1"
+    },
+    {
+      "diag_id": "d154",
+      "record_id": "sentences_50agree_1108",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "682928115d2bef4128fc92ff14f8a2942033d6927e4b5feaea42fbcbd586f897"
+    },
+    {
+      "diag_id": "d155",
+      "record_id": "sentences_50agree_4478",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "bbd83a35f17bcd9eaf5769b6b222f547716e59d14b4e9239f5f20f3c82761cd2"
+    },
+    {
+      "diag_id": "d156",
+      "record_id": "sentences_50agree_3195",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2cff090060a6da36777180c272137a58563a48a3b66ab5f3c656aa78cf838741"
+    },
+    {
+      "diag_id": "d157",
+      "record_id": "sentences_50agree_3645",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5afa239ee4f9341c093b90d4d8b4382ce21c2cfb33e8e1153a32b87ff79a15dd"
+    },
+    {
+      "diag_id": "d158",
+      "record_id": "sentences_50agree_0743",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "70c6cd6ea1533e86e44523c6b510755e8dd457fdcda91b8889b1dc9f4baf163a"
+    },
+    {
+      "diag_id": "d159",
+      "record_id": "sentences_50agree_2975",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "49ca317c34524fbf51f4fcc3b59ecde90d13d1050bbf69601e9da87a8ef58fd0"
+    },
+    {
+      "diag_id": "d160",
+      "record_id": "sentences_50agree_0171",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "614f7e135b6f9650ab5cd0cbc83a4acdc8b8c527a6d9990ab9c6f43e5f448037"
+    },
+    {
+      "diag_id": "d161",
+      "record_id": "sentences_50agree_0469",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "cf7b60c577d5acb3fed15467205e320015b2117c6d73757fde75d55e01969928"
+    },
+    {
+      "diag_id": "d162",
+      "record_id": "sentences_50agree_1337",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b928fe187adaa15e904ed42d3ee00610dff64a42ccc6991ac247c446455b0ff4"
+    },
+    {
+      "diag_id": "d163",
+      "record_id": "sentences_50agree_3746",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b9cd350c8a98e4b1dd5d50eff5d62099ca49b4e1476f9944f383e986a1d2a080"
+    },
+    {
+      "diag_id": "d164",
+      "record_id": "sentences_50agree_0889",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "65c00a6d5e990b4c910d266befb8365a03ba036eb31012f638920a6e07bed72b"
+    },
+    {
+      "diag_id": "d165",
+      "record_id": "sentences_50agree_2481",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "7128426b76350197cd59b52ee70db426edf02f2bfe56f0ea52b95f95b21f0a8f"
+    },
+    {
+      "diag_id": "d166",
+      "record_id": "sentences_50agree_2909",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "bcfa9fa8170569e29937775f90ada1ebb4bbd41f07a46b49d5813751ad8b7e3c"
+    },
+    {
+      "diag_id": "d167",
+      "record_id": "sentences_50agree_0880",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "cf71ae3949869f05fee65ee880ebcdb610e7339483e3c59018706f24ac08093c"
+    },
+    {
+      "diag_id": "d168",
+      "record_id": "sentences_50agree_3071",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "27ad99f051e0fc7e2a680a0f2f9f4e1c7e2b83cdbddb4007a4254900dc5d97b3"
+    },
+    {
+      "diag_id": "d169",
+      "record_id": "sentences_50agree_4103",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a256952aab671d77a08619193ade26ae83301eaf224c26bb09bd4227257de67b"
+    },
+    {
+      "diag_id": "d170",
+      "record_id": "sentences_50agree_0907",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "d1d9d7414c5ea5c2c389c98041c340a38228a14805effc202a982c436d64d3b8"
+    },
+    {
+      "diag_id": "d171",
+      "record_id": "sentences_50agree_1145",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "4e0fef746f942ec80e3928b7bcd8867f09c9ab4a9f15c4adf1f47766b6496bbe"
+    },
+    {
+      "diag_id": "d172",
+      "record_id": "sentences_50agree_1205",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "0afb62949ef9e52d0c647e7d6dd9b208b8e69dde32c4a326650a17a9be336f9d"
+    },
+    {
+      "diag_id": "d173",
+      "record_id": "sentences_50agree_1245",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "55c8663b2a599744fd354f38aa6f9f1ba77570c179c6a2f244f8e70a8021902d"
+    },
+    {
+      "diag_id": "d174",
+      "record_id": "sentences_50agree_0749",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "3d3c2fbdf8648c65ef142962a530e4440cb091b24b94f03ade6e758ee3da9e9e"
+    },
+    {
+      "diag_id": "d175",
+      "record_id": "sentences_50agree_4495",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "bfd8a40e831f784c78695654f4efa37f4fd149435ca7f398a4a23af25985094d"
+    },
+    {
+      "diag_id": "d176",
+      "record_id": "sentences_50agree_3353",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "fc7f771c63920a9185d78458d7b63efec81c2428b5dbdec0e7f43d2fded29cfc"
+    },
+    {
+      "diag_id": "d177",
+      "record_id": "sentences_50agree_3399",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2c18c8f5e99201890b52b6368226ddb1fe02d6925ee4f6113962f256a31515ca"
+    },
+    {
+      "diag_id": "d178",
+      "record_id": "sentences_50agree_2678",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5b0dc6d71f089e7d4b4715e83baf693619f89966c68c721050df42dc63d6aaa5"
+    },
+    {
+      "diag_id": "d179",
+      "record_id": "sentences_50agree_1228",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "c2146dd9698756323c22a9b8a3cdbe2ca1cf9ffb5d84028203ca173c5c452714"
+    },
+    {
+      "diag_id": "d180",
+      "record_id": "sentences_50agree_0564",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "6c71d29fb32060736577fddb71310574e7ab5ed55a819615f5b80976b2ab99e7"
+    },
+    {
+      "diag_id": "d181",
+      "record_id": "sentences_50agree_3504",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "c63509efe8ff9cd0808318dc7f671a284b0de15701fb7d69f56cd4879c779ccb"
+    },
+    {
+      "diag_id": "d182",
+      "record_id": "sentences_50agree_3169",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "0db276dc312db131964b0db3e330f5f02a65bb38ecc9761639f22f46638382a5"
+    },
+    {
+      "diag_id": "d183",
+      "record_id": "sentences_50agree_3581",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "ee08442e486d79bf0e854a763aeaafd83f1ca67c31348d836f4e0b3a27b36414"
+    },
+    {
+      "diag_id": "d184",
+      "record_id": "sentences_50agree_4371",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "fa8dd3a6aa47b59ad639bd3c3e4da0cee91e76aa5d12db18854bc02910b7d7d4"
+    },
+    {
+      "diag_id": "d185",
+      "record_id": "sentences_50agree_2680",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b1010c73df98d8d12fa018e7b6123321413327490604a3de238a07c6bf472f23"
+    },
+    {
+      "diag_id": "d186",
+      "record_id": "sentences_50agree_1977",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "9fa192372ca0458795cb31d7151357937b1848ceccb581efa99ce18bf4bad2fe"
+    },
+    {
+      "diag_id": "d187",
+      "record_id": "sentences_50agree_0076",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "85809e72e7bbad73604009ea7717ec6de619c6187dfcaadceba171ef55e6a529"
+    },
+    {
+      "diag_id": "d188",
+      "record_id": "sentences_50agree_0822",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "830747424097eb6bda36f05814d1f2a1e1eea6fdb7349df454ce2a5760403aaa"
+    },
+    {
+      "diag_id": "d189",
+      "record_id": "sentences_50agree_4836",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "ec6321b1a07bb5c6afe26ab3ee03617fa1a8806e27c6046c99c9f5d123674696"
+    },
+    {
+      "diag_id": "d190",
+      "record_id": "sentences_50agree_0016",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "2a0495e8c0b2285be67a1c7b1bfb3f1812657814078234d58ee10168b761c3e4"
+    },
+    {
+      "diag_id": "d191",
+      "record_id": "sentences_50agree_1307",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "986a62920d60ddbd74529da94c62833d169380078aabf9ca56a8a203c092660a"
+    },
+    {
+      "diag_id": "d192",
+      "record_id": "sentences_50agree_0784",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "3ebaaee81c2a8a222a8cbb47668c45fe0e1a45784ba5d631ba210e3b93aaaf02"
+    },
+    {
+      "diag_id": "d193",
+      "record_id": "sentences_50agree_1802",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "0104412aee9fd58a7dcec7f6bfda2aaea0e7dbe9e3d91bc1855044167f2e8c87"
+    },
+    {
+      "diag_id": "d194",
+      "record_id": "sentences_50agree_0987",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "fd5e1e874640bdbcae0ca7faad800516ba10404facc864e3f77a8693374b46d0"
+    },
+    {
+      "diag_id": "d195",
+      "record_id": "sentences_50agree_2991",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "71e297d4182952ad3585debf9e218bac3f993131a42cea276b964436e78f313b"
+    },
+    {
+      "diag_id": "d196",
+      "record_id": "sentences_50agree_2472",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2202b4797350065aa14e046ec5c1c28ca96a2fb6f1de3025e216fb33c4d980c7"
+    },
+    {
+      "diag_id": "d197",
+      "record_id": "sentences_50agree_0352",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "f1bd11201bcab837b5ee17e3159e2b0e081b56ba5c3846728f24ebcb1457745d"
+    },
+    {
+      "diag_id": "d198",
+      "record_id": "sentences_50agree_2540",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "ec881744653d07dac4e9e99514c52b5612d715f1069a29707f68123fdda28ca4"
+    },
+    {
+      "diag_id": "d199",
+      "record_id": "sentences_50agree_0881",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "85da53e1384db02930076fda661b3971855382610f07e2fc23f13e728ee61b02"
+    },
+    {
+      "diag_id": "d200",
+      "record_id": "sentences_50agree_4196",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "60276d14849c0e25512c538775b24b5c980692a25142cf536750f2006f5c4ad9"
+    },
+    {
+      "diag_id": "d201",
+      "record_id": "sentences_50agree_3929",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "64010444fce56e9bef5c73b8ccb0c8b56e6703bf642b2a6f73c1cc182caf6cf2"
+    },
+    {
+      "diag_id": "d202",
+      "record_id": "sentences_50agree_0244",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "0ea48d87f11de8320f15e9de8a24cd2921918548e3302e69a0393023c5e3da09"
+    },
+    {
+      "diag_id": "d203",
+      "record_id": "sentences_50agree_1451",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "300525604032218654070250dbc1683fce904d7fff2c94188c0216708332552d"
+    },
+    {
+      "diag_id": "d204",
+      "record_id": "sentences_50agree_4420",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "6077e9f1e70df93771c7442d29db4249ba4b5fbb1261a2e4f20a15c89a1d818f"
+    },
+    {
+      "diag_id": "d205",
+      "record_id": "sentences_50agree_2696",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1356439fe73045f141e6e4c9f7f748a14ac7d7abe90b6e62a69c5c2932709315"
+    },
+    {
+      "diag_id": "d206",
+      "record_id": "sentences_50agree_0260",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "ad721161e0a734ae3756f3ae3eee45f0557ca56cecc1b0c6fc5273ecb2764869"
+    },
+    {
+      "diag_id": "d207",
+      "record_id": "sentences_50agree_3627",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "d7af403cb5e490c0556dcf83037a2fdaf684d204307eee7eddf996a41ec611de"
+    },
+    {
+      "diag_id": "d208",
+      "record_id": "sentences_50agree_4133",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "7cedf07f23d9c43881e57fe6b3a66468f4fd3c6f2de42c3d5cd545a9fdf6648b"
+    },
+    {
+      "diag_id": "d209",
+      "record_id": "sentences_50agree_1105",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "081e8c14320738eb382ef299af0f762b16951dc7cd72bc94bbd663c71ae5dc59"
+    },
+    {
+      "diag_id": "d210",
+      "record_id": "sentences_50agree_0640",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "f7f1a58c6dffa402ac80f4465a9d184d0233cf95907683bb071e7add7e31426c"
+    },
+    {
+      "diag_id": "d211",
+      "record_id": "sentences_50agree_0651",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "a8566c0bb1952e88ae26b5288c64230ac563fc673cc272e30231e334ac907a65"
+    },
+    {
+      "diag_id": "d212",
+      "record_id": "sentences_50agree_3756",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b0250317464a270dde1baee8e03b616d5b2570ed9389eaadef79f519f11c4cba"
+    },
+    {
+      "diag_id": "d213",
+      "record_id": "sentences_50agree_4529",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "71866d802677f002d2649b8ab9f50136f007a279ac99b8da12612466384c9e36"
+    },
+    {
+      "diag_id": "d214",
+      "record_id": "sentences_50agree_0993",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1cd82dfde44b9c1cccedc2cce8aa8c78b9630fdd8e59540f451d19a6f5e7bdd3"
+    },
+    {
+      "diag_id": "d215",
+      "record_id": "sentences_50agree_3201",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "c0ca3969b3da0b3c3ae674a7b9920f9678abddc2489230290bc02a8ac63e1851"
+    },
+    {
+      "diag_id": "d216",
+      "record_id": "sentences_50agree_3187",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2a3bdb69741242692f475921da0fde29e3fc5fa981abb6f79ce1579375476dfa"
+    },
+    {
+      "diag_id": "d217",
+      "record_id": "sentences_50agree_2070",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1481f4e07ef665b6e1ef09b25e8e63aa60d8d1f69edb615100ef2a5b9cdf20c4"
+    },
+    {
+      "diag_id": "d218",
+      "record_id": "sentences_50agree_0946",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "2386475c4e903303590c01d54c16ed652e28ae7f9247237ac24902ca8192721a"
+    },
+    {
+      "diag_id": "d219",
+      "record_id": "sentences_50agree_2578",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "d8e7a00cb7d2938ccf0856f62f67b01eaf13760861dafe204fd27f94c92b607e"
+    },
+    {
+      "diag_id": "d220",
+      "record_id": "sentences_50agree_4358",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2b89c4fc64166f0427f787d3867da018fea0f5e45062da32438826d2552ee060"
+    },
+    {
+      "diag_id": "d221",
+      "record_id": "sentences_50agree_1092",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "8492d61aed24919e012d202c653951715986a4271ad1dc8b26ae6afbb132e5ef"
+    },
+    {
+      "diag_id": "d222",
+      "record_id": "sentences_50agree_1329",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "3e97da767ef47586d0a7fd2e1e9fb88a9c9af1bb497861b56cf588c212ce02cc"
+    },
+    {
+      "diag_id": "d223",
+      "record_id": "sentences_50agree_4199",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "ce1471ee7276aa1b37971a047bfc6ebf7eb6958f1c65718dbc1a2649b51e204b"
+    },
+    {
+      "diag_id": "d224",
+      "record_id": "sentences_50agree_2533",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "b3d8ae072936ec91747342f5397df8529d11be51a91d2ac87ee28d71ae4bcef6"
+    },
+    {
+      "diag_id": "d225",
+      "record_id": "sentences_50agree_0437",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "34dec5d99e2c1b495e47258b928f2c00c8e9ddcbaba407fa64c84b538f49efdd"
+    },
+    {
+      "diag_id": "d226",
+      "record_id": "sentences_50agree_3828",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "733d4deadeeb6f5be0af591b5d50026651852bd9a1661338eb8eaf46c57ef17e"
+    },
+    {
+      "diag_id": "d227",
+      "record_id": "sentences_50agree_3223",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2e0b37eed97d502f931dc3fd9efb014201737937bcc66af06c1b12b492bda65f"
+    },
+    {
+      "diag_id": "d228",
+      "record_id": "sentences_50agree_1383",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b069f46ed1bdf52ad20fa4e3b2b8451d94360c134dd55024ecee34486d5be9e2"
+    },
+    {
+      "diag_id": "d229",
+      "record_id": "sentences_50agree_1600",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b46f4d32278fa9f29e15f671b5ed4edc2dd4e157e46fb4440d49e831677d2d3c"
+    },
+    {
+      "diag_id": "d230",
+      "record_id": "sentences_50agree_2030",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "07b87ec660e7ff603763226912cfa64eb040fe50ce42b88428b19eeff3918112"
+    },
+    {
+      "diag_id": "d231",
+      "record_id": "sentences_50agree_3442",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "9ba62fbbaadcb11d7b83918485a795bb9383633cda0e551dde42e688d02c7b48"
+    },
+    {
+      "diag_id": "d232",
+      "record_id": "sentences_50agree_2413",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "34c41e7006f4c25581122ac4c03dff43daadbf6637d734a1753971163e1241ab"
+    },
+    {
+      "diag_id": "d233",
+      "record_id": "sentences_50agree_3744",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "34feb33645fa083588470856ea65baffe1295233e35dc29cb3aa28385f08d30a"
+    },
+    {
+      "diag_id": "d234",
+      "record_id": "sentences_50agree_3493",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "e1010400c202ac24114218437350b0ac330c4900c4a3b084ffa1d5154d63e69d"
+    },
+    {
+      "diag_id": "d235",
+      "record_id": "sentences_50agree_0245",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "ab25a3e905bbb15d1925b82852c329671042bdf97a59246c56d8f7fc0ba8338f"
+    },
+    {
+      "diag_id": "d236",
+      "record_id": "sentences_50agree_1186",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "05a7bd580288d7ad02962fce68789f3fa367cce4c4ad5d959a6c75271071223f"
+    },
+    {
+      "diag_id": "d237",
+      "record_id": "sentences_50agree_3815",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1254484c3f6f48712232425bb0be85aff97153575a48c49245f440975387cba2"
+    },
+    {
+      "diag_id": "d238",
+      "record_id": "sentences_50agree_4258",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b610b00eed0a4561dc98b447cd39baf96c1137cdf29dee7adb11329add0e4d38"
+    },
+    {
+      "diag_id": "d239",
+      "record_id": "sentences_50agree_1859",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "6983351bc38a26ca33200fda62027df5e4d279e765aec1f95841d2a2237439f4"
+    },
+    {
+      "diag_id": "d240",
+      "record_id": "sentences_50agree_1706",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "237439e3cfe7bf8d2249362702057e84df10861a7d1ae2c88bbc9fdac65991f6"
+    },
+    {
+      "diag_id": "d241",
+      "record_id": "sentences_50agree_3333",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "73df7a12441f3ff1eef4837f26bf027eeb94b9cddca55bace4b976dcabd01b17"
+    },
+    {
+      "diag_id": "d242",
+      "record_id": "sentences_50agree_2916",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "c8f7697e2f0a61258602598972369a6639ba9c4c63df53b27fd7f3847a619376"
+    },
+    {
+      "diag_id": "d243",
+      "record_id": "sentences_50agree_4595",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "dd74ee26269151e89a164cd6de97a8f1a558c1e3d3ae3a1c932f015e8677f160"
+    },
+    {
+      "diag_id": "d244",
+      "record_id": "sentences_50agree_3191",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "ae78a7bf756d470c59eb1bab792c5e4549b1f086289fcfc6edda1624d5aed1f2"
+    },
+    {
+      "diag_id": "d245",
+      "record_id": "sentences_50agree_1252",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "bfdff7c5d613b9d0f0af01809e20e136a9ea6b795d2a2e8e30f597628d220c2b"
+    },
+    {
+      "diag_id": "d246",
+      "record_id": "sentences_50agree_0077",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "9fb4d846413f5e84e0de113ca39cfd951efe65138f420b57068e18e7187928c8"
+    },
+    {
+      "diag_id": "d247",
+      "record_id": "sentences_50agree_4612",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "e6c695de86e381ac883c9c4942d6586690abc8924176d1d95d330df9109081a4"
+    },
+    {
+      "diag_id": "d248",
+      "record_id": "sentences_50agree_0306",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "b1f48dfbc96e77c93bc8e88855284b69279a2d0f7889c582aa46eaccfd9ce3c0"
+    },
+    {
+      "diag_id": "d249",
+      "record_id": "sentences_50agree_1064",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "1ff1ae14534617ae26a52da4cdfddb379436cd33049e7156de462708c2a1c1cf"
+    },
+    {
+      "diag_id": "d250",
+      "record_id": "sentences_50agree_3306",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "cb17c754a4f8e224cad4508877a862a3349e57e6e358dc51575cb059358af45e"
+    },
+    {
+      "diag_id": "d251",
+      "record_id": "sentences_50agree_1899",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "bd655ab5513b6c2aed51c753bbca455a92677a8768fe5a9e840e46a6a313ceaf"
+    },
+    {
+      "diag_id": "d252",
+      "record_id": "sentences_50agree_3068",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "27f2e2c1ffc3cff8ae0c38cd5ffbaeedc5106ad62708a3eb5005165193efb2e3"
+    },
+    {
+      "diag_id": "d253",
+      "record_id": "sentences_50agree_1795",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a13d1b700bfcddbe88cc1c82c75a2a7bea2b343c555ad55efd3d673e3a47d321"
+    },
+    {
+      "diag_id": "d254",
+      "record_id": "sentences_50agree_3764",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2a0e7d5b5c095b51993296fe280eddc94a9be9c5d5b06effff15453f1d95e3b0"
+    },
+    {
+      "diag_id": "d255",
+      "record_id": "sentences_50agree_1707",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "e8a8d61e4e9dd8b3c0b24701f69d83e03a4cac8ce113bfc4f64143ad1e17b7d1"
+    },
+    {
+      "diag_id": "d256",
+      "record_id": "sentences_50agree_1468",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "30b7c75ca8995a82fb68fb5e5910b9b03ee1d112b67ce2f4ddfd0cd847f5ab6f"
+    },
+    {
+      "diag_id": "d257",
+      "record_id": "sentences_50agree_2507",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "924e46bba5f9fbd58e60a1961d8037d66d9458c30786d2c987c6b3caad2ebd75"
+    },
+    {
+      "diag_id": "d258",
+      "record_id": "sentences_50agree_1404",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "2835a3bc7c4da3504332fe7b21782d0a2411f73e35ce71767bc9d496f6b973b3"
+    },
+    {
+      "diag_id": "d259",
+      "record_id": "sentences_50agree_0803",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "5b2b8106ceee8187d94469d26ec91d6428deb9d63170e36c4a5077848cc5d415"
+    },
+    {
+      "diag_id": "d260",
+      "record_id": "sentences_50agree_1954",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "a459f78dd73978ef14b7670df6eb1149c19d39559fcf311bbc624363372cec49"
+    },
+    {
+      "diag_id": "d261",
+      "record_id": "sentences_50agree_3664",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "fd901607856223ab0a72301554bbe4afcae3e1e93dfdb5aa8d674fd017c62d3b"
+    },
+    {
+      "diag_id": "d262",
+      "record_id": "sentences_50agree_4503",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "10aac44f12fc992a867ef4c29ea60966903233f19e44ab5d42f0b93a5efeaa68"
+    },
+    {
+      "diag_id": "d263",
+      "record_id": "sentences_50agree_3881",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "c320d5fd539c85e93529f9fcf4ff6f6371f86aabf4ed6eda7fc0ebb819f95383"
+    },
+    {
+      "diag_id": "d264",
+      "record_id": "sentences_50agree_3796",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b56a70764573e09f9174fe958ff852078f7d6e1ca1d2bffc9fd4e619a074e030"
+    },
+    {
+      "diag_id": "d265",
+      "record_id": "sentences_50agree_3270",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "4f61e9f9109f06762d6c83d94863f4fadbff0b142355f3fdf03976211ff96b77"
+    },
+    {
+      "diag_id": "d266",
+      "record_id": "sentences_50agree_2299",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "90245d2fe451964128e937af2c0e0f4dcd8d0f471b551418dc8eda889b5b6ade"
+    },
+    {
+      "diag_id": "d267",
+      "record_id": "sentences_50agree_2857",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b978758f017dbd77b5913d02a298e04574f271e50b843bd1d066085020e7f89d"
+    },
+    {
+      "diag_id": "d268",
+      "record_id": "sentences_50agree_0126",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "e5f2051b131de48aa824c42b99069a7af74531b6823686d4e77205168dd71417"
+    },
+    {
+      "diag_id": "d269",
+      "record_id": "sentences_50agree_3642",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "fad1a1d3ab22acb69ebe27abda866d3044aa1921ce500282f055137ac0753a7a"
+    },
+    {
+      "diag_id": "d270",
+      "record_id": "sentences_50agree_4814",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "00f331590bc74ed9cd796cf0d6bbf02b42714f461171861979895c9fc46896d7"
+    },
+    {
+      "diag_id": "d271",
+      "record_id": "sentences_50agree_3857",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "a97d99e200294162d68e6007188a1f327406fd083aa44bf91483f76be2b6cb8b"
+    },
+    {
+      "diag_id": "d272",
+      "record_id": "sentences_50agree_3503",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "c7a1963a2e6a20fa21a5839e54d2b449d039c1f3287aa0ccd5249cd90b0be12d"
+    },
+    {
+      "diag_id": "d273",
+      "record_id": "sentences_50agree_3370",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "5e8fc21220de027a7c8d1976d1c644dcdebbee025f265310d148b3449c71fae2"
+    },
+    {
+      "diag_id": "d274",
+      "record_id": "sentences_50agree_4468",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "ef80b5edfa2c12f4904894bbb66c69b4c55349e39a166bcb1f27b9ac50a26239"
+    },
+    {
+      "diag_id": "d275",
+      "record_id": "sentences_50agree_4288",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "dadcd719f10ebfa1f1d7d2ad32cc5b81dc0a34f02ae4082f65a41fec55ac6fb7"
+    },
+    {
+      "diag_id": "d276",
+      "record_id": "sentences_50agree_3798",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "cd3ff73e59d0ad4a3c5769b42609ab3ae9c453f8c11b89db37ffd2979c93643b"
+    },
+    {
+      "diag_id": "d277",
+      "record_id": "sentences_50agree_1200",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "88981e94e727a4998ae85556bfb5bfc8a1034c837fc66502f4c496b9217c376e"
+    },
+    {
+      "diag_id": "d278",
+      "record_id": "sentences_50agree_4482",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "4512d9bc91757f8bb1348e70748a87e1ef01490991eca6774f80a16e8052ca21"
+    },
+    {
+      "diag_id": "d279",
+      "record_id": "sentences_50agree_1185",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "8b71ea880e023a53509b250cc60d91b814528b0bbc5710707e185891c00a3329"
+    },
+    {
+      "diag_id": "d280",
+      "record_id": "sentences_50agree_0593",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "d1a9f5002081a347f412048353fa9b4518c9803bde885ba6be501b18db0374f4"
+    },
+    {
+      "diag_id": "d281",
+      "record_id": "sentences_50agree_0985",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "b5d669fcd0b1a7b6fe176d89d137c14631ed296fcd012ac29a9abd92c732eb57"
+    },
+    {
+      "diag_id": "d282",
+      "record_id": "sentences_50agree_4782",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "e3263557e5b80ae425e6f347aaf3bdb0825b21924b81efd43f466fa5900608cb"
+    },
+    {
+      "diag_id": "d283",
+      "record_id": "sentences_50agree_3806",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "dd4379448620b362487b0d4f403ddc2e5795e9ec95d44e997d9282e6c0174e13"
+    },
+    {
+      "diag_id": "d284",
+      "record_id": "sentences_50agree_0850",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "5cd66e353bcd00f908f3dea179937f4468c3f9b1d232f35061dfccf447acc38e"
+    },
+    {
+      "diag_id": "d285",
+      "record_id": "sentences_50agree_1041",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "aba92086ba2fc4cae4c2b58f0e01fe0501772a2d9ab3106a1ccd4a3a9ad55b8b"
+    },
+    {
+      "diag_id": "d286",
+      "record_id": "sentences_50agree_1279",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "aa938e26fe535778c78307ffaf510756d929466af28f7f8a5db7ed43b0ffcf2a"
+    },
+    {
+      "diag_id": "d287",
+      "record_id": "sentences_50agree_4313",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "6bdee6ac485e4efe0addf95d97c9979cc22fb71617de928a3e3b85a51dea8866"
+    },
+    {
+      "diag_id": "d288",
+      "record_id": "sentences_50agree_3411",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "9eb6502f9ddf695f8dca377ef699714d2f5ae99fdb31e61ed5a88c342822cad7"
+    },
+    {
+      "diag_id": "d289",
+      "record_id": "sentences_50agree_4604",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "b7ec6c8cdc998ac7a8844c548a9d0253e13279a6c653fa97470ecfe27e30b87b"
+    },
+    {
+      "diag_id": "d290",
+      "record_id": "sentences_50agree_2834",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "f4748c84820f8716f71b3dcc05b8bef7bc2bf16a485529ac3ff54c8d19b3075a"
+    },
+    {
+      "diag_id": "d291",
+      "record_id": "sentences_50agree_0358",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "6278b54c7715e367a0d62c7dcb1ca0235749d22c08e49d80b843e9e2c20c2645"
+    },
+    {
+      "diag_id": "d292",
+      "record_id": "sentences_50agree_2177",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "5c969c01b541b3eadd19e95ef75db26744b92e859869a0810ab7b8883325a6c9"
+    },
+    {
+      "diag_id": "d293",
+      "record_id": "sentences_50agree_3247",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "9d86a0c69530bdb3973fa6b4e1a11200c85b871c37ed9134e43a8f6c764847ce"
+    },
+    {
+      "diag_id": "d294",
+      "record_id": "sentences_50agree_0569",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "641d23d2de521240841af9b6ba6f84094cba9b2f5e2c7e9fd32719735cddd532"
+    },
+    {
+      "diag_id": "d295",
+      "record_id": "sentences_50agree_2205",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "3ccc4acd18a733ceb187a038302747cfae78568008c869c5a8fb12b328bf8981"
+    },
+    {
+      "diag_id": "d296",
+      "record_id": "sentences_50agree_4093",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "588938b77aebb6b119d9a0d7188565f15ff868ffd6ffcd2bf32a9ec9e2c5cb37"
+    },
+    {
+      "diag_id": "d297",
+      "record_id": "sentences_50agree_4744",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "26cf3a093ffcce55ca3e6567d32ceebc77a8dfdf38c862159741d29529bd5160"
+    },
+    {
+      "diag_id": "d298",
+      "record_id": "sentences_50agree_3672",
+      "label": 1,
+      "label_name": "neutral",
+      "sha256": "e9256e2b713a076afa19f3c3fa27c2e295e62c1e19ba58eefb70f1821cebab20"
+    },
+    {
+      "diag_id": "d299",
+      "record_id": "sentences_50agree_3230",
+      "label": 0,
+      "label_name": "negative",
+      "sha256": "dff144c0ea643326c7e7e122d29dde838a40cd4532f5d65093d0486f687e5f7d"
+    },
+    {
+      "diag_id": "d300",
+      "record_id": "sentences_50agree_1409",
+      "label": 2,
+      "label_name": "positive",
+      "sha256": "b5f014b63f324050b5d7504db45c59fded42f6c82a72ab1968685194c98f6f7b"
+    }
+  ]
+}

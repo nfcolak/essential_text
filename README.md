@@ -85,17 +85,150 @@ All datasets are downloaded from pinned upstream commits with SHA-256 verificati
 
 ---
 
-## Quick Start (Google Colab & Local Smoke Tests)
+## Step 2 Results: Controlled Transformer Fine-Tuning (RQ2)
 
-### 1. Run Full Step 1 Pipeline in Google Colab
-Click the badge at the top of this README or run via CLI inside a Colab runtime:
+Full artifacts: [`results/step2/`](results/step2/) ([`STEP2_REPORT.md`](results/step2/STEP2_REPORT.md),
+`summary_metrics.json`, `statistical_comparisons.json`, `attribution.json`, figures) and one directory per run in
+`results/step2/runs/<config>/<model>/<tag>/` with `result.json` and per-sentence probabilities (`predictions.npz`).
+
+**Protocol.** `google-bert/bert-base-uncased` (general domain) and `yiyanghkust/finbert-pretrain` (financial MLM,
+no sentiment supervision) are fine-tuned with one shared recipe (AdamW, lr 2e-5, batch 16, max length 128, 10%
+warmup, weight decay 0.01, gradient clipping 1.0, at most 5 epochs, patience 2) on the identical locked Step 1
+splits of each PhraseBank agreement level, 3 seeds each (42, 100, 2026). The epoch is chosen by validation Macro-F1
+only; test and SEntFiN 1.0 are scored once. Off-the-shelf `ProsusAI/finbert` was trained on PhraseBank, so it is
+scored **only** on SEntFiN 1.0 (zero-shot). All four Step 1 baselines were refit in the same environment so every
+paired test compares predictions on identical sentences. Hugging Face revisions are pinned in
+`src/transformer/finetune.py`. Runs: 61 (12 baseline, 18 fine-tune, 30 CV, 1 zero-shot) on Apple MPS.
+
+### In-domain test Macro-F1 (mean ± sd over 3 seeds; baselines are deterministic)
+
+| Model | allagree (N = 339) | 75agree (N = 518) | 50agree (N = 726) |
+|---|---:|---:|---:|
+| VADER | 0.753 | 0.646 | 0.645 |
+| Loughran–McDonald | 0.636 | 0.597 | 0.567 |
+| TF-IDF + Logistic Regression | 0.869 | 0.776 | 0.762 |
+| TF-IDF + Linear SVM | 0.870 | 0.791 | 0.768 |
+| `bert-base-uncased` | **0.974 ± 0.013** | **0.906 ± 0.004** | **0.872 ± 0.007** |
+| FinBERT-MLM (`finbert-pretrain`) | 0.944 ± 0.005 | 0.894 ± 0.004 | 0.846 ± 0.014 |
+
+### External SEntFiN 1.0 Macro-F1 (N = 9,460; models trained on each PhraseBank level)
+
+| Model | trained on allagree | trained on 75agree | trained on 50agree |
+|---|---:|---:|---:|
+| VADER | 0.624 | 0.625 | 0.624 |
+| Loughran–McDonald | 0.585 | 0.585 | 0.585 |
+| TF-IDF + Logistic Regression | 0.451 | 0.475 | 0.475 |
+| TF-IDF + Linear SVM | 0.450 | 0.472 | 0.469 |
+| `bert-base-uncased` | 0.685 ± 0.021 | 0.676 ± 0.012 | 0.676 ± 0.018 |
+| FinBERT-MLM | 0.669 ± 0.028 | 0.653 ± 0.047 | 0.704 ± 0.010 |
+| `ProsusAI/finbert` (off-the-shelf, zero-shot) | **0.727** | | |
+
+5-fold CV on the allagree training partition (scored on the fold used for epoch selection, so optimistic):
+`bert-base-uncased` 0.950 ± 0.013, FinBERT-MLM 0.952 ± 0.013, TF-IDF + SVM 0.816 ± 0.028, VADER 0.716 ± 0.041.
+
+### Architecture vs. domain-pretraining attribution (ΔMacro-F1, seed-averaged paired bootstrap, B = 10,000)
+
+`Δarch` = BERT − best TF-IDF model (chosen by **validation** Macro-F1; SVM in every config).
+`Δdomain` = FinBERT-MLM − BERT.
+
+| Config | Split | Δarch [95% CI] | Δdomain [95% CI] |
+|---|---|---:|---:|
+| allagree | test | +0.104 [+0.064, +0.148] | −0.029 [−0.050, −0.012] |
+| 75agree | test | +0.116 [+0.074, +0.159] | −0.012 [−0.036, +0.011] |
+| 50agree | test | +0.104 [+0.069, +0.141] | −0.026 [−0.051, −0.002] |
+| allagree | SEntFiN | +0.235 [+0.224, +0.247] | −0.016 [−0.024, −0.008] |
+| 75agree | SEntFiN | +0.203 [+0.192, +0.215] | −0.023 [−0.030, −0.015] |
+| 50agree | SEntFiN | +0.207 [+0.195, +0.219] | +0.028 [+0.019, +0.036] |
+
+**Reading.** Almost all of the gain over traditional baselines comes from the contextual architecture (+0.10
+in-domain, +0.20 to +0.24 on SEntFiN). Under one shared recipe, domain-adaptive MLM pretraining does not add to
+it in-domain (−0.01 to −0.03) and helps out-of-distribution only when trained on the noisiest 50agree labels
+(+0.028). The off-the-shelf `ProsusAI/finbert` is best on SEntFiN, but it also had more sentiment supervision
+(all of PhraseBank), so it is a reference point rather than a controlled comparison. Pairwise McNemar tests with
+Holm–Bonferroni correction and per-seed p-values are in `results/step2/statistical_comparisons.json` and the report.
+
+![Macro-F1 by config](results/step2/step2_macro_f1_by_config.png)
+![Attribution](results/step2/step2_attribution.png)
+
+---
+
+## Step 3 Results: Linguistic Phenomenon Attribution (RQ1, RQ3)
+
+Full artifacts: [`results/step3/`](results/step3/) ([`STEP3_REPORT.md`](results/step3/STEP3_REPORT.md),
+`annotation_agreement.json`, `phenomenon_analysis.json`, figures) and the diagnostic set in
+[`data/diagnostic/`](data/diagnostic/).
+
+**Diagnostic set.** 300 sentences, label-stratified, drawn only from the `sentences_50agree` **test** split
+(seed 42; 37 negative, 178 neutral, 85 positive). Each sentence is tagged for five phenomena: financial
+terminology, negation, hedging, numerical comparison, context-dependent polarity
+([`annotation/GUIDELINES.md`](annotation/GUIDELINES.md)).
+
+**Annotators are LLMs, not humans.** Annotator A was Claude Sonnet 5.5 and annotator B was Gemini 3.8 Flash.
+Each worked blind (text only: no gold label, no prediction, no rule tags, never the other annotator's file) and
+tagged every sentence by reading it, not by keyword scripts. A third reference is the rule-based tagger
+`src/analysis/phenomena.py`. Consensus tags require both annotators.
+
+| Phenomenon | κ A–B | κ A–rules | κ B–rules | consensus n |
+|---|---:|---:|---:|---:|
+| financial terminology | 0.961 | 0.925 | 0.961 | 13 |
+| negation | 1.000 | 1.000 | 1.000 | 10 |
+| hedging | 0.893 | 0.778 | 0.827 | 53 |
+| numerical comparison | 0.965 | 0.852 | 0.840 | 50 |
+| context-dependent | 0.593 | 0.855 | 0.662 | 3 |
+
+Agreement is high partly because the guideline defines each phenomenon with explicit cue words, so both LLMs
+and the rule tagger look at the same cues. Subsets with n < 20 are flagged as unreliable in the report.
+
+**Error rate on the diagnostic subset (seed mean).** Hedging (n = 53): VADER 0.264, TF-IDF + SVM 0.208,
+BERT 0.088, FinBERT-MLM 0.138. Numerical comparison (n = 50): VADER 0.400, Loughran–McDonald 0.520,
+TF-IDF + SVM 0.120, BERT 0.033, FinBERT-MLM 0.067. The architecture effect on hedging is +0.119 accuracy
+[+0.019, +0.233]; the domain effect is not distinguishable from zero on any phenomenon in this subset.
+
+**RQ1 (accounting terms → false negative).** On SEntFiN 1.0, gold-neutral headlines that contain a financial
+term (rule tags, n = 150) are labelled negative far more often than other neutral headlines (n = 3,259):
+VADER 0.367 vs 0.021, Loughran–McDonald 0.513 vs 0.043, BERT 0.358 vs 0.035, FinBERT-MLM 0.311 vs 0.048
+(models trained on allagree), ProsusAI 0.393 vs 0.110. Inside PhraseBank test splits the same subsets hold only
+7–15 sentences, too few for a conclusion.
+
+![Phenomenon error heatmap](results/step3/step3_phenomenon_error_heatmap.png)
+![RQ1 accounting terms](results/step3/step3_rq1_accounting_terms.png)
+
+### Caveats
+
+- One shared fine-tuning recipe, no per-model hyperparameter search; FinBERT-MLM may need a different learning
+  rate or more epochs, so `Δdomain` measures "domain pretraining under the BERT recipe".
+- The Step 1 tables come from Google Colab. Rerun locally, the splits and lexicon baselines are identical, while
+  TF-IDF Macro-F1 moves by up to 0.012 (different scikit-learn/scipy builds). Steps 2 and 3 use the local refit
+  throughout, which is why their TF-IDF numbers differ slightly from Step 1.
+- Six fine-tunes first hit Apple MPS "Insufficient Memory" command-buffer errors (four with NaN loss). They were
+  quarantined and rerun in fresh processes with zero errors; the trainer now fails a run on a non-finite loss.
+
+---
+
+## Quick Start
+
+### 1. Step 1 (data, splits, baselines)
 ```bash
-python3 colab/run_step1_colab.py --mode full --execute --out-dir results/step1 --splits-dir data/splits --bootstrap-samples 10000
+python3 colab/run_step1_colab.py --mode full --execute --fpb-config all --out-dir results/step1 --splits-dir data/splits --bootstrap-samples 10000
+```
+`--fpb-config all` writes the locked manifests of all three agreement levels to `data/splits/` (git-ignored,
+regenerated deterministically; Step 2 runs record their SHA-256).
+
+### 2. Step 2 (fine-tuning matrix, resumable; prints the plan without `--execute`)
+```bash
+python3 scripts/run_step2.py --stage all --execute
+python3 scripts/summarize_step2.py --runs-dir results/step2/runs --out-dir results/step2 --bootstrap-samples 10000
 ```
 
-### 2. Run Local Unit & Smoke Tests (Zero Network / Synthetic Fixtures)
+### 3. Step 3 (diagnostic set and phenomenon analysis)
 ```bash
-python3 -m unittest discover -s tests -v
+python3 scripts/build_diagnostic_set.py --execute          # 300-sentence subset, key and rule tags
+python3 scripts/run_step3_analysis.py                      # needs data/diagnostic/annotations_{a,b}.csv
+```
+
+### 4. Unit tests (offline, synthetic fixtures, tiny local models)
+```bash
+HF_HUB_OFFLINE=1 python3 -m unittest discover -s tests -v
 ```
 
 ---
@@ -105,32 +238,33 @@ python3 -m unittest discover -s tests -v
 ```text
 essential_text/
 ├── AGENTS.md                  # Shared project rules and leakage-free methodology constraints
-├── README.md                  # Project overview, Step 1 results, and usage instructions
-├── requirements.txt           # Python dependencies for Colab execution
+├── README.md                  # Project overview, results, and usage instructions
+├── requirements.txt           # Python dependencies (incl. torch, transformers)
+├── annotation/
+│   └── GUIDELINES.md          # Five-phenomenon annotation guideline
 ├── data/
-│   └── dataset_audit_verdict.json  # Pinned SHA-256 dataset provenance and row-level audit
-├── proposal/
-│   ├── proposal.tex           # Revised project proposal LaTeX source
-│   ├── proposal.pdf           # Compiled revised 2-page project proposal
-│   ├── methodology_and_rubric_audit.md
-│   ├── rubric_compliance_matrix.md
-│   ├── CHANGELOG_AND_RESPONSE.md
-│   └── verify_proposal.py     # Automated proposal verification suite
+│   ├── dataset_audit_verdict.json  # Pinned SHA-256 dataset provenance and row-level audit
+│   └── diagnostic/            # 300-sentence diagnostic set: items, key, rule tags, LLM annotations A/B
+├── proposal/                  # Revised proposal (LaTeX/PDF), rubric audit, verification script
 ├── results/
-│   └── step1/                 # Full Step 1 evaluation outputs from Google Colab
-│       ├── STEP1_REPORT.md
-│       ├── summary_metrics.json
-│       ├── statistical_comparisons.json
-│       ├── rq1_confusion_matrices.png
-│       └── rq1_neutral_to_negative_comparison.png
+│   ├── step1/                 # Step 1 outputs from Google Colab
+│   ├── step2/                 # Step 2 report, statistics, attribution, figures, runs/ with per-run predictions
+│   └── step3/                 # Step 3 report, agreement, phenomenon analysis, figures
+├── scripts/
+│   ├── run_step2.py           # Resumable Step 2 run matrix (baselines, fine-tune, CV, zero-shot)
+│   ├── summarize_step2.py     # Multi-seed statistics, McNemar + Holm, bootstrap, attribution, figures
+│   ├── build_diagnostic_set.py
+│   └── run_step3_analysis.py  # Cohen's kappa, per-phenomenon errors and attribution, RQ1 analysis
 ├── src/
-│   ├── data/                  # SHA-256 hashing, Jaccard >= 0.80 clustering, split locking & dedup
+│   ├── data/                  # Hashing, Jaccard >= 0.80 clustering, split locking, dedup, IO helpers
 │   ├── baselines/             # Tier 1 (VADER, Loughran-McDonald) & Tier 2 (TF-IDF + LR/SVM)
-│   └── evaluation/            # Classification metrics, ECE, McNemar's test, paired bootstrap CIs
+│   ├── transformer/           # Tier 3 fine-tuning and zero-shot scoring (PyTorch + Hugging Face)
+│   ├── evaluation/            # Metrics, ECE, McNemar, paired bootstrap, multi-seed statistics
+│   └── analysis/              # Phenomenon tagger and per-phenomenon attribution
 ├── colab/
-│   └── run_step1_colab.py     # End-to-end Step 1 pipeline runner (smoke & Colab full mode)
+│   └── run_step1_colab.py     # End-to-end Step 1 pipeline runner (smoke & full mode)
 ├── notebooks/
 │   ├── build_step1_notebook.py
 │   └── step1_data_and_baselines_colab.ipynb
-└── tests/                     # Fast unittest suite (44 tests on synthetic financial fixtures)
+└── tests/                     # Offline unittest suite (114 tests)
 ```

@@ -1,0 +1,167 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_75agree",
+  "model_key": "tfidf_logreg",
+  "model_name": "TF-IDF + Logistic Regression",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "model_type": "logreg",
+    "C": 10.0,
+    "class_weight": "balanced",
+    "val_macro_f1": 0.8223104569907878
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.861003861003861,
+      "macro_f1": 0.8223104569907878,
+      "per_class": {
+        "negative": {
+          "precision": 0.9333333333333333,
+          "recall": 0.6666666666666666,
+          "f1": 0.7777777777777778,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.8996960486322189,
+          "recall": 0.9192546583850931,
+          "f1": 0.9093701996927803,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.75,
+          "recall": 0.8120300751879699,
+          "f1": 0.779783393501805,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          42,
+          9,
+          12
+        ],
+        [
+          2,
+          296,
+          24
+        ],
+        [
+          1,
+          24,
+          108
+        ]
+      ],
+      "neutral_to_negative_rate": 0.006211180124223602,
+      "ece": 0.04697980055707764
+    },
+    "test": {
+      "accuracy": 0.8204633204633205,
+      "macro_f1": 0.7762195868534746,
+      "per_class": {
+        "negative": {
+          "precision": 0.7818181818181819,
+          "recall": 0.6825396825396826,
+          "f1": 0.7288135593220338,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.8765432098765432,
+          "recall": 0.8819875776397516,
+          "f1": 0.8792569659442725,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.7050359712230215,
+          "recall": 0.7368421052631579,
+          "f1": 0.7205882352941176,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          43,
+          11,
+          9
+        ],
+        [
+          6,
+          284,
+          32
+        ],
+        [
+          6,
+          29,
+          98
+        ]
+      ],
+      "neutral_to_negative_rate": 0.018633540372670808,
+      "ece": 0.04650923891647442
+    },
+    "external": {
+      "accuracy": 0.5132135306553911,
+      "macro_f1": 0.47492306261736683,
+      "per_class": {
+        "negative": {
+          "precision": 0.7956577266922095,
+          "recall": 0.23074074074074075,
+          "f1": 0.35773758254378407,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4537987679671458,
+          "recall": 0.8427691405104136,
+          "f1": 0.5899383983572896,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.5792838874680307,
+          "recall": 0.40555058191584603,
+          "f1": 0.47709320695102686,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          623,
+          1559,
+          518
+        ],
+        [
+          67,
+          2873,
+          469
+        ],
+        [
+          93,
+          1899,
+          1359
+        ]
+      ],
+      "neutral_to_negative_rate": 0.0196538574361983,
+      "ece": 0.18897223582227438
+    }
+  },
+  "n": {
+    "train": 2417,
+    "val": 518,
+    "test": 518,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "3a40318cdb1be7e064ba4e6d129798e5165408f48661708aa0361a96ab492d2d",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.963956356048584,
+  "timestamp": "2026-10-20T11:09:04.033831+00:00"
+}

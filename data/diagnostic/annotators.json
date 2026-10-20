@@ -1,0 +1,5 @@
+{
+  "a": "Claude Sonnet 5.5 (claude-sonnet-5-5, Anthropic) - LLM agent, not a human annotator",
+  "b": "Gemini 3.8 Flash (gemini-3.8-flash-medium, Google, via Antigravity CLI) - LLM agent, not a human annotator",
+  "protocol": "Blind and independent: each agent saw only diagnostic_items.csv (diag_id,text) and annotation/GUIDELINES.md, never the other annotator's file, gold labels, model predictions or rule tags. Each read the sentences in batches of about 25 and wrote tags by hand (no keyword scripts; verified from the agent transcripts). Run on 2026-10-20 in OpenSpec workspace annotate-diagnostic-set."
+}

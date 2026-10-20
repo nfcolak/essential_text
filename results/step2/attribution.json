@@ -1,0 +1,287 @@
+{
+  "definition": {
+    "delta_arch": "bert_base - tfidf_best (tfidf_best chosen by validation Macro-F1)",
+    "delta_domain": "finbert_mlm - bert_base"
+  },
+  "configs": {
+    "sentences_allagree": {
+      "tfidf_best": "tfidf_svm",
+      "tfidf_val_macro_f1": {
+        "tfidf_logreg": 0.8778331350717975,
+        "tfidf_svm": 0.8845310519139843
+      },
+      "test": {
+        "n": 339,
+        "delta_arch": {
+          "macro_f1": {
+            "delta": 0.1040416467281059,
+            "ci_low": 0.0642122676964638,
+            "ci_high": 0.14838159058483608,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 339,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": 0.0806293018682398,
+            "ci_low": 0.051130776794493626,
+            "ci_high": 0.11307767944936087,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 339,
+            "metric": "accuracy"
+          }
+        },
+        "delta_domain": {
+          "macro_f1": {
+            "delta": -0.02947045363261447,
+            "ci_low": -0.050221590025420565,
+            "ci_high": -0.01199244190529117,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 339,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": -0.02163225172074712,
+            "ci_low": -0.036381514257620484,
+            "ci_high": -0.008849557522123908,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 339,
+            "metric": "accuracy"
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "delta_arch": {
+          "macro_f1": {
+            "delta": 0.2353151208319602,
+            "ci_low": 0.22355979305698787,
+            "ci_high": 0.24667671598096821,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": 0.18590556730091612,
+            "ci_low": 0.17522815362931649,
+            "ci_high": 0.1962649753347427,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "accuracy"
+          }
+        },
+        "delta_domain": {
+          "macro_f1": {
+            "delta": -0.01590320657474087,
+            "ci_low": -0.023813113402393997,
+            "ci_high": -0.008087058646382558,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": -0.013847780126849951,
+            "ci_low": -0.02131782945736438,
+            "ci_high": -0.006448202959830951,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "accuracy"
+          }
+        }
+      }
+    },
+    "sentences_75agree": {
+      "tfidf_best": "tfidf_svm",
+      "tfidf_val_macro_f1": {
+        "tfidf_logreg": 0.8223104569907878,
+        "tfidf_svm": 0.8272184470496078
+      },
+      "test": {
+        "n": 518,
+        "delta_arch": {
+          "macro_f1": {
+            "delta": 0.11577453630363932,
+            "ci_low": 0.07381528753510451,
+            "ci_high": 0.1594563491333026,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 518,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": 0.08751608751608753,
+            "ci_low": 0.05855855855855863,
+            "ci_high": 0.11711711711711703,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 518,
+            "metric": "accuracy"
+          }
+        },
+        "delta_domain": {
+          "macro_f1": {
+            "delta": -0.012463197378956403,
+            "ci_low": -0.0361514803216753,
+            "ci_high": 0.011300810867566652,
+            "p_value": 0.3042,
+            "B": 10000,
+            "n": 518,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": -0.010939510939510955,
+            "ci_low": -0.027027027027027084,
+            "ci_high": 0.0045045045045044585,
+            "p_value": 0.1802,
+            "B": 10000,
+            "n": 518,
+            "metric": "accuracy"
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "delta_arch": {
+          "macro_f1": {
+            "delta": 0.2033967421925012,
+            "ci_low": 0.19237028731492992,
+            "ci_high": 0.21474151483790957,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": 0.16180408738548258,
+            "ci_low": 0.15186751233262863,
+            "ci_high": 0.17198819591261463,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "accuracy"
+          }
+        },
+        "delta_domain": {
+          "macro_f1": {
+            "delta": -0.022630507205850692,
+            "ci_low": -0.030344693370795782,
+            "ci_high": -0.014738257605461647,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": -0.017230443974629917,
+            "ci_low": -0.024419485553206652,
+            "ci_high": -0.009865221987314845,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "accuracy"
+          }
+        }
+      }
+    },
+    "sentences_50agree": {
+      "tfidf_best": "tfidf_svm",
+      "tfidf_val_macro_f1": {
+        "tfidf_logreg": 0.7295162690887067,
+        "tfidf_svm": 0.7368214459945391
+      },
+      "test": {
+        "n": 726,
+        "delta_arch": {
+          "macro_f1": {
+            "delta": 0.10365690561790009,
+            "ci_low": 0.06867082739267805,
+            "ci_high": 0.14131751648204532,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 726,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": 0.07667584940312211,
+            "ci_low": 0.04820936639118467,
+            "ci_high": 0.10606060606060597,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 726,
+            "metric": "accuracy"
+          }
+        },
+        "delta_domain": {
+          "macro_f1": {
+            "delta": -0.026059912340389846,
+            "ci_low": -0.05078097765452046,
+            "ci_high": -0.001565784871989577,
+            "p_value": 0.0366,
+            "B": 10000,
+            "n": 726,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": -0.014233241505968719,
+            "ci_low": -0.03305785123966953,
+            "ci_high": 0.0045913682277318735,
+            "p_value": 0.1396,
+            "B": 10000,
+            "n": 726,
+            "metric": "accuracy"
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "delta_arch": {
+          "macro_f1": {
+            "delta": 0.20713778077397565,
+            "ci_low": 0.19538453502261097,
+            "ci_high": 0.21871967690545546,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": 0.17589852008456663,
+            "ci_low": 0.16504580690627213,
+            "ci_high": 0.18653981677237486,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "accuracy"
+          }
+        },
+        "delta_domain": {
+          "macro_f1": {
+            "delta": 0.027678747979446805,
+            "ci_low": 0.019492867407058957,
+            "ci_high": 0.035869052490639666,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "macro_f1"
+          },
+          "accuracy": {
+            "delta": 0.024770965468639883,
+            "ci_low": 0.016842847075405284,
+            "ci_high": 0.03273431994362219,
+            "p_value": 0.0,
+            "B": 10000,
+            "n": 9460,
+            "metric": "accuracy"
+          }
+        }
+      }
+    }
+  }
+}
