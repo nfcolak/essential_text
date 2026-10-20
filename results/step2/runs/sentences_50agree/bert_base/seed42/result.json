@@ -1,0 +1,205 @@
+{
+  "status": "completed",
+  "stage": "finetune",
+  "config": "sentences_50agree",
+  "model_key": "bert_base",
+  "model_name": "google-bert/bert-base-uncased",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "max_length": 128,
+    "batch_size": 16,
+    "eval_batch_size": 64,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_epochs": 5,
+    "patience": 2,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "device": null
+  },
+  "best_epoch": 4,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.7449032702957684,
+      "val_macro_f1": 0.8016539721095958,
+      "seconds": 72.93560194969177
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.3462798446592576,
+      "val_macro_f1": 0.8311313475050088,
+      "seconds": 66.3935558795929
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.188006915024675,
+      "val_macro_f1": 0.8319083357338432,
+      "seconds": 77.50632500648499
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.09210294485092163,
+      "val_macro_f1": 0.837652506293577,
+      "seconds": 70.7153627872467
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.04486435975325909,
+      "val_macro_f1": 0.8368146229880643,
+      "seconds": 59.6263313293457
+    }
+  ],
+  "metrics": {
+    "val": {
+      "accuracy": 0.8626373626373627,
+      "macro_f1": 0.837652506293577,
+      "per_class": {
+        "negative": {
+          "precision": 0.8452380952380952,
+          "recall": 0.7717391304347826,
+          "f1": 0.8068181818181818,
+          "support": 92
+        },
+        "neutral": {
+          "precision": 0.8695652173913043,
+          "recall": 0.9259259259259259,
+          "f1": 0.8968609865470852,
+          "support": 432
+        },
+        "positive": {
+          "precision": 0.8532608695652174,
+          "recall": 0.7696078431372549,
+          "f1": 0.8092783505154639,
+          "support": 204
+        }
+      },
+      "confusion_matrix": [
+        [
+          71,
+          16,
+          5
+        ],
+        [
+          10,
+          400,
+          22
+        ],
+        [
+          3,
+          44,
+          157
+        ]
+      ],
+      "neutral_to_negative_rate": 0.023148148148148147,
+      "ece": 0.10953065855326238
+    },
+    "test": {
+      "accuracy": 0.8911845730027548,
+      "macro_f1": 0.879561821302484,
+      "per_class": {
+        "negative": {
+          "precision": 0.9259259259259259,
+          "recall": 0.8333333333333334,
+          "f1": 0.8771929824561403,
+          "support": 90
+        },
+        "neutral": {
+          "precision": 0.9203747072599532,
+          "recall": 0.913953488372093,
+          "f1": 0.9171528588098017,
+          "support": 430
+        },
+        "positive": {
+          "precision": 0.8211009174311926,
+          "recall": 0.8689320388349514,
+          "f1": 0.8443396226415094,
+          "support": 206
+        }
+      },
+      "confusion_matrix": [
+        [
+          75,
+          9,
+          6
+        ],
+        [
+          4,
+          393,
+          33
+        ],
+        [
+          2,
+          25,
+          179
+        ]
+      ],
+      "neutral_to_negative_rate": 0.009302325581395349,
+      "ece": 0.07929091163739026
+    },
+    "external": {
+      "accuracy": 0.6801268498942917,
+      "macro_f1": 0.6804592284915022,
+      "per_class": {
+        "negative": {
+          "precision": 0.8176441596845737,
+          "recall": 0.6144444444444445,
+          "f1": 0.7016282512159019,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.5636294464523492,
+          "recall": 0.8691698445291874,
+          "f1": 0.6838218324486499,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.8334866605335787,
+          "recall": 0.540734109221128,
+          "f1": 0.6559276018099548,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1659,
+          934,
+          107
+        ],
+        [
+          191,
+          2963,
+          255
+        ],
+        [
+          179,
+          1360,
+          1812
+        ]
+      ],
+      "neutral_to_negative_rate": 0.056028160750953356,
+      "ece": 0.27231232517932485
+    }
+  },
+  "n": {
+    "train": 3392,
+    "val": 728,
+    "test": 726,
+    "external": 9460
+  },
+  "device": "mps",
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "d11c912d24b8ea2db5c553bd042d204a96e9ed21d61459b1719d47dde4e195e2",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 364.670569896698,
+  "timestamp": "2026-10-20T11:49:01.613576+00:00"
+}

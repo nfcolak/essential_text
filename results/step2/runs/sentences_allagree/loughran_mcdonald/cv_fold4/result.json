@@ -1,0 +1,82 @@
+{
+  "status": "completed",
+  "stage": "cv",
+  "config": "sentences_allagree",
+  "model_key": "loughran_mcdonald",
+  "model_name": "Loughran-McDonald",
+  "seed": 42,
+  "fold": 4,
+  "hyperparams": {
+    "threshold_neg": -0.0298,
+    "threshold_pos": 0.02,
+    "val_macro_f1": 0.6487680757204762
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.7539432176656151,
+      "macro_f1": 0.6487680757204762,
+      "per_class": {
+        "negative": {
+          "precision": 0.59375,
+          "recall": 0.4523809523809524,
+          "f1": 0.5135135135135135,
+          "support": 42
+        },
+        "neutral": {
+          "precision": 0.7929515418502202,
+          "recall": 0.9230769230769231,
+          "f1": 0.8530805687203792,
+          "support": 195
+        },
+        "positive": {
+          "precision": 0.6896551724137931,
+          "recall": 0.5,
+          "f1": 0.5797101449275363,
+          "support": 80
+        }
+      },
+      "confusion_matrix": [
+        [
+          19,
+          16,
+          7
+        ],
+        [
+          4,
+          180,
+          11
+        ],
+        [
+          9,
+          31,
+          40
+        ]
+      ],
+      "neutral_to_negative_rate": 0.020512820512820513,
+      "ece": 0.23441416664454465
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1268,
+    "val": 317,
+    "test": null,
+    "external": null
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 0.013278007507324219,
+  "timestamp": "2026-10-20T12:38:31.429741+00:00"
+}

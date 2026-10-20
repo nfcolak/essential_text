@@ -1,0 +1,72 @@
+{
+  "annotators": {
+    "a": "Claude Sonnet 5.5 (claude-sonnet-5-5, Anthropic) - LLM agent, not a human annotator",
+    "b": "Gemini 3.8 Flash (gemini-3.8-flash-medium, Google, via Antigravity CLI) - LLM agent, not a human annotator",
+    "note": "two independent LLM annotators, not human"
+  },
+  "config": "sentences_50agree",
+  "n_items": 300,
+  "consensus_mode": "both",
+  "agreement": {
+    "financial_terminology": {
+      "n": 300,
+      "kappa_ab": 0.9612202688728029,
+      "kappa_a_rule": 0.9250749250749246,
+      "kappa_b_rule": 0.9612202688728029,
+      "raw_agreement_ab": 0.9966666666666667,
+      "raw_agreement_a_rule": 0.9933333333333333,
+      "raw_agreement_b_rule": 0.9966666666666667,
+      "prevalence_a": 0.04666666666666667,
+      "prevalence_b": 0.043333333333333335,
+      "prevalence_rule": 0.04666666666666667
+    },
+    "negation": {
+      "n": 300,
+      "kappa_ab": 1.0,
+      "kappa_a_rule": 1.0,
+      "kappa_b_rule": 1.0,
+      "raw_agreement_ab": 1.0,
+      "raw_agreement_a_rule": 1.0,
+      "raw_agreement_b_rule": 1.0,
+      "prevalence_a": 0.03333333333333333,
+      "prevalence_b": 0.03333333333333333,
+      "prevalence_rule": 0.03333333333333333
+    },
+    "hedging": {
+      "n": 300,
+      "kappa_ab": 0.8931395597349862,
+      "kappa_a_rule": 0.7778297474275022,
+      "kappa_b_rule": 0.8274010432648049,
+      "raw_agreement_ab": 0.9666666666666667,
+      "raw_agreement_a_rule": 0.9366666666666666,
+      "raw_agreement_b_rule": 0.95,
+      "prevalence_a": 0.19,
+      "prevalence_b": 0.19666666666666666,
+      "prevalence_rule": 0.15333333333333332
+    },
+    "numerical_comparison": {
+      "n": 300,
+      "kappa_ab": 0.9648382559774965,
+      "kappa_a_rule": 0.8521607278241091,
+      "kappa_b_rule": 0.8396334478808707,
+      "raw_agreement_ab": 0.99,
+      "raw_agreement_a_rule": 0.9566666666666667,
+      "raw_agreement_b_rule": 0.9533333333333334,
+      "prevalence_a": 0.17333333333333334,
+      "prevalence_b": 0.17,
+      "prevalence_rule": 0.18333333333333332
+    },
+    "context_dependent": {
+      "n": 300,
+      "kappa_ab": 0.593495934959351,
+      "kappa_a_rule": 0.8554913294797704,
+      "kappa_b_rule": 0.6621621621621626,
+      "raw_agreement_ab": 0.9866666666666667,
+      "raw_agreement_a_rule": 0.9966666666666667,
+      "raw_agreement_b_rule": 0.99,
+      "prevalence_a": 0.013333333333333334,
+      "prevalence_b": 0.02,
+      "prevalence_rule": 0.01
+    }
+  }
+}

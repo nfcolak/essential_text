@@ -24,3 +24,6 @@ models/
 data/raw/
 data/cache/
 wandb/
+
+# Locked split manifests (regenerated deterministically by colab/run_step1_colab.py; SHA-256 recorded in results)
+data/splits/

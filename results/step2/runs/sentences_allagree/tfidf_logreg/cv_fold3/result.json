@@ -1,0 +1,83 @@
+{
+  "status": "completed",
+  "stage": "cv",
+  "config": "sentences_allagree",
+  "model_key": "tfidf_logreg",
+  "model_name": "TF-IDF + Logistic Regression",
+  "seed": 42,
+  "fold": 3,
+  "hyperparams": {
+    "model_type": "logreg",
+    "C": 10.0,
+    "class_weight": null,
+    "val_macro_f1": 0.8203903017515506
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.8643533123028391,
+      "macro_f1": 0.8203903017515506,
+      "per_class": {
+        "negative": {
+          "precision": 1.0,
+          "recall": 0.6428571428571429,
+          "f1": 0.782608695652174,
+          "support": 42
+        },
+        "neutral": {
+          "precision": 0.8597285067873304,
+          "recall": 0.9743589743589743,
+          "f1": 0.9134615384615384,
+          "support": 195
+        },
+        "positive": {
+          "precision": 0.8260869565217391,
+          "recall": 0.7125,
+          "f1": 0.7651006711409396,
+          "support": 80
+        }
+      },
+      "confusion_matrix": [
+        [
+          27,
+          8,
+          7
+        ],
+        [
+          0,
+          190,
+          5
+        ],
+        [
+          0,
+          23,
+          57
+        ]
+      ],
+      "neutral_to_negative_rate": 0.0,
+      "ece": 0.03056840180222544
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1268,
+    "val": 317,
+    "test": null,
+    "external": null
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 0.9252333641052246,
+  "timestamp": "2026-10-20T12:38:35.298618+00:00"
+}

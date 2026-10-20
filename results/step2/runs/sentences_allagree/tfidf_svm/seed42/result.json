@@ -1,0 +1,167 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_allagree",
+  "model_key": "tfidf_svm",
+  "model_name": "TF-IDF + Linear SVM",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "model_type": "svm",
+    "C": 10.0,
+    "class_weight": null,
+    "val_macro_f1": 0.8845310519139843
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.9117647058823529,
+      "macro_f1": 0.8845310519139843,
+      "per_class": {
+        "negative": {
+          "precision": 0.9459459459459459,
+          "recall": 0.7777777777777778,
+          "f1": 0.8536585365853658,
+          "support": 45
+        },
+        "neutral": {
+          "precision": 0.9035087719298246,
+          "recall": 0.9856459330143541,
+          "f1": 0.9427917620137299,
+          "support": 209
+        },
+        "positive": {
+          "precision": 0.92,
+          "recall": 0.8023255813953488,
+          "f1": 0.8571428571428571,
+          "support": 86
+        }
+      },
+      "confusion_matrix": [
+        [
+          35,
+          6,
+          4
+        ],
+        [
+          1,
+          206,
+          2
+        ],
+        [
+          1,
+          16,
+          69
+        ]
+      ],
+      "neutral_to_negative_rate": 0.004784688995215311,
+      "ece": 0.03773545158260005
+    },
+    "test": {
+      "accuracy": 0.8997050147492626,
+      "macro_f1": 0.8698879551820727,
+      "per_class": {
+        "negative": {
+          "precision": 0.9230769230769231,
+          "recall": 0.782608695652174,
+          "f1": 0.8470588235294118,
+          "support": 46
+        },
+        "neutral": {
+          "precision": 0.9216589861751152,
+          "recall": 0.9615384615384616,
+          "f1": 0.9411764705882353,
+          "support": 208
+        },
+        "positive": {
+          "precision": 0.8313253012048193,
+          "recall": 0.8117647058823529,
+          "f1": 0.8214285714285714,
+          "support": 85
+        }
+      },
+      "confusion_matrix": [
+        [
+          36,
+          3,
+          7
+        ],
+        [
+          1,
+          200,
+          7
+        ],
+        [
+          2,
+          14,
+          69
+        ]
+      ],
+      "neutral_to_negative_rate": 0.004807692307692308,
+      "ece": 0.0389494037909494
+    },
+    "external": {
+      "accuracy": 0.4982029598308668,
+      "macro_f1": 0.44969563219021885,
+      "per_class": {
+        "negative": {
+          "precision": 0.8240866035182679,
+          "recall": 0.22555555555555556,
+          "f1": 0.3541727246292527,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.43013130615065653,
+          "recall": 0.9128776767380463,
+          "f1": 0.5847425779782037,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.6675639300134589,
+          "recall": 0.2960310355117875,
+          "f1": 0.41017159396320035,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          609,
+          1855,
+          236
+        ],
+        [
+          39,
+          3112,
+          258
+        ],
+        [
+          91,
+          2268,
+          992
+        ]
+      ],
+      "neutral_to_negative_rate": 0.011440305074801994,
+      "ece": 0.39629775456154825
+    }
+  },
+  "n": {
+    "train": 1585,
+    "val": 340,
+    "test": 339,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.29121899604797363,
+  "timestamp": "2026-10-20T11:09:02.884849+00:00"
+}
