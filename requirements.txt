@@ -4,6 +4,8 @@ scipy>=1.10.0
 scikit-learn>=1.2.0
 
 # NLP and Hugging Face ecosystem
+torch>=2.1.0
+transformers>=4.40.0
 datasets>=2.14.0
 huggingface_hub>=0.17.0
 vaderSentiment>=3.3.2
