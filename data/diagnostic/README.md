@@ -15,6 +15,7 @@ so the folder carries the dataset's licence (see "Licence and citation" below).
 | `annotations_b.csv` | Tags from annotator B (LLM, see below), same format and same v2 re-annotation of `context_dependent`. |
 | `annotators.json` | Who the two annotators are and the blind protocol they followed. |
 | `annotations_a_v1.csv`, `annotations_b_v1.csv` | The first-round annotations, kept for the record, before the widened `context_dependent` definition (guideline v1). |
+| `context_v2_a.csv`, `context_v2_b.csv` | The raw v2 re-annotation of `context_dependent` only (`diag_id,context_dependent,note`), merged into `annotations_{a,b}.csv`. |
 
 The tagging rules are in `annotation/GUIDELINES.md` (repository root, changelog at its end).
 

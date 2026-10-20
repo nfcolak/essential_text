@@ -240,14 +240,14 @@ def _heatmap(path: str, rates: dict, title: str) -> None:
             value = rates[name]["models"][model]["tag1"]["balanced_error"]
             if value is not None:
                 grid[i, j] = value
-    fig, ax = plt.subplots(figsize=(10.5, 5.8), facecolor="white")
+    fig, ax = plt.subplots(figsize=(8.5, 6.2), facecolor="white")
     ax.set_facecolor("white")
-    im = ax.imshow(grid, cmap="viridis_r", vmin=0, vmax=max(0.05, np.nanmax(grid)
+    im = ax.imshow(grid, cmap="viridis_r", aspect="auto", vmin=0, vmax=max(0.05, np.nanmax(grid)
                                                              if np.isfinite(grid).any() else 1))
     ax.set_xticks(range(len(PHENOMENA)))
     ax.set_xticklabels(
-        [f"{p.replace('_', ' ')}\n(n={rates[p]['n_tag1']}{'*' if rates[p]['small_n'] else ''})"
-         for p in PHENOMENA], fontsize=8, rotation=30, ha="right", rotation_mode="anchor")
+        [f"{p.replace('_', chr(10))}\n(n={rates[p]['n_tag1']}{'*' if rates[p]['small_n'] else ''})"
+         for p in PHENOMENA], fontsize=8)
     ax.set_yticks(range(len(MODELS)))
     ax.set_yticklabels([_name(m) for m in MODELS], fontsize=8)
     for i in range(len(MODELS)):
@@ -257,7 +257,7 @@ def _heatmap(path: str, rates: dict, title: str) -> None:
                 ax.text(j, i, f"{grid[i, j]:.2f}", ha="center", va="center",
                         color="white" if grid[i, j] > 0.45 * vmax else "black", fontsize=8)
     fig.colorbar(im, ax=ax, label="label-balanced error on tagged sentences")
-    ax.set_title(title + "  (* = fewer than 20 tagged sentences)", fontsize=10)
+    ax.set_title(title + "\n(* = fewer than 20 tagged sentences)", fontsize=10)
     fig.tight_layout()
     fig.savefig(path, dpi=150, facecolor="white")
     plt.close(fig)
@@ -496,7 +496,9 @@ def _report(path: str, *, annotators: dict, key: dict, agreement: dict, mode: st
     lines += [
         "![error heatmap](step3_phenomenon_error_heatmap.png)",
         "",
-        "The heatmap shows the label-balanced error.",
+        "The heatmap shows the label-balanced error. When a gold class has only a few sentences in a subset (see "
+        "the gold-label mix), resamples that drop or keep that class change the average a lot, so the balanced "
+        "interval can be wide and need not be centred on the point value; read those cells with the raw rate.",
         "",
         "## 3. Architecture versus domain-pretraining attribution",
         "",

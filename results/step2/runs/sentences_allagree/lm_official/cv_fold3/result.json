@@ -1,0 +1,89 @@
+{
+  "status": "completed",
+  "stage": "cv",
+  "config": "sentences_allagree",
+  "model_key": "lm_official",
+  "model_name": "Loughran-McDonald (official Master Dictionary)",
+  "seed": 42,
+  "fold": 3,
+  "hyperparams": {
+    "thresholds": [
+      -1e-09,
+      1e-09
+    ],
+    "tuned": false,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    }
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6624605678233438,
+      "macro_f1": 0.5011788046838926,
+      "per_class": {
+        "negative": {
+          "precision": 0.425,
+          "recall": 0.40476190476190477,
+          "f1": 0.4146341463414634,
+          "support": 42
+        },
+        "neutral": {
+          "precision": 0.689922480620155,
+          "recall": 0.9128205128205128,
+          "f1": 0.7858719646799117,
+          "support": 195
+        },
+        "positive": {
+          "precision": 0.7894736842105263,
+          "recall": 0.1875,
+          "f1": 0.30303030303030304,
+          "support": 80
+        }
+      },
+      "confusion_matrix": [
+        [
+          17,
+          22,
+          3
+        ],
+        [
+          16,
+          178,
+          1
+        ],
+        [
+          7,
+          58,
+          15
+        ]
+      ],
+      "neutral_to_negative_rate": 0.08205128205128205,
+      "ece": 0.26384093295136457
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1268,
+    "val": 317,
+    "test": null,
+    "external": null
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 0.1413412094116211,
+  "timestamp": "2026-10-20T14:22:47.672731+00:00"
+}

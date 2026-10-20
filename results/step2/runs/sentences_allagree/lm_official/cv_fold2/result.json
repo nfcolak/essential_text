@@ -1,0 +1,89 @@
+{
+  "status": "completed",
+  "stage": "cv",
+  "config": "sentences_allagree",
+  "model_key": "lm_official",
+  "model_name": "Loughran-McDonald (official Master Dictionary)",
+  "seed": 42,
+  "fold": 2,
+  "hyperparams": {
+    "thresholds": [
+      -1e-09,
+      1e-09
+    ],
+    "tuned": false,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    }
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6529968454258676,
+      "macro_f1": 0.4885937843799138,
+      "per_class": {
+        "negative": {
+          "precision": 0.5116279069767442,
+          "recall": 0.5238095238095238,
+          "f1": 0.5176470588235295,
+          "support": 42
+        },
+        "neutral": {
+          "precision": 0.688715953307393,
+          "recall": 0.9076923076923077,
+          "f1": 0.7831858407079646,
+          "support": 195
+        },
+        "positive": {
+          "precision": 0.47058823529411764,
+          "recall": 0.1,
+          "f1": 0.16494845360824742,
+          "support": 80
+        }
+      },
+      "confusion_matrix": [
+        [
+          22,
+          20,
+          0
+        ],
+        [
+          9,
+          177,
+          9
+        ],
+        [
+          12,
+          60,
+          8
+        ]
+      ],
+      "neutral_to_negative_rate": 0.046153846153846156,
+      "ece": 0.27359030844661336
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1268,
+    "val": 317,
+    "test": null,
+    "external": null
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 0.13984990119934082,
+  "timestamp": "2026-10-20T14:22:47.506281+00:00"
+}

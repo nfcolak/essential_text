@@ -1,0 +1,86 @@
+{
+  "status": "completed",
+  "stage": "cv",
+  "config": "sentences_allagree",
+  "model_key": "vader_official",
+  "model_name": "VADER (official vaderSentiment lexicon)",
+  "seed": 42,
+  "fold": 0,
+  "hyperparams": {
+    "thresholds": [
+      -0.05,
+      0.05
+    ],
+    "tuned": false,
+    "lexicon": "vaderSentiment 3.3.2",
+    "lexicon_size": 7506
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.5488958990536278,
+      "macro_f1": 0.46982760828914677,
+      "per_class": {
+        "negative": {
+          "precision": 0.4090909090909091,
+          "recall": 0.20930232558139536,
+          "f1": 0.27692307692307694,
+          "support": 43
+        },
+        "neutral": {
+          "precision": 0.7552447552447552,
+          "recall": 0.5538461538461539,
+          "f1": 0.6390532544378699,
+          "support": 195
+        },
+        "positive": {
+          "precision": 0.375,
+          "recall": 0.7215189873417721,
+          "f1": 0.4935064935064935,
+          "support": 79
+        }
+      },
+      "confusion_matrix": [
+        [
+          9,
+          17,
+          17
+        ],
+        [
+          9,
+          108,
+          78
+        ],
+        [
+          4,
+          18,
+          57
+        ]
+      ],
+      "neutral_to_negative_rate": 0.046153846153846156,
+      "ece": 0.44678409186071394
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1268,
+    "val": 317,
+    "test": null,
+    "external": null
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 0.4020071029663086,
+  "timestamp": "2026-10-20T14:22:46.822351+00:00"
+}
