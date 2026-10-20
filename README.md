@@ -90,13 +90,15 @@ All datasets are downloaded from pinned upstream commits with SHA-256 verificati
 ## Step 2 Results: Controlled Transformer Fine-Tuning (RQ2)
 
 Full artifacts: [`results/step2/`](results/step2/) ([`STEP2_REPORT.md`](results/step2/STEP2_REPORT.md),
-`summary_metrics.json`, `statistical_comparisons.json`, `attribution.json`, figures) and one directory per run in
+`summary_metrics.json`, `statistical_comparisons.json`, `attribution.json`, `rq1_boundary.json`, figures) and one
+directory per run in
 `results/step2/runs/<config>/<model>/<tag>/` with `result.json` and per-sentence probabilities (`predictions.npz`).
 
 **Protocol.** `google-bert/bert-base-uncased` (general domain) and `yiyanghkust/finbert-pretrain` (financial MLM,
 no sentiment supervision) are fine-tuned with one shared recipe (AdamW, lr 2e-5, batch 16, max length 128, 10%
-warmup, weight decay 0.01, gradient clipping 1.0, at most 5 epochs, patience 2) on the identical locked Step 1
-splits of each PhraseBank agreement level, 3 seeds each (42, 100, 2026). The epoch is chosen by validation Macro-F1
+warmup, weight decay 0.01, gradient clipping 1.0, at most 5 epochs, patience 2) on the identical locked splits of
+each PhraseBank agreement level (allagree from Step 1; 75agree and 50agree produced locally with the same Step 1 code
+and seed, `--fpb-config all`, all three pinned in `data/splits/SHA256SUMS`), 3 seeds each (42, 100, 2026). The epoch is chosen by validation Macro-F1
 only; test and SEntFiN 1.0 are scored once. Off-the-shelf `ProsusAI/finbert` was trained on PhraseBank, so it is
 scored **only** on SEntFiN 1.0 (zero-shot). All baselines were refit in the same environment, so every paired test
 compares predictions on identical sentences. Tier 1 has three variants: the plain official lexicons with their
@@ -104,8 +106,8 @@ fixed published rules; the proposal's specification, i.e. the official lexicons 
 validation split (and 3-token negation handling for Loughran–McDonald); and the custom finance-adjusted lists from
 Step 1. TF-IDF models tune C ∈ {0.01, 0.1, 1, 10} and the class weight on validation (C = 1 or 10 was chosen in every
 run). Hugging Face revisions are pinned in `src/transformer/finetune.py`; split files are checked against
-`data/splits/SHA256SUMS` before every run. Runs: 93 (24 baseline, 18 fine-tune, 50 CV, 1 zero-shot) on Apple MPS
-(Python 3.9.6, torch 2.8.0, transformers 4.57.6, scikit-learn 1.6.1; exact versions in `requirements-lock.txt`).
+`data/splits/SHA256SUMS` before every run. Runs: 93 (24 baseline, 18 fine-tune, 50 CV, 1 zero-shot); the 28
+transformer runs on Apple MPS, the 65 lexicon and TF-IDF runs on CPU (Python 3.9.6, torch 2.8.0, transformers 4.57.6, scikit-learn 1.6.1; exact versions in `requirements-lock.txt`).
 
 The three agreement levels are nested (a 100%-agreement sentence is also in 75agree and 50agree), so columns are
 compared within a config; across configs the comparison is descriptive.
@@ -146,8 +148,11 @@ FinBERT-MLM 0.952 ± 0.013, `bert-base-uncased` 0.950 ± 0.013, TF-IDF + SVM 0.8
 0.716 ± 0.041, VADER (official, val-tuned) 0.529 ± 0.039, VADER (official) 0.492 ± 0.038, Loughran–McDonald
 (official, val-tuned) 0.483 ± 0.026, Loughran–McDonald (official) 0.480 ± 0.026.
 
-Tuning the thresholds of the official lexicons on validation, as the proposal specified, adds at most +0.03
-Macro-F1; the large gap to the custom lists (0.57–0.75) comes from their edited word lists, not from tuning.
+Tuning the thresholds of the official lexicons on validation, as the proposal specified, changes Macro-F1 by
+−0.04 to +0.04 (at most +0.027 on a test split, +0.036 in CV, −0.044 on SEntFiN for the allagree-tuned VADER); the
+large gap to the custom lists (0.57–0.75) comes from their edited word lists, not from tuning. For Loughran–McDonald
+the discrete score (P − N) / (P + N + 1) leaves the sweep at the default ±0.05 in every config and fold, so the
+"val-tuned" LM variant differs from the plain one by its negation handling only.
 
 ### RQ1: the neutral/negative boundary (neutral recall R_neu, negative precision P_neg)
 
@@ -168,8 +173,8 @@ seed family. Full tables for every config: `STEP2_REPORT.md`, section "RQ1: neut
 
 **Reading.** The general-purpose lexicon loses many more neutral sentences than the financial one: VADER's neutral
 recall is 0.14–0.34 below Loughran–McDonald's in every config and on SEntFiN (all intervals exclude zero; neutral-only
-McNemar significant in 3/3 seed families). This is the RQ1 effect at the lexicon level, and validation tuning only
-halves it. Negative precision differs much less between the two lexicons (in-domain intervals include zero). Between
+McNemar p < 1e-4 on each single deterministic lexicon run). This is the RQ1 effect at the lexicon level, and
+validation tuning removes only a third to a half of it (VADER; the LM thresholds did not move). Negative precision differs much less between the two lexicons (in-domain intervals include zero). Between
 the controlled encoders there is no domain-pretraining advantage at this boundary: ΔR_neu (BERT − FinBERT-MLM) includes
 zero in all six config × split cells, and ΔP_neg is significant only on SEntFiN after 50agree training (+0.048, BERT
 better; the allagree test interval touches zero, p = 0.17). The off-the-shelf ProsusAI/finbert has lower neutral recall and negative precision on SEntFiN than both
@@ -203,6 +208,8 @@ family; the BERT vs FinBERT-MLM difference on allagree test is significant in on
 
 ![Macro-F1 by config](results/step2/step2_macro_f1_by_config.png)
 ![Attribution](results/step2/step2_attribution.png)
+![Confusion matrices, allagree test](results/step2/step2_confusion_matrices_allagree.png)
+![External generalization](results/step2/step2_external_generalization.png)
 
 ---
 
@@ -213,7 +220,9 @@ Full artifacts: [`results/step3/`](results/step3/) ([`STEP3_REPORT.md`](results/
 [`data/diagnostic/`](data/diagnostic/) (see its [`README.md`](data/diagnostic/README.md) for provenance and licence).
 
 **Diagnostic set.** 300 sentences, label-stratified, drawn only from the `sentences_50agree` **test** split
-(seed 42; 37 negative, 178 neutral, 85 positive). Each sentence is tagged for five phenomena: financial
+(seed 42; 37 negative, 178 neutral, 85 positive). The 50agree level was chosen before any annotation because its
+test split is the largest and has the most Step 1 baseline errors. Because the levels are nested, some of these
+sentences are training sentences of the stricter levels, so only models trained on 50agree are scored on this set. Each sentence is tagged for five phenomena: financial
 terminology, negation, hedging, numerical comparison, context-dependent polarity
 ([`annotation/GUIDELINES.md`](annotation/GUIDELINES.md)).
 
@@ -245,7 +254,11 @@ rule tags on at most 1 sentence. Subsets with n < 20 get confidence intervals on
 rates depend on the gold-label mix of each subset (numerical-comparison sentences are almost never neutral), so the
 report also gives label-balanced rates and the label mix. On this subset the architecture effect on hedging is
 +0.119 accuracy [+0.019, +0.233] (p = 0.030), which does **not** survive Holm correction over the ten tests of the
-table (Holm p = 0.18); no domain effect is distinguishable from zero.
+table (Holm p = 0.18). All domain-effect intervals contain zero, but the subset is too small to see a modest
+effect: it cannot tell a domain effect of about ±0.05–0.08 (hedging, numerical comparison, context-dependent) or
+±0.13–0.22 (negation n = 10, financial terminology n = 13) from zero. The annotated set therefore supports
+phenomenon-level conclusions for three of the five phenomena; for negation and financial terminology use the
+full-split rule-tag analysis below.
 
 **Full test splits and SEntFiN with rule tags** (report section 5; larger n, cruder tags). On allagree test, Δarch
 is significant after Holm for financial terminology (+0.185), hedging (+0.175) and numerical comparison (+0.071); on
@@ -257,7 +270,7 @@ SEntFiN, context-dependent +0.091), so there is no stable phenomenon-level domai
 tags, n = 142) are labelled negative far more often than other neutral headlines (n = 3,267): VADER (official) 0.570
 vs 0.078, Loughran–McDonald (official) 0.479 vs 0.073, BERT 0.322–0.378 vs 0.029–0.043 and FinBERT-MLM 0.146–0.385
 vs 0.031–0.081 (range over the three training levels), ProsusAI 0.415 vs 0.109. **Most of this effect is one cue
-word:** 47 of the 142 headlines contain *loss/losses*, and most models tag them negative (lexicons 98–100%, BERT
+word:** 47 of the 142 headlines contain *loss/losses*, and most models tag them negative (lexicons 94–100%, BERT
 79–94%, ProsusAI 94%, FinBERT-MLM 79–82% except 32% when trained on 75agree; TF-IDF 11–40%). SEntFiN often labels a reported loss as neutral for the named entity, whereas PhraseBank
 labels most reported losses negative, so this part reflects a label-convention difference between the datasets as
 much as model error. Without the loss-only headlines (n = 96) the gap shrinks to VADER (official) 0.375 vs 0.078,
@@ -268,6 +281,7 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 
 ![Phenomenon error heatmap](results/step3/step3_phenomenon_error_heatmap.png)
 ![RQ1 accounting terms](results/step3/step3_rq1_accounting_terms.png)
+![Attribution by phenomenon](results/step3/step3_attribution_by_phenomenon.png)
 
 ### Caveats
 
@@ -281,6 +295,16 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
   probabilities and a transformer that predicts a single class.
 - The context-dependent definition was widened after the first-round κ (0.593) was known; the v2 κ (0.975) is
   therefore not an independent test of the original guideline.
+- TF-IDF + Linear SVM is `LinearSVC` with Platt (sigmoid) calibration fitted on the training features; its
+  predictions are the argmax of the calibrated probabilities and its ECE is train-calibrated, so it is not directly
+  comparable with the ECE of the other models.
+- Near-duplicates are grouped at token Jaccard ≥ 0.80. Just below that threshold a few templated earnings sentences
+  (same template, different numbers, same label) still have a train neighbour: 4 of 339 / 6 of 518 / 7 of 726 test
+  sentences at Jaccard ≥ 0.75 (allagree / 75agree / 50agree).
+- McNemar p-values are the exact binomial test on the discordant pairs (the continuity-corrected χ² is stored
+  alongside). For a pair of two single-run models (lexicons, TF-IDF) the per-seed "families" repeat one test.
+- `results/step2/runs/journal.jsonl` is an append-only event log; it also records the six MPS reruns, one
+  deliberately stopped run and the TF-IDF refit. The `result.json` files are authoritative.
 
 ### Deviations from the proposal
 
@@ -305,8 +329,21 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
   holds after the v2 re-annotation, with the caveat above.
 - **Phenomenon deltas.** Defined on F1 in the proposal; Step 3 reports them on accuracy because several subsets
   have very few sentences of one class, where per-class F1 is undefined or unstable.
-- **Effort record.** The proposal's 55-hour per-member work plan is not documented against actual hours in this
-  repository.
+- **Work plan and effort.** The 55-hour, five-work-package plan was removed from the 2-page `proposal.pdf` for the
+  page limit (commit `0d55c01`); it is kept in [`proposal/rubric_compliance_matrix.md`](proposal/rubric_compliance_matrix.md),
+  section 2. Actual per-member hours are not recorded in this repository.
+- **Fine-tuning recipe.** The proposal promises identical AdamW settings and validation early stopping (met). The
+  companion `proposal/methodology_and_rubric_audit.md` sketched lr ∈ {2e-5, 3e-5}, batch 32 and 4 epochs; the runs
+  use one fixed recipe, lr 2e-5, batch 16, up to 5 epochs with patience 2, without a learning-rate search.
+- **Diagnostic split.** The proposal says "from the locked test split"; the set comes from the 50agree test split
+  (reason above), so it is scored with 50agree-trained models only.
+- **McNemar variant.** The proposal names McNemar with continuity correction; the reported p-values are the exact
+  binomial version (the corrected χ² is stored).
+- **Corpus size.** The proposal gives 4,845 sentences for the full corpus; the pinned release has 4,846
+  (`data/dataset_audit_verdict.json`).
+- **Not delivered.** The audit's lexicon-domain effect Δlex-domain and a `pyproject.toml` (requirements files are
+  provided instead); the manifest file name in the audit (`splits/fpb_splits_sha256.json`) is replaced by
+  `data/splits/SHA256SUMS` and `data/splits/assignments/`.
 
 ---
 
@@ -366,9 +403,10 @@ essential_text/
 │   ├── run_step2.py           # Resumable Step 2 run matrix (baselines, fine-tune, CV, zero-shot)
 │   ├── summarize_step2.py     # Multi-seed statistics, McNemar + Holm, bootstrap, attribution, figures
 │   ├── build_diagnostic_set.py
-│   └── run_step3_analysis.py  # Cohen's kappa, per-phenomenon errors and attribution, RQ1 analysis
+│   ├── run_step3_analysis.py  # Cohen's kappa, per-phenomenon errors and attribution, RQ1 analysis
+│   └── export_split_assignments.py  # Text-free split / CV-fold assignments with a --check mode
 ├── src/
-│   ├── data/                  # Hashing, Jaccard >= 0.80 clustering, split locking, dedup, IO helpers
+│   ├── data/                  # Hashing, Jaccard >= 0.80 clustering, split locking, dedup, IO, assignments.py
 │   ├── baselines/             # Tier 1 official + custom lexicons, Tier 2 TF-IDF + LR/SVM, registry
 │   ├── transformer/           # Tier 3 fine-tuning and zero-shot scoring (PyTorch + Hugging Face)
 │   ├── evaluation/            # Metrics, ECE, McNemar, paired bootstrap, multi-seed statistics

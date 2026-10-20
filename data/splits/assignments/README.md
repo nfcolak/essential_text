@@ -12,7 +12,9 @@ Text-free split assignments derived from the locked manifests in `data/splits/` 
 - `sentfin_holdout.csv`: columns `id,sha256,label` of the deduplicated SEntFiN hold-out sentences.
 
 No sentence text is stored here. Texts come from the pinned Financial PhraseBank zip and the pinned SEntFiN csv
-(see `src/data/download.py` for URLs and SHA-256 sums); match them by `sha256`.
+(see `src/data/download.py` for URLs and SHA-256 sums); match them by `sha256`. The hash is
+`src.data.dedup.sentence_sha256(text)`: lower-case the text, replace every non-alphanumeric character by a space,
+collapse whitespace, strip, then SHA-256 of the UTF-8 bytes (`normalize_text` in `src/data/dedup.py`).
 
 ## Rebuild and check
 

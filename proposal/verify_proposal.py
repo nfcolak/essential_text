@@ -9,8 +9,10 @@ Verifies:
 2. Leakage-free protocol terms: pre-sentiment MLM checkpoint, locked splits, external holdout (SEntFiN 1.0).
 3. Strictly classification-appropriate metrics & statistical tests: Macro-F1, Accuracy, per-class P/R/F1,
    confusion matrices, McNemar's paired test, and paired bootstrap resampling (B = 10,000).
-4. Full 7-rubric compliance: 55-hour workload across 5 work packages and 3 authors, 3 baseline tiers,
-   5 linguistic phenomena with architecture vs domain attribution, accessible public datasets.
+4. Full 7-rubric compliance: 3 authors, 3 baseline tiers, 5 linguistic phenomena with architecture vs domain
+   attribution, accessible public datasets; the 55-hour workload across 5 work packages is checked in
+   proposal/rubric_compliance_matrix.md (the Work Plan section was removed from the 2-page PDF for the page limit,
+   commit 0d55c01).
 5. All 6 references present with complete bibliographic metadata.
 6. Exact page count == 2 in proposal.pdf.
 """
@@ -121,18 +123,21 @@ def run_checks():
         check(in_tex and in_pdf, f"{desc} (found in .tex and .pdf)")
 
     print("\n--- 6. 55-Hour Team Work Plan & Scope ---")
+    # The Work Plan section was removed from the 2-page PDF for the page limit (commit 0d55c01);
+    # the 55-hour budget and WP1-WP5 live in rubric_compliance_matrix.md section 2.
+    matrix_text = (repo_root / "proposal" / "rubric_compliance_matrix.md").read_text(encoding="utf-8")
     workplan_terms = [
-        ("55-hour", "Explicit 55-hour total team budget"),
+        ("55-Hour", "Explicit 55-hour total team budget"),
         ("WP1", "Work Package 1 (Data & Splits)"),
         ("WP2", "Work Package 2 (Baselines)"),
         ("WP3", "Work Package 3 (Transformer Fine-Tuning)"),
         ("WP4", "Work Package 4 (Phenomenon & Stats)"),
         ("WP5", "Work Package 5 (Repo & Report)"),
-        ("Zheng", "Team member: Qiyao Zheng"),
-        ("Donick", "Team member: Benjamin Donick"),
-        ("Colak", "Team member: Necati Furkan Colak"),
     ]
     for term, desc in workplan_terms:
+        check(term.lower() in matrix_text.lower(), f"{desc} (found in rubric_compliance_matrix.md)")
+    for term, desc in [("Zheng", "Team member: Qiyao Zheng"), ("Donick", "Team member: Benjamin Donick"),
+                       ("Colak", "Team member: Necati Furkan Colak")]:
         in_tex = term.lower() in tex_normalized.lower()
         in_pdf = term.lower() in pdf_text.lower()
         check(in_tex and in_pdf, f"{desc} (found in .tex and .pdf)")

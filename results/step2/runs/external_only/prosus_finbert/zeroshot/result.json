@@ -8,15 +8,7 @@
   "fold": null,
   "hyperparams": {
     "max_length": 128,
-    "batch_size": 16,
     "eval_batch_size": 64,
-    "learning_rate": 2e-05,
-    "weight_decay": 0.01,
-    "warmup_ratio": 0.1,
-    "max_epochs": 5,
-    "patience": 2,
-    "grad_clip": 1.0,
-    "seed": 42,
     "device": null
   },
   "best_epoch": null,
@@ -86,5 +78,6 @@
   "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
   "probe": false,
   "wall_seconds": 8.56681513786316,
-  "timestamp": "2026-10-20T12:52:29.664122+00:00"
+  "timestamp": "2026-10-20T12:52:29.664122+00:00",
+  "hyperparams_note": "Inference only (zero-shot). The training-recipe fields recorded by the first version of run_step2.py were removed on 2026-10-20 after review; the run, predictions and metrics are unchanged."
 }

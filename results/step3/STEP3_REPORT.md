@@ -4,7 +4,7 @@
 
 Annotators A and B are two independent LLM annotators, not human annotators. Annotator A was `Claude Sonnet 5.5 (claude-sonnet-5-5, Anthropic) - LLM agent, not a human annotator` and annotator B was `Gemini 3.8 Flash (gemini-3.8-flash-medium, Google, via Antigravity CLI) - LLM agent, not a human annotator`. Both labelled the same 300 sentences blind (no gold label, no model prediction) using the same guidelines. Both models may have seen Financial PhraseBank during pretraining; blindness refers to the labels and predictions withheld in this run. All agreement numbers below therefore describe agreement between two language models and must not be read as inter-human agreement.
 
-The sentences were drawn from the `sentences_50agree` test split (seed 42). Mean Cohen's kappa between A and B over the five phenomena is 0.959.
+The sentences were drawn from the `sentences_50agree` test split (seed 42). This level was chosen before any annotation because its test split is the largest and has the most Step 1 baseline errors. Its sentences overlap the training splits of the stricter levels (the levels are nested), so only models trained on this level are scored on the diagnostic subset. Mean Cohen's kappa between A and B over the five phenomena is 0.959.
 
 | Phenomenon | kappa A-B | kappa A-rule | kappa B-rule | raw agreement A-B | prevalence A / B / rule | consensus differs from rule (n) |
 |---|---|---|---|---|---|---|
@@ -77,6 +77,8 @@ The heatmap shows the label-balanced error. When a gold class has only a few sen
 ## 3. Architecture versus domain-pretraining attribution
 
 `delta_arch` = accuracy(bert_base) - accuracy(tfidf_svm) and `delta_domain` = accuracy(finbert_mlm) - accuracy(bert_base) on the tagged sentences. `tfidf_svm` was chosen by validation Macro-F1 (logreg 0.7295, svm 0.7368).
+
+Coverage: the subset is label-stratified, not phenomenon-stratified, so phenomena with fewer than 20 tagged sentences (marked `*`) get an interval only and support no conclusion here; for them use the full-split rule-tag analysis in section 5. Intervals that contain zero mean the subset cannot distinguish an effect of about their half-width from zero, not that the effect is absent.
 
 | Phenomenon | n | delta_arch [95% CI] (p, Holm p) | delta_domain [95% CI] (p, Holm p) |
 |---|---|---|---|
