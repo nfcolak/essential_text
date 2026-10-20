@@ -447,7 +447,10 @@ def _report(path: str, *, annotators: dict, key: dict, agreement: dict, mode: st
         "inter-human agreement.",
         "",
         f"The sentences were drawn from the `{key.get('config')}` test split "
-        f"(seed {key.get('seed')}). Mean Cohen's kappa between A and B over the five phenomena is "
+        f"(seed {key.get('seed')}). This level was chosen before any annotation because its test split is the "
+        "largest and has the most Step 1 baseline errors. Its sentences overlap the training splits of the "
+        "stricter levels (the levels are nested), so only models trained on this level are scored on the "
+        "diagnostic subset. Mean Cohen's kappa between A and B over the five phenomena is "
         f"{_fmt(mean_kappa)}.",
         "",
         "| Phenomenon | kappa A-B | kappa A-rule | kappa B-rule | raw agreement A-B | "
@@ -506,6 +509,11 @@ def _report(path: str, *, annotators: dict, key: dict, agreement: dict, mode: st
         "accuracy(finbert_mlm) - accuracy(bert_base) on the tagged sentences. "
         f"`{tfidf_best}` was chosen by validation Macro-F1 (logreg "
         f"{_fmt(tfidf_scores['tfidf_logreg'], 4)}, svm {_fmt(tfidf_scores['tfidf_svm'], 4)}).",
+        "",
+        "Coverage: the subset is label-stratified, not phenomenon-stratified, so phenomena with fewer than 20 "
+        "tagged sentences (marked `*`) get an interval only and support no conclusion here; for them use the "
+        "full-split rule-tag analysis in section 5. Intervals that contain zero mean the subset cannot "
+        "distinguish an effect of about their half-width from zero, not that the effect is absent.",
         "",
     ]
     lines += _attribution_table(diag["attribution"])

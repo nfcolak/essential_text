@@ -289,6 +289,14 @@ def _family_p(res: dict[str, Any], seed: int) -> float:
     return float(next(iter(per_seed.values()))["p_value"])
 
 
+def _families_txt(res: dict[str, Any]) -> str:
+    """Family count; a pair of two single-run models is one test, so it is labelled as such."""
+    count = f"{res['n_seeds_significant']}/{res['n_families']}"
+    if len(res["mcnemar_by_seed"]) == 1:
+        return f"single run ({count} families)"
+    return count
+
+
 def apply_seed_families(results: dict[str, Any]) -> list[int]:
     """Holm per seed family; adds ``p_min``, ``p_max``, ``p_holm_by_seed``, ``n_seeds_significant``.
 
@@ -652,13 +660,19 @@ def build_report(
               "- The epoch is selected by validation Macro-F1 only; the test split and SEntFiN are scored once "
               "with the selected checkpoint.",
               "- Fine-tuned models run with several seeds; tables show mean ± sample sd over seeds. Baselines are "
-              "deterministic and have the single run `seed42` (sd shown as n/a).",
+              "single runs with seed 42 (`seed42`; sd shown as n/a): the lexicons are deterministic, the TF-IDF models "
+              "are deterministic given that seed.",
               "- Baseline fitting: the plain official lexicons (VADER, Loughran-McDonald) use fixed published rules "
               "and nothing is tuned. The `official, val-tuned` variants keep the official lexicons but tune their "
               "decision thresholds on the validation split of each config (the LM variant also applies 3-token "
               "negation handling), as specified in the proposal. The finance-adjusted lexicon variants tune their "
               "thresholds the same way, and the TF-IDF models tune C in {0.01, 0.1, 1, 10} and the class weight on "
-              "validation per config.",
+              "validation per config. For Loughran-McDonald the discrete score (P - N) / (P + N + 1) makes every "
+              "threshold pair in (0, 0.25) give the same predictions, so the sweep kept the default +/-0.05 in "
+              "every config and fold: the val-tuned LM variant differs from the plain one by negation handling only.",
+              "- TF-IDF + Linear SVM is `LinearSVC` wrapped in Platt (sigmoid) calibration fitted on the training "
+              "features; its predictions are the argmax of the calibrated one-vs-rest probabilities and its ECE is "
+              "train-calibrated, so it is not directly comparable with the ECE of the other models.",
               "- The 5-fold CV on `sentences_allagree` is scored on the fold validation part, the same part used "
               "for epoch selection (as in Step 1 CV), so it is an optimistic estimate and not a test score.",
               "- The three PhraseBank levels (allagree, 75agree, 50agree) are nested: a sentence in a stricter "
@@ -675,8 +689,13 @@ def build_report(
               "- McNemar is a per-seed diagnostic. There is no primary seed: each seed pairing forms its own "
               "family, Holm-Bonferroni is applied within each family (pairs of single-run models enter every "
               "family with their one run), and the report gives p_min, p_max and the number of seed families "
-              "with Holm-adjusted p < 0.05. The seed+sentence bootstrap of the Macro-F1 difference is the "
-              "headline test.",
+              "with Holm-adjusted p < 0.05. A pair of two single-run models (lexicons, TF-IDF) is one test, not a "
+              "replication; its family count is labelled `single run`. McNemar p-values are the exact binomial "
+              "test on the discordant pairs; the continuity-corrected chi-squared is stored alongside. The "
+              "seed+sentence bootstrap of the Macro-F1 difference is the headline test.",
+              "- `runs/journal.jsonl` is an append-only event log: it also records the six runs that hit Apple MPS "
+              "memory errors and were rerun, one deliberately stopped run and the TF-IDF refit after the C grid "
+              "gained 0.01. The `result.json` files are authoritative.",
               "- RQ1 boundary: R_neu is the recall of gold-neutral sentences and P_neg the precision of the "
               "negative class (seed means; deltas use the seed+sentence bootstrap). The McNemar test in that "
               "section is restricted to gold-neutral sentences (correct = predicted neutral), with Holm within "
@@ -749,7 +768,7 @@ def build_report(
                     f"{res['a']['neutral_recall']:.3f} / {res['b']['neutral_recall']:.3f} | "
                     f"{res['a']['negative_precision']:.3f} / {res['b']['negative_precision']:.3f} | "
                     f"{_ci(res['delta_neutral_recall'])} | {_ci(res['delta_negative_precision'])} | "
-                    f"{res['p_min']:.3g}–{res['p_max']:.3g} | {res['n_seeds_significant']}/{res['n_families']} |")
+                    f"{res['p_min']:.3g}–{res['p_max']:.3g} | {_families_txt(res)} |")
             lines.append("")
 
     lines += ["## Architecture vs domain-pretraining attribution", "",
@@ -803,7 +822,7 @@ def build_report(
                 b = res["bootstrap_macro_f1"]
                 lines.append(f"| {display_name(res['model_a'])} vs {display_name(res['model_b'])} | "
                              f"{res['p_min']:.3g}–{res['p_max']:.3g} | "
-                             f"{res['n_seeds_significant']}/{res['n_families']} | {per_seed} | "
+                             f"{_families_txt(res)} | {per_seed} | "
                              f"{b['delta']:+.3f} [{b['ci_low']:+.3f}, {b['ci_high']:+.3f}], "
                              f"{_p_txt(b['p_value'], b['B'])} |")
             lines.append("")

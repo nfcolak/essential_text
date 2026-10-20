@@ -339,7 +339,7 @@ class LMOfficialTunedBaseline(_TunedThresholdMixin):
         n_pos = 0
         n_neg = 0
         for i, token in enumerate(tokens):
-            word = token.upper()
+            word = token.split("'")[0].upper()
             is_pos = word in self.positive_words
             is_neg = word in self.negative_words
             if not (is_pos or is_neg):
