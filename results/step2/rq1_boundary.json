@@ -1,0 +1,1979 @@
+{
+  "note": "R_neu = recall of gold-neutral sentences (predicted neutral / gold neutral); P_neg = precision of the negative class (gold negative / predicted negative); both are seed means. delta_* = A - B with the seed+sentence bootstrap. McNemar is restricted to gold-neutral sentences (correct = predicted neutral), one test per seed pairing; Holm-Bonferroni within each seed family over the pairs of one config x split block.",
+  "configs": {
+    "sentences_allagree": {
+      "test": {
+        "n": 339,
+        "family_seeds": [
+          42,
+          100,
+          2026
+        ],
+        "pairs": {
+          "vader_official__vs__lm_official": {
+            "a": {
+              "neutral_recall": 0.5913461538461539,
+              "negative_precision": 0.3448275862068966,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8990384615384616,
+              "negative_precision": 0.475,
+              "n_seeds": 1
+            },
+            "n_neutral": 208,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 16,
+                "n01": 80,
+                "chi2": 41.34375,
+                "p_value": 2.0744109143956072e-11
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.3076923076923077,
+              "ci_low": -0.3900060975609756,
+              "ci_high": -0.22499999999999998,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 339,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.3076923076923077
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.1301724137931034,
+              "ci_low": -0.32083991452734495,
+              "ci_high": 0.05603919631093545,
+              "p_value": 0.1738,
+              "B": 10000,
+              "n": 339,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.1301724137931034
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official",
+            "model_b": "lm_official",
+            "p_min": 2.0744109143956072e-11,
+            "p_max": 2.0744109143956072e-11,
+            "p_holm_by_seed": {
+              "42": 8.297643657582429e-11,
+              "100": 8.297643657582429e-11,
+              "2026": 8.297643657582429e-11
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader_official_tuned__vs__lm_official_tuned": {
+            "a": {
+              "neutral_recall": 0.7307692307692307,
+              "negative_precision": 0.42105263157894735,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8990384615384616,
+              "negative_precision": 0.5757575757575758,
+              "n_seeds": 1
+            },
+            "n_neutral": 208,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 17,
+                "n01": 52,
+                "chi2": 16.753623188405797,
+                "p_value": 2.9304321745456655e-05
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.16826923076923084,
+              "ci_low": -0.2436579791398339,
+              "ci_high": -0.09302325581395354,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 339,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.16826923076923084
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.15470494417862846,
+              "ci_low": -0.38563259321323834,
+              "ci_high": 0.0714285714285714,
+              "p_value": 0.1738,
+              "B": 10000,
+              "n": 339,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.15470494417862846
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official_tuned",
+            "model_b": "lm_official_tuned",
+            "p_min": 2.9304321745456655e-05,
+            "p_max": 2.9304321745456655e-05,
+            "p_holm_by_seed": {
+              "42": 8.791296523636997e-05,
+              "100": 8.791296523636997e-05,
+              "2026": 8.791296523636997e-05
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader__vs__loughran_mcdonald": {
+            "a": {
+              "neutral_recall": 0.9230769230769231,
+              "negative_precision": 0.7714285714285715,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8846153846153846,
+              "negative_precision": 0.6428571428571429,
+              "n_seeds": 1
+            },
+            "n_neutral": 208,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 13,
+                "n01": 5,
+                "chi2": 2.7222222222222223,
+                "p_value": 0.09625244140625
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.03846153846153855,
+              "ci_low": 0.0,
+              "ci_high": 0.07978785835580858,
+              "p_value": 0.068,
+              "B": 10000,
+              "n": 339,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.03846153846153855
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.12857142857142856,
+              "ci_low": -0.028510338345864583,
+              "ci_high": 0.2919542795566502,
+              "p_value": 0.115,
+              "B": 10000,
+              "n": 339,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.12857142857142856
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader",
+            "model_b": "loughran_mcdonald",
+            "p_min": 0.09625244140625,
+            "p_max": 0.09625244140625,
+            "p_holm_by_seed": {
+              "42": 0.09625244140625,
+              "100": 0.1925048828125,
+              "2026": 0.1925048828125
+            },
+            "n_seeds_significant": 0,
+            "n_families": 3
+          },
+          "bert_base__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.9919871794871794,
+              "negative_precision": 1.0,
+              "n_seeds": 3
+            },
+            "b": {
+              "neutral_recall": 0.9775641025641026,
+              "negative_precision": 0.9545219638242894,
+              "n_seeds": 3
+            },
+            "n_neutral": 208,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 7,
+                "n01": 0,
+                "chi2": 5.142857142857143,
+                "p_value": 0.015625
+              },
+              "100": {
+                "n10": 2,
+                "n01": 4,
+                "chi2": 0.16666666666666666,
+                "p_value": 0.6875
+              },
+              "2026": {
+                "n10": 4,
+                "n01": 0,
+                "chi2": 2.25,
+                "p_value": 0.125
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.01442307692307676,
+              "ci_low": -0.008421847339373232,
+              "ci_high": 0.04025895966745292,
+              "p_value": 0.2386,
+              "B": 10000,
+              "n": 339,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.033653846153846145,
+                -0.009615384615384692,
+                0.019230769230769273
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.04547803617571056,
+              "ci_low": 0.0,
+              "ci_high": 0.11559360851726087,
+              "p_value": 0.1722,
+              "B": 10000,
+              "n": 339,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.06666666666666665,
+                0.023255813953488413,
+                0.046511627906976716
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "bert_base",
+            "model_b": "finbert_mlm",
+            "p_min": 0.015625,
+            "p_max": 0.6875,
+            "p_holm_by_seed": {
+              "42": 0.03125,
+              "100": 0.6875,
+              "2026": 0.1925048828125
+            },
+            "n_seeds_significant": 1,
+            "n_families": 3
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "family_seeds": [
+          42,
+          100,
+          2026
+        ],
+        "pairs": {
+          "vader_official__vs__lm_official": {
+            "a": {
+              "neutral_recall": 0.5899090642417131,
+              "negative_precision": 0.6557649667405765,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8706365503080082,
+              "negative_precision": 0.6871794871794872,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 111,
+                "n01": 1068,
+                "chi2": 775.1789652247668,
+                "p_value": 6.359717791632562e-197
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.28072748606629516,
+              "ci_low": -0.29789054844262575,
+              "ci_high": -0.2631894223751433,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.28072748606629516
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.03141452043891069,
+              "ci_low": -0.05459308503561298,
+              "ci_high": -0.008637527979246478,
+              "p_value": 0.0064,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.03141452043891069
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official",
+            "model_b": "lm_official",
+            "p_min": 6.359717791632562e-197,
+            "p_max": 6.359717791632562e-197,
+            "p_holm_by_seed": {
+              "42": 3.815830674979537e-196,
+              "100": 3.815830674979537e-196,
+              "2026": 3.815830674979537e-196
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader_official_tuned__vs__lm_official_tuned": {
+            "a": {
+              "neutral_recall": 0.728952772073922,
+              "negative_precision": 0.7039413382218148,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8709298914637724,
+              "negative_precision": 0.6955128205128205,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 185,
+                "n01": 669,
+                "chi2": 273.172131147541,
+                "p_value": 5.124212153181766e-65
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.14197711938985047,
+              "ci_low": -0.15787915339063424,
+              "ci_high": -0.12571073804330454,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.14197711938985047
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.008428517708994332,
+              "ci_low": -0.01670413514644153,
+              "ci_high": 0.03310820111446086,
+              "p_value": 0.5004,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.008428517708994332
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official_tuned",
+            "model_b": "lm_official_tuned",
+            "p_min": 5.124212153181766e-65,
+            "p_max": 5.124212153181766e-65,
+            "p_holm_by_seed": {
+              "42": 2.0496848612727063e-64,
+              "100": 2.0496848612727063e-64,
+              "2026": 1.5372636459545296e-64
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader__vs__loughran_mcdonald": {
+            "a": {
+              "neutral_recall": 0.8638897037254327,
+              "negative_precision": 0.8406827880512091,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8457025520680551,
+              "negative_precision": 0.7986154814348647,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 210,
+                "n01": 148,
+                "chi2": 10.393854748603353,
+                "p_value": 0.0012332601587545118
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.01818715165737761,
+              "ci_low": 0.007299270072992692,
+              "ci_high": 0.029109441633502594,
+              "p_value": 0.0016,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.01818715165737761
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.04206730661634439,
+              "ci_low": 0.02402022682300068,
+              "ci_high": 0.05983739936907332,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.04206730661634439
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader",
+            "model_b": "loughran_mcdonald",
+            "p_min": 0.0012332601587545118,
+            "p_max": 0.0012332601587545118,
+            "p_holm_by_seed": {
+              "42": 0.0012332601587545118,
+              "100": 0.0012332601587545118,
+              "2026": 0.0012332601587545118
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "bert_base__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.8584140021511685,
+              "negative_precision": 0.8545189863464309,
+              "n_seeds": 3
+            },
+            "b": {
+              "neutral_recall": 0.8789478830546592,
+              "negative_precision": 0.8484762243817014,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 303,
+                "n01": 132,
+                "chi2": 66.4367816091954,
+                "p_value": 1.4670396891716063e-16
+              },
+              "100": {
+                "n10": 83,
+                "n01": 383,
+                "chi2": 191.84763948497854,
+                "p_value": 4.256736218794056e-47
+              },
+              "2026": {
+                "n10": 129,
+                "n01": 210,
+                "chi2": 18.87905604719764,
+                "p_value": 1.2741654117163633e-05
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.02053388090349073,
+              "ci_low": -0.07070548963423337,
+              "ci_high": 0.030912972727600935,
+              "p_value": 0.4894,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.05016133763567032,
+                -0.08800234672924612,
+                -0.0237606336168964
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.006042761964729415,
+              "ci_low": -0.012404850906662528,
+              "ci_high": 0.024915817410339585,
+              "p_value": 0.5246,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.0145772093028258,
+                -0.00809050285324131,
+                0.011641579444603867
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "bert_base",
+            "model_b": "finbert_mlm",
+            "p_min": 4.256736218794056e-47,
+            "p_max": 1.2741654117163633e-05,
+            "p_holm_by_seed": {
+              "42": 2.9340793783432127e-16,
+              "100": 1.2770208656382167e-46,
+              "2026": 2.5483308234327266e-05
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "prosus_finbert__vs__bert_base": {
+            "a": {
+              "neutral_recall": 0.7521267233792901,
+              "negative_precision": 0.7571536144578314,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8584140021511685,
+              "negative_precision": 0.8545189863464309,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 81,
+                "n01": 517,
+                "chi2": 316.4297658862876,
+                "p_value": 1.101430586629889e-78
+              },
+              "100": {
+                "n10": 182,
+                "n01": 401,
+                "chi2": 81.516295025729,
+                "p_value": 6.350960066227146e-20
+              },
+              "2026": {
+                "n10": 91,
+                "n01": 523,
+                "chi2": 302.54234527687294,
+                "p_value": 1.2395259794712455e-74
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.10628727877187838,
+              "ci_low": -0.13634144665661083,
+              "ci_high": -0.067661393216544,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.12789674391317107
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.0973653718885995,
+              "ci_low": -0.11435494407561514,
+              "ci_high": -0.08103117801464448,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.09462091581356735
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "prosus_finbert",
+            "model_b": "bert_base",
+            "p_min": 1.101430586629889e-78,
+            "p_max": 6.350960066227146e-20,
+            "p_holm_by_seed": {
+              "42": 5.507152933149445e-78,
+              "100": 1.2701920132454292e-19,
+              "2026": 4.958103917884982e-74
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "prosus_finbert__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.7521267233792901,
+              "negative_precision": 0.7571536144578314,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8789478830546592,
+              "negative_precision": 0.8484762243817014,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 177,
+                "n01": 442,
+                "chi2": 112.59450726978999,
+                "p_value": 4.187264446409564e-27
+              },
+              "100": {
+                "n10": 68,
+                "n01": 587,
+                "chi2": 409.6549618320611,
+                "p_value": 5.3019352362149567e-104
+              },
+              "2026": {
+                "n10": 66,
+                "n01": 579,
+                "chi2": 406.4248062015504,
+                "p_value": 2.4450030998391123e-103
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.1268211596753691,
+              "ci_low": -0.16092647921729364,
+              "ci_high": -0.0809938467783453,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.07773540627750075
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.09132260992387009,
+              "ci_low": -0.10967522031636005,
+              "ci_high": -0.07290868821019168,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.08004370651074155
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "prosus_finbert",
+            "model_b": "finbert_mlm",
+            "p_min": 5.3019352362149567e-104,
+            "p_max": 4.187264446409564e-27,
+            "p_holm_by_seed": {
+              "42": 1.2561793339228693e-26,
+              "100": 2.6509676181074783e-103,
+              "2026": 1.222501549919556e-102
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          }
+        }
+      }
+    },
+    "sentences_75agree": {
+      "test": {
+        "n": 518,
+        "family_seeds": [
+          42,
+          100,
+          2026
+        ],
+        "pairs": {
+          "vader_official__vs__lm_official": {
+            "a": {
+              "neutral_recall": 0.5559006211180124,
+              "negative_precision": 0.425531914893617,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8913043478260869,
+              "negative_precision": 0.3939393939393939,
+              "n_seeds": 1
+            },
+            "n_neutral": 322,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 17,
+                "n01": 125,
+                "chi2": 80.62676056338029,
+                "p_value": 1.6665029711480696e-21
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.3354037267080745,
+              "ci_low": -0.39714694564694564,
+              "ci_high": -0.2738853503184714,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 518,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.3354037267080745
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.0315925209542231,
+              "ci_low": -0.1107974244801362,
+              "ci_high": 0.1773089601438417,
+              "p_value": 0.6746,
+              "B": 10000,
+              "n": 518,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.0315925209542231
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official",
+            "model_b": "lm_official",
+            "p_min": 1.6665029711480696e-21,
+            "p_max": 1.6665029711480696e-21,
+            "p_holm_by_seed": {
+              "42": 6.666011884592278e-21,
+              "100": 6.666011884592278e-21,
+              "2026": 6.666011884592278e-21
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader_official_tuned__vs__lm_official_tuned": {
+            "a": {
+              "neutral_recall": 0.6987577639751553,
+              "negative_precision": 0.42857142857142855,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8913043478260869,
+              "negative_precision": 0.4262295081967213,
+              "n_seeds": 1
+            },
+            "n_neutral": 322,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 22,
+                "n01": 84,
+                "chi2": 35.10377358490566,
+                "p_value": 1.0168289347541834e-09
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.1925465838509316,
+              "ci_low": -0.2522261876119443,
+              "ci_high": -0.13455657492354733,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 518,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.1925465838509316
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.0023419203747072626,
+              "ci_low": -0.13938018495852028,
+              "ci_high": 0.14520486555697815,
+              "p_value": 0.988,
+              "B": 10000,
+              "n": 518,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.0023419203747072626
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official_tuned",
+            "model_b": "lm_official_tuned",
+            "p_min": 1.0168289347541834e-09,
+            "p_max": 1.0168289347541834e-09,
+            "p_holm_by_seed": {
+              "42": 3.0504868042625503e-09,
+              "100": 3.0504868042625503e-09,
+              "2026": 3.0504868042625503e-09
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader__vs__loughran_mcdonald": {
+            "a": {
+              "neutral_recall": 0.8850931677018633,
+              "negative_precision": 0.6727272727272727,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8850931677018633,
+              "negative_precision": 0.5952380952380952,
+              "n_seeds": 1
+            },
+            "n_neutral": 322,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 20,
+                "n01": 20,
+                "chi2": 0.0,
+                "p_value": 1.0
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.0,
+              "ci_low": -0.038922155688622784,
+              "ci_high": 0.0383417301548291,
+              "p_value": 1.0,
+              "B": 10000,
+              "n": 518,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.0
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.0774891774891775,
+              "ci_low": -0.05757146941109209,
+              "ci_high": 0.21508028792912515,
+              "p_value": 0.258,
+              "B": 10000,
+              "n": 518,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.0774891774891775
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader",
+            "model_b": "loughran_mcdonald",
+            "p_min": 1.0,
+            "p_max": 1.0,
+            "p_holm_by_seed": {
+              "42": 1.0,
+              "100": 1.0,
+              "2026": 1.0
+            },
+            "n_seeds_significant": 0,
+            "n_families": 3
+          },
+          "bert_base__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.953416149068323,
+              "negative_precision": 0.8649492583918813,
+              "n_seeds": 3
+            },
+            "b": {
+              "neutral_recall": 0.9637681159420289,
+              "negative_precision": 0.8826516867385731,
+              "n_seeds": 3
+            },
+            "n_neutral": 322,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 4,
+                "n01": 6,
+                "chi2": 0.1,
+                "p_value": 0.75390625
+              },
+              "100": {
+                "n10": 5,
+                "n01": 5,
+                "chi2": 0.0,
+                "p_value": 1.0
+              },
+              "2026": {
+                "n10": 0,
+                "n01": 8,
+                "chi2": 6.125,
+                "p_value": 0.0078125
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.010351966873705987,
+              "ci_low": -0.029561671763506662,
+              "ci_high": 0.008385744234800874,
+              "p_value": 0.2924,
+              "B": 10000,
+              "n": 518,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.006211180124223614,
+                0.0,
+                -0.024844720496894457
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.01770242834669178,
+              "ci_low": -0.08415642654166026,
+              "ci_high": 0.049224748188498764,
+              "p_value": 0.5916,
+              "B": 10000,
+              "n": 518,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.01382488479262678,
+                0.016393442622950838,
+                -0.05567584287039906
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "bert_base",
+            "model_b": "finbert_mlm",
+            "p_min": 0.0078125,
+            "p_max": 1.0,
+            "p_holm_by_seed": {
+              "42": 1.0,
+              "100": 1.0,
+              "2026": 0.015625
+            },
+            "n_seeds_significant": 1,
+            "n_families": 3
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "family_seeds": [
+          42,
+          100,
+          2026
+        ],
+        "pairs": {
+          "vader_official__vs__lm_official": {
+            "a": {
+              "neutral_recall": 0.5899090642417131,
+              "negative_precision": 0.6557649667405765,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8706365503080082,
+              "negative_precision": 0.6871794871794872,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 111,
+                "n01": 1068,
+                "chi2": 775.1789652247668,
+                "p_value": 6.359717791632562e-197
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.28072748606629516,
+              "ci_low": -0.29789054844262575,
+              "ci_high": -0.2631894223751433,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.28072748606629516
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.03141452043891069,
+              "ci_low": -0.05459308503561298,
+              "ci_high": -0.008637527979246478,
+              "p_value": 0.0064,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.03141452043891069
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official",
+            "model_b": "lm_official",
+            "p_min": 6.359717791632562e-197,
+            "p_max": 6.359717791632562e-197,
+            "p_holm_by_seed": {
+              "42": 3.815830674979537e-196,
+              "100": 3.815830674979537e-196,
+              "2026": 3.815830674979537e-196
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader_official_tuned__vs__lm_official_tuned": {
+            "a": {
+              "neutral_recall": 0.6849515987092989,
+              "negative_precision": 0.6566757493188011,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8709298914637724,
+              "negative_precision": 0.6955128205128205,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 149,
+                "n01": 783,
+                "chi2": 429.9238197424893,
+                "p_value": 1.818599288110004e-104
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.18597829275447353,
+              "ci_low": -0.2021809608016505,
+              "ci_high": -0.1692713716530066,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.18597829275447353
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.03883707119401936,
+              "ci_low": -0.061543104941975624,
+              "ci_high": -0.016881175882894763,
+              "p_value": 0.0002,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.03883707119401936
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official_tuned",
+            "model_b": "lm_official_tuned",
+            "p_min": 1.818599288110004e-104,
+            "p_max": 1.818599288110004e-104,
+            "p_holm_by_seed": {
+              "42": 7.274397152440016e-104,
+              "100": 9.09299644055002e-104,
+              "2026": 7.274397152440016e-104
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader__vs__loughran_mcdonald": {
+            "a": {
+              "neutral_recall": 0.8638897037254327,
+              "negative_precision": 0.8406827880512091,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8457025520680551,
+              "negative_precision": 0.7986154814348647,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 210,
+                "n01": 148,
+                "chi2": 10.393854748603353,
+                "p_value": 0.0012332601587545118
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.01818715165737761,
+              "ci_low": 0.007299270072992692,
+              "ci_high": 0.029109441633502594,
+              "p_value": 0.0016,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.01818715165737761
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.04206730661634439,
+              "ci_low": 0.02402022682300068,
+              "ci_high": 0.05983739936907332,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.04206730661634439
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader",
+            "model_b": "loughran_mcdonald",
+            "p_min": 0.0012332601587545118,
+            "p_max": 0.0012332601587545118,
+            "p_holm_by_seed": {
+              "42": 0.0012332601587545118,
+              "100": 0.0024665203175090237,
+              "2026": 0.0012332601587545118
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "bert_base__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.8879436784980933,
+              "negative_precision": 0.8609845553657661,
+              "n_seeds": 3
+            },
+            "b": {
+              "neutral_recall": 0.912975457123301,
+              "negative_precision": 0.8835500180828749,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 120,
+                "n01": 208,
+                "chi2": 23.076219512195124,
+                "p_value": 1.355591610299212e-06
+              },
+              "100": {
+                "n10": 212,
+                "n01": 178,
+                "chi2": 2.792307692307692,
+                "p_value": 0.09459127467091732
+              },
+              "2026": {
+                "n10": 69,
+                "n01": 271,
+                "chi2": 118.8264705882353,
+                "p_value": 1.971373853280017e-29
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.025031778625207668,
+              "ci_low": -0.06649171390543417,
+              "ci_high": 0.01421811479726175,
+              "p_value": 0.242,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.02581402170724545,
+                0.009973599295981295,
+                -0.05925491346435907
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.022565462717108797,
+              "ci_low": -0.0725577653012149,
+              "ci_high": 0.02166772999586322,
+              "p_value": 0.3766,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.007950123806154896,
+                0.02260538302277426,
+                -0.09825189498025566
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "bert_base",
+            "model_b": "finbert_mlm",
+            "p_min": 1.971373853280017e-29,
+            "p_max": 0.09459127467091732,
+            "p_holm_by_seed": {
+              "42": 2.711183220598424e-06,
+              "100": 0.09459127467091732,
+              "2026": 3.942747706560034e-29
+            },
+            "n_seeds_significant": 2,
+            "n_families": 3
+          },
+          "prosus_finbert__vs__bert_base": {
+            "a": {
+              "neutral_recall": 0.7521267233792901,
+              "negative_precision": 0.7571536144578314,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8879436784980933,
+              "negative_precision": 0.8609845553657661,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 79,
+                "n01": 531,
+                "chi2": 333.44426229508196,
+                "p_value": 3.4480328006462676e-83
+              },
+              "100": {
+                "n10": 82,
+                "n01": 526,
+                "chi2": 322.7779605263158,
+                "p_value": 2.9186872449274298e-80
+              },
+              "2026": {
+                "n10": 69,
+                "n01": 562,
+                "chi2": 383.61965134706816,
+                "p_value": 5.011606186070225e-97
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.1358169551188032,
+              "ci_low": -0.15071589710904826,
+              "ci_high": -0.1210681651544519,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.13259020240539754
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.10383094090793477,
+              "ci_low": -0.12948163728377712,
+              "ci_high": -0.07489317563736048,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.12239184008762316
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "prosus_finbert",
+            "model_b": "bert_base",
+            "p_min": 5.011606186070225e-97,
+            "p_max": 2.9186872449274298e-80,
+            "p_holm_by_seed": {
+              "42": 1.0344098401938803e-82,
+              "100": 1.1674748979709719e-79,
+              "2026": 1.5034818558210676e-96
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "prosus_finbert__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.7521267233792901,
+              "negative_precision": 0.7571536144578314,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.912975457123301,
+              "negative_precision": 0.8835500180828749,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 78,
+                "n01": 618,
+                "chi2": 417.4152298850575,
+                "p_value": 3.6685439404077486e-105
+              },
+              "100": {
+                "n10": 111,
+                "n01": 521,
+                "chi2": 264.6851265822785,
+                "p_value": 2.1052226737861387e-64
+              },
+              "2026": {
+                "n10": 29,
+                "n01": 724,
+                "chi2": 639.6228419654715,
+                "p_value": 7.699947244195156e-175
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.16084873374401087,
+              "ci_low": -0.2014891891680957,
+              "ci_high": -0.12071592294694636,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.158404224112643
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.12639640362504356,
+              "ci_low": -0.17098591849729217,
+              "ci_high": -0.08876904713181337,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.11444171628146826
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "prosus_finbert",
+            "model_b": "finbert_mlm",
+            "p_min": 7.699947244195156e-175,
+            "p_max": 2.1052226737861387e-64,
+            "p_holm_by_seed": {
+              "42": 1.8342719702038743e-104,
+              "100": 6.315668021358416e-64,
+              "2026": 3.849973622097578e-174
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          }
+        }
+      }
+    },
+    "sentences_50agree": {
+      "test": {
+        "n": 726,
+        "family_seeds": [
+          42,
+          100,
+          2026
+        ],
+        "pairs": {
+          "vader_official__vs__lm_official": {
+            "a": {
+              "neutral_recall": 0.5116279069767442,
+              "negative_precision": 0.39285714285714285,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8209302325581396,
+              "negative_precision": 0.40217391304347827,
+              "n_seeds": 1
+            },
+            "n_neutral": 430,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 33,
+                "n01": 166,
+                "chi2": 87.55778894472361,
+                "p_value": 1.5613432390208212e-22
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.30930232558139537,
+              "ci_low": -0.36602977614490767,
+              "ci_high": -0.25235793951684,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 726,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.30930232558139537
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.009316770186335421,
+              "ci_low": -0.12867126033623885,
+              "ci_high": 0.11514780850814481,
+              "p_value": 0.881,
+              "B": 10000,
+              "n": 726,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.009316770186335421
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official",
+            "model_b": "lm_official",
+            "p_min": 1.5613432390208212e-22,
+            "p_max": 1.5613432390208212e-22,
+            "p_holm_by_seed": {
+              "42": 6.245372956083285e-22,
+              "100": 6.245372956083285e-22,
+              "2026": 6.245372956083285e-22
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader_official_tuned__vs__lm_official_tuned": {
+            "a": {
+              "neutral_recall": 0.6116279069767442,
+              "negative_precision": 0.39285714285714285,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8209302325581396,
+              "negative_precision": 0.4157303370786517,
+              "n_seeds": 1
+            },
+            "n_neutral": 430,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 38,
+                "n01": 128,
+                "chi2": 47.71686746987952,
+                "p_value": 1.3455349453696383e-12
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.2093023255813954,
+              "ci_low": -0.2641521080829257,
+              "ci_high": -0.15421658597004842,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 726,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.2093023255813954
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.022873194221508852,
+              "ci_low": -0.14382078671490656,
+              "ci_high": 0.10200022481452801,
+              "p_value": 0.7176,
+              "B": 10000,
+              "n": 726,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.022873194221508852
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official_tuned",
+            "model_b": "lm_official_tuned",
+            "p_min": 1.3455349453696383e-12,
+            "p_max": 1.3455349453696383e-12,
+            "p_holm_by_seed": {
+              "42": 4.036604836108915e-12,
+              "100": 4.036604836108915e-12,
+              "2026": 4.036604836108915e-12
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader__vs__loughran_mcdonald": {
+            "a": {
+              "neutral_recall": 0.8790697674418605,
+              "negative_precision": 0.639344262295082,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8232558139534883,
+              "negative_precision": 0.4857142857142857,
+              "n_seeds": 1
+            },
+            "n_neutral": 430,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 44,
+                "n01": 20,
+                "chi2": 8.265625,
+                "p_value": 0.0036899642765400487
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.05581395348837215,
+              "ci_low": 0.020547945205479423,
+              "ci_high": 0.09153318077803196,
+              "p_value": 0.0018,
+              "B": 10000,
+              "n": 726,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.05581395348837215
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.1536299765807963,
+              "ci_low": 0.05788298565840941,
+              "ci_high": 0.25178952107260244,
+              "p_value": 0.0014,
+              "B": 10000,
+              "n": 726,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.1536299765807963
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader",
+            "model_b": "loughran_mcdonald",
+            "p_min": 0.0036899642765400487,
+            "p_max": 0.0036899642765400487,
+            "p_holm_by_seed": {
+              "42": 0.007379928553080097,
+              "100": 0.005252753621368075,
+              "2026": 0.007379928553080097
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "bert_base__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.8806201550387597,
+              "negative_precision": 0.9059844724449535,
+              "n_seeds": 3
+            },
+            "b": {
+              "neutral_recall": 0.8813953488372093,
+              "negative_precision": 0.8272552606096005,
+              "n_seeds": 3
+            },
+            "n_neutral": 430,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 23,
+                "n01": 16,
+                "chi2": 0.9230769230769231,
+                "p_value": 0.3367836351899315
+              },
+              "100": {
+                "n10": 20,
+                "n01": 45,
+                "chi2": 8.861538461538462,
+                "p_value": 0.0026263768106840374
+              },
+              "2026": {
+                "n10": 32,
+                "n01": 15,
+                "chi2": 5.446808510638298,
+                "p_value": 0.018623836615006432
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.0007751937984495916,
+              "ci_low": -0.05555882352941189,
+              "ci_high": 0.04862745098039201,
+              "p_value": 0.9996,
+              "B": 10000,
+              "n": 726,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.016279069767441867,
+                -0.05813953488372092,
+                0.03953488372093017
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.07872921183535297,
+              "ci_low": -0.012392113398020961,
+              "ci_high": 0.16939625077624493,
+              "p_value": 0.0876,
+              "B": 10000,
+              "n": 726,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.06710239651416128,
+                0.03637206069732424,
+                0.13271317829457363
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "bert_base",
+            "model_b": "finbert_mlm",
+            "p_min": 0.0026263768106840374,
+            "p_max": 0.3367836351899315,
+            "p_holm_by_seed": {
+              "42": 0.3367836351899315,
+              "100": 0.005252753621368075,
+              "2026": 0.018623836615006432
+            },
+            "n_seeds_significant": 2,
+            "n_families": 3
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "family_seeds": [
+          42,
+          100,
+          2026
+        ],
+        "pairs": {
+          "vader_official__vs__lm_official": {
+            "a": {
+              "neutral_recall": 0.5899090642417131,
+              "negative_precision": 0.6557649667405765,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8706365503080082,
+              "negative_precision": 0.6871794871794872,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 111,
+                "n01": 1068,
+                "chi2": 775.1789652247668,
+                "p_value": 6.359717791632562e-197
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.28072748606629516,
+              "ci_low": -0.29789054844262575,
+              "ci_high": -0.2631894223751433,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.28072748606629516
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.03141452043891069,
+              "ci_low": -0.05459308503561298,
+              "ci_high": -0.008637527979246478,
+              "p_value": 0.0064,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.03141452043891069
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official",
+            "model_b": "lm_official",
+            "p_min": 6.359717791632562e-197,
+            "p_max": 6.359717791632562e-197,
+            "p_holm_by_seed": {
+              "42": 3.815830674979537e-196,
+              "100": 3.815830674979537e-196,
+              "2026": 3.815830674979537e-196
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader_official_tuned__vs__lm_official_tuned": {
+            "a": {
+              "neutral_recall": 0.6867116456438839,
+              "negative_precision": 0.6557649667405765,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8709298914637724,
+              "negative_precision": 0.6955128205128205,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 151,
+                "n01": 779,
+                "chi2": 422.7193548387097,
+                "p_value": 1.3866670206169677e-102
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.18421824581988855,
+              "ci_low": -0.20046569406257247,
+              "ci_high": -0.16759445094359465,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.18421824581988855
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.03974785377224399,
+              "ci_low": -0.06239810708539239,
+              "ci_high": -0.017365588548550543,
+              "p_value": 0.0004,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.03974785377224399
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader_official_tuned",
+            "model_b": "lm_official_tuned",
+            "p_min": 1.3866670206169677e-102,
+            "p_max": 1.3866670206169677e-102,
+            "p_holm_by_seed": {
+              "42": 6.933335103084838e-102,
+              "100": 6.933335103084838e-102,
+              "2026": 6.933335103084838e-102
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "vader__vs__loughran_mcdonald": {
+            "a": {
+              "neutral_recall": 0.8641830448811968,
+              "negative_precision": 0.8406827880512091,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8457025520680551,
+              "negative_precision": 0.7986154814348647,
+              "n_seeds": 1
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 211,
+                "n01": 148,
+                "chi2": 10.707520891364902,
+                "p_value": 0.0010392186640808525
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.01848049281314168,
+              "ci_low": 0.007584431637275135,
+              "ci_high": 0.0293943438814464,
+              "p_value": 0.0016,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.01848049281314168
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.04206730661634439,
+              "ci_low": 0.02402022682300068,
+              "ci_high": 0.05983739936907332,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.04206730661634439
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "vader",
+            "model_b": "loughran_mcdonald",
+            "p_min": 0.0010392186640808525,
+            "p_max": 0.0010392186640808525,
+            "p_holm_by_seed": {
+              "42": 0.0010392186640808525,
+              "100": 0.0010392186640808525,
+              "2026": 0.002078437328161705
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "bert_base__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.8292754473452625,
+              "negative_precision": 0.8287065831478563,
+              "n_seeds": 3
+            },
+            "b": {
+              "neutral_recall": 0.8100127114500831,
+              "negative_precision": 0.780823447154479,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 418,
+                "n01": 151,
+                "chi2": 124.35149384885764,
+                "p_value": 5.856364258604136e-30
+              },
+              "100": {
+                "n10": 238,
+                "n01": 380,
+                "chi2": 32.16990291262136,
+                "p_value": 1.2254221633381447e-08
+              },
+              "2026": {
+                "n10": 343,
+                "n01": 271,
+                "chi2": 8.210097719869706,
+                "p_value": 0.0041288756917661935
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": 0.01926273589517935,
+              "ci_low": -0.022648243148834523,
+              "ci_high": 0.061646706246977864,
+              "p_value": 0.4044,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                0.078322088589029,
+                -0.041654444118509826,
+                0.021120563215019095
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": 0.047883135993377235,
+              "ci_low": 0.022681529794549765,
+              "ci_high": 0.07588754307657877,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                0.030473386532492097,
+                0.02711211195722807,
+                0.08606390949041132
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "bert_base",
+            "model_b": "finbert_mlm",
+            "p_min": 5.856364258604136e-30,
+            "p_max": 0.0041288756917661935,
+            "p_holm_by_seed": {
+              "42": 1.7569092775812408e-29,
+              "100": 3.6762664900144343e-08,
+              "2026": 0.0041288756917661935
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "prosus_finbert__vs__bert_base": {
+            "a": {
+              "neutral_recall": 0.7521267233792901,
+              "negative_precision": 0.7571536144578314,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8292754473452625,
+              "negative_precision": 0.8287065831478563,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 101,
+                "n01": 500,
+                "chi2": 263.56738768718805,
+                "p_value": 1.994721766502574e-64
+              },
+              "100": {
+                "n10": 231,
+                "n01": 360,
+                "chi2": 27.722504230118442,
+                "p_value": 1.25430361931509e-07
+              },
+              "2026": {
+                "n10": 185,
+                "n01": 446,
+                "chi2": 107.13153724247226,
+                "p_value": 8.17251731197266e-26
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.07714872396597239,
+              "ci_low": -0.11532032884317332,
+              "ci_high": -0.03889863044040025,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.11704312114989734
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.07155296869002492,
+              "ci_low": -0.09515095849678902,
+              "ci_high": -0.0504267110951929,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.060490545226742354
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "prosus_finbert",
+            "model_b": "bert_base",
+            "p_min": 1.994721766502574e-64,
+            "p_max": 1.25430361931509e-07,
+            "p_holm_by_seed": {
+              "42": 7.978887066010296e-64,
+              "100": 2.50860723863018e-07,
+              "2026": 3.269006924789064e-25
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          },
+          "prosus_finbert__vs__finbert_mlm": {
+            "a": {
+              "neutral_recall": 0.7521267233792901,
+              "negative_precision": 0.7571536144578314,
+              "n_seeds": 1
+            },
+            "b": {
+              "neutral_recall": 0.8100127114500831,
+              "negative_precision": 0.780823447154479,
+              "n_seeds": 3
+            },
+            "n_neutral": 3409,
+            "mcnemar_by_seed": {
+              "42": {
+                "n10": 252,
+                "n01": 384,
+                "chi2": 26.982704402515722,
+                "p_value": 1.8636361099031477e-07
+              },
+              "100": {
+                "n10": 184,
+                "n01": 455,
+                "chi2": 114.08450704225352,
+                "p_value": 2.000726683598532e-27
+              },
+              "2026": {
+                "n10": 213,
+                "n01": 402,
+                "chi2": 57.46991869918699,
+                "p_value": 2.1562422814534858e-14
+              }
+            },
+            "delta_neutral_recall": {
+              "delta": -0.05788598807079304,
+              "ci_low": -0.08180191377131725,
+              "ci_high": -0.035436031595079506,
+              "p_value": 0.0,
+              "B": 10000,
+              "n": 9460,
+              "metric": "neutral_recall",
+              "per_seed_delta": [
+                -0.03872103256086834
+              ],
+              "method": "seed+sentence"
+            },
+            "delta_negative_precision": {
+              "delta": -0.023669832696647686,
+              "ci_low": -0.04317357234267208,
+              "ci_high": -0.0028532817876616517,
+              "p_value": 0.0252,
+              "B": 10000,
+              "n": 9460,
+              "metric": "negative_precision",
+              "per_seed_delta": [
+                -0.030017158694250257
+              ],
+              "method": "seed+sentence"
+            },
+            "model_a": "prosus_finbert",
+            "model_b": "finbert_mlm",
+            "p_min": 2.000726683598532e-27,
+            "p_max": 1.8636361099031477e-07,
+            "p_holm_by_seed": {
+              "42": 3.7272722198062953e-07,
+              "100": 8.002906734394127e-27,
+              "2026": 6.468726844360457e-14
+            },
+            "n_seeds_significant": 3,
+            "n_families": 3
+          }
+        }
+      }
+    }
+  }
+}

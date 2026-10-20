@@ -99,10 +99,12 @@ warmup, weight decay 0.01, gradient clipping 1.0, at most 5 epochs, patience 2) 
 splits of each PhraseBank agreement level, 3 seeds each (42, 100, 2026). The epoch is chosen by validation Macro-F1
 only; test and SEntFiN 1.0 are scored once. Off-the-shelf `ProsusAI/finbert` was trained on PhraseBank, so it is
 scored **only** on SEntFiN 1.0 (zero-shot). All baselines were refit in the same environment, so every paired test
-compares predictions on identical sentences. The official lexicons use fixed published rules (nothing tuned); the
-custom lexicons and TF-IDF models tune thresholds / hyperparameters on the validation split of each config. Hugging
-Face revisions are pinned in `src/transformer/finetune.py`; split files are checked against
-`data/splits/SHA256SUMS` before every run. Runs: 77 (18 baseline, 18 fine-tune, 40 CV, 1 zero-shot) on Apple MPS
+compares predictions on identical sentences. Tier 1 has three variants: the plain official lexicons with their
+fixed published rules; the proposal's specification, i.e. the official lexicons with decision thresholds tuned on the
+validation split (and 3-token negation handling for Loughran–McDonald); and the custom finance-adjusted lists from
+Step 1. TF-IDF models tune C ∈ {0.01, 0.1, 1, 10} and the class weight on validation (C = 1 or 10 was chosen in every
+run). Hugging Face revisions are pinned in `src/transformer/finetune.py`; split files are checked against
+`data/splits/SHA256SUMS` before every run. Runs: 93 (24 baseline, 18 fine-tune, 50 CV, 1 zero-shot) on Apple MPS
 (Python 3.9.6, torch 2.8.0, transformers 4.57.6, scikit-learn 1.6.1; exact versions in `requirements-lock.txt`).
 
 The three agreement levels are nested (a 100%-agreement sentence is also in 75agree and 50agree), so columns are
@@ -113,7 +115,9 @@ compared within a config; across configs the comparison is descriptive.
 | Model | allagree (N = 339) | 75agree (N = 518) | 50agree (N = 726) |
 |---|---:|---:|---:|
 | VADER (official lexicon) | 0.500 | 0.515 | 0.491 |
+| VADER (official lexicon, val-tuned thresholds) | 0.507 | 0.542 | 0.506 |
 | Loughran–McDonald (official dictionary) | 0.498 | 0.518 | 0.502 |
+| Loughran–McDonald (official, negation + val-tuned thresholds) | 0.505 | 0.520 | 0.503 |
 | VADER-style (finance-adjusted, custom) | 0.753 | 0.646 | 0.645 |
 | LM-style (finance-adjusted, custom) | 0.636 | 0.597 | 0.567 |
 | TF-IDF + Logistic Regression | 0.869 | 0.776 | 0.762 |
@@ -126,7 +130,9 @@ compared within a config; across configs the comparison is descriptive.
 | Model | trained on allagree | trained on 75agree | trained on 50agree |
 |---|---:|---:|---:|
 | VADER (official lexicon) | 0.525 | 0.525 | 0.525 |
+| VADER (official lexicon, val-tuned thresholds) | 0.481 | 0.528 | 0.525 |
 | Loughran–McDonald (official dictionary) | 0.466 | 0.466 | 0.466 |
+| Loughran–McDonald (official, negation + val-tuned thresholds) | 0.469 | 0.469 | 0.469 |
 | VADER-style (finance-adjusted, custom) | 0.624 | 0.625 | 0.624 |
 | LM-style (finance-adjusted, custom) | 0.585 | 0.585 | 0.585 |
 | TF-IDF + Logistic Regression | 0.451 | 0.475 | 0.475 |
@@ -137,7 +143,37 @@ compared within a config; across configs the comparison is descriptive.
 
 5-fold CV on the allagree training partition (scored on the fold used for epoch selection, so optimistic):
 FinBERT-MLM 0.952 ± 0.013, `bert-base-uncased` 0.950 ± 0.013, TF-IDF + SVM 0.816 ± 0.028, VADER-style (custom)
-0.716 ± 0.041, VADER (official) 0.492 ± 0.038, Loughran–McDonald (official) 0.480 ± 0.026.
+0.716 ± 0.041, VADER (official, val-tuned) 0.529 ± 0.039, VADER (official) 0.492 ± 0.038, Loughran–McDonald
+(official, val-tuned) 0.483 ± 0.026, Loughran–McDonald (official) 0.480 ± 0.026.
+
+Tuning the thresholds of the official lexicons on validation, as the proposal specified, adds at most +0.03
+Macro-F1; the large gap to the custom lists (0.57–0.75) comes from their edited word lists, not from tuning.
+
+### RQ1: the neutral/negative boundary (neutral recall R_neu, negative precision P_neg)
+
+As planned in the proposal's RQ1 traceability matrix: R_neu and P_neg per model, Δ with the seed + sentence
+bootstrap (B = 10,000) and McNemar on gold-neutral sentences only (correct = predicted neutral), Holm within each
+seed family. Full tables for every config: `STEP2_REPORT.md`, section "RQ1: neutral/negative boundary", and
+`results/step2/rq1_boundary.json`.
+
+| Pair (A vs B), allagree-trained | Split | R_neu A / B | ΔR_neu [95% CI] | P_neg A / B | ΔP_neg [95% CI] |
+|---|---|---|---:|---|---:|
+| VADER (official) vs LM (official) | test | 0.591 / 0.899 | −0.308 [−0.390, −0.225] | 0.345 / 0.475 | −0.130 [−0.321, +0.056] |
+| VADER vs LM (official, val-tuned) | test | 0.731 / 0.899 | −0.168 [−0.244, −0.093] | 0.421 / 0.576 | −0.155 [−0.386, +0.071] |
+| BERT vs FinBERT-MLM | test | 0.992 / 0.978 | +0.014 [−0.008, +0.040] | 1.000 / 0.955 | +0.045 [+0.000, +0.116] |
+| VADER (official) vs LM (official) | SEntFiN | 0.590 / 0.871 | −0.281 [−0.298, −0.263] | 0.656 / 0.687 | −0.031 [−0.055, −0.009] |
+| VADER vs LM (official, val-tuned) | SEntFiN | 0.729 / 0.871 | −0.142 [−0.158, −0.126] | 0.704 / 0.696 | +0.008 [−0.017, +0.033] |
+| BERT vs FinBERT-MLM | SEntFiN | 0.858 / 0.879 | −0.021 [−0.071, +0.031] | 0.855 / 0.848 | +0.006 [−0.012, +0.025] |
+| ProsusAI vs BERT | SEntFiN | 0.752 / 0.858 | −0.106 [−0.136, −0.068] | 0.757 / 0.855 | −0.097 [−0.114, −0.081] |
+
+**Reading.** The general-purpose lexicon loses many more neutral sentences than the financial one: VADER's neutral
+recall is 0.14–0.34 below Loughran–McDonald's in every config and on SEntFiN (all intervals exclude zero; neutral-only
+McNemar significant in 3/3 seed families). This is the RQ1 effect at the lexicon level, and validation tuning only
+halves it. Negative precision differs much less between the two lexicons (in-domain intervals include zero). Between
+the controlled encoders there is no domain-pretraining advantage at this boundary: ΔR_neu (BERT − FinBERT-MLM) includes
+zero in all six config × split cells, and ΔP_neg is significant only on SEntFiN after 50agree training (+0.048, BERT
+better; the allagree test interval touches zero, p = 0.17). The off-the-shelf ProsusAI/finbert has lower neutral recall and negative precision on SEntFiN than both
+controlled encoders.
 
 ### Architecture vs. domain-pretraining attribution (ΔMacro-F1, seed + sentence bootstrap, B = 10,000)
 
@@ -251,10 +287,18 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 - **Annotation.** The proposal planned double annotation by two team members; it was done by two blind LLM
   annotators (above). Human spot-checking of a sample is still open.
 - **Tier 1 lexicons.** Step 1 used custom finance-adjusted word lists under the names VADER and Loughran–McDonald;
-  the official lexicons were added in Step 2 and are now the headline Tier 1 rows.
-- **Split manifests.** Planned as committed files; they stay git-ignored (about 11 MB), are regenerated by one
-  command (`--fpb-config all`) and are pinned by `data/splits/SHA256SUMS`, which `run_step2.py` checks before running.
-  CV folds are built deterministically in code (seed 42) rather than stored as manifests.
+  the official lexicons (plain, and with the proposal's validation-tuned thresholds and LM negation handling) were
+  added in Step 2 and are now the headline Tier 1 rows.
+- **Split manifests.** The full manifests (with sentence text, about 11 MB) stay git-ignored and are regenerated by
+  one command (`--fpb-config all`), pinned by `data/splits/SHA256SUMS`, which `run_step2.py` checks before running.
+  The committed deliverable is [`data/splits/assignments/`](data/splits/assignments/): text-free per-config split
+  and 5-fold CV assignments plus the SEntFiN holdout ids, keyed by sentence id and SHA-256
+  (`scripts/export_split_assignments.py --check` verifies them against the manifests).
+- **Pre-tagger.** The proposal planned lexical/dependency pre-tagging; negation scope is detected with token windows
+  and regular expressions (`src/analysis/phenomena.py`), not a dependency parser.
+- **FiQA.** The proposal mentioned FiQA headlines next to SEntFiN 1.0 as external data; only SEntFiN 1.0 is used.
+- **Cross-validation.** 5-fold stratified CV is run on the allagree training partition only (all baselines and both
+  encoders); the 75agree and 50agree levels use the single locked 70/15/15 split with three seeds.
 - **SEntFiN size.** The proposal planned a 2,000-sentence holdout; all 9,460 unambiguous, deduplicated headlines
   are used.
 - **κ criterion.** The proposal's acceptance criterion κ ≥ 0.75 failed for context-dependent in round 1 (0.593); it
@@ -280,6 +324,7 @@ regenerated deterministically; Step 2 runs record their SHA-256).
 # official Loughran-McDonald dictionary (git-ignored; SHA-256 checked by src/baselines/lexicon_official.py)
 curl -L -o data/raw/LM_MasterDictionary_1993-2025.csv "https://drive.usercontent.google.com/download?id=1iq2RUf8qGFEAk1g8wQntP3habOnR3fXF&export=download&confirm=t"
 python3 scripts/run_step2.py --stage all --execute
+python3 scripts/export_split_assignments.py --check            # verify committed split assignments
 python3 scripts/summarize_step2.py --runs-dir results/step2/runs --out-dir results/step2 --bootstrap-samples 10000
 ```
 
@@ -310,6 +355,7 @@ essential_text/
 ├── data/
 │   ├── dataset_audit_verdict.json  # Pinned SHA-256 dataset provenance and row-level audit
 │   ├── splits/SHA256SUMS      # SHA-256 of the locked split files (the files themselves are regenerated)
+│   ├── splits/assignments/    # Text-free split / CV-fold / SEntFiN-holdout assignments (committed deliverable)
 │   └── diagnostic/            # 300-sentence diagnostic set: items, key, rule tags, LLM annotations A/B, README
 ├── proposal/                  # Revised proposal (LaTeX/PDF), rubric audit, verification script
 ├── results/
@@ -332,5 +378,5 @@ essential_text/
 ├── notebooks/
 │   ├── build_step1_notebook.py
 │   └── step1_data_and_baselines_colab.ipynb
-└── tests/                     # Offline unittest suite (166 tests)
+└── tests/                     # Offline unittest suite (189 tests)
 ```

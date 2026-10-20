@@ -653,10 +653,12 @@ def build_report(
               "with the selected checkpoint.",
               "- Fine-tuned models run with several seeds; tables show mean ± sample sd over seeds. Baselines are "
               "deterministic and have the single run `seed42` (sd shown as n/a).",
-              "- Baseline fitting: the official lexicons (VADER, Loughran-McDonald) use fixed published rules and "
-              "nothing is tuned. The finance-adjusted lexicon variants tune their decision thresholds on the "
-              "validation split of each config, and the TF-IDF models tune their hyperparameters on validation per "
-              "config.",
+              "- Baseline fitting: the plain official lexicons (VADER, Loughran-McDonald) use fixed published rules "
+              "and nothing is tuned. The `official, val-tuned` variants keep the official lexicons but tune their "
+              "decision thresholds on the validation split of each config (the LM variant also applies 3-token "
+              "negation handling), as specified in the proposal. The finance-adjusted lexicon variants tune their "
+              "thresholds the same way, and the TF-IDF models tune C in {0.01, 0.1, 1, 10} and the class weight on "
+              "validation per config.",
               "- The 5-fold CV on `sentences_allagree` is scored on the fold validation part, the same part used "
               "for epoch selection (as in Step 1 CV), so it is an optimistic estimate and not a test score.",
               "- The three PhraseBank levels (allagree, 75agree, 50agree) are nested: a sentence in a stricter "
