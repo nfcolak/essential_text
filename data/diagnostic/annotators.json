@@ -1,5 +1,9 @@
 {
   "a": "Claude Sonnet 5.5 (claude-sonnet-5-5, Anthropic) - LLM agent, not a human annotator",
   "b": "Gemini 3.8 Flash (gemini-3.8-flash-medium, Google, via Antigravity CLI) - LLM agent, not a human annotator",
-  "protocol": "Blind and independent: each agent saw only diagnostic_items.csv (diag_id,text) and annotation/GUIDELINES.md, never the other annotator's file, gold labels, model predictions or rule tags. Each read the sentences in batches of about 25 and wrote tags by hand (no keyword scripts; verified from the agent transcripts). Run on 2026-10-20 in OpenSpec workspace annotate-diagnostic-set."
+  "protocol": "Blind and independent: each agent saw only diagnostic_items.csv (diag_id,text) and annotation/GUIDELINES.md, never the other annotator's file, gold labels, model predictions or rule tags. Each read the sentences in chunks (about 25 to 75 sentences per read) and wrote the tags by hand, without keyword scripts or the rule tagger. Blindness refers to the labels, predictions and rule tags withheld in this run: both models may have seen Financial PhraseBank sentences during pretraining. These process claims were verified by the supervising agent from the session transcripts; the transcripts are not part of the repository.",
+  "rounds": {
+    "v1": "2026-10-20, all five tags with guideline v1 (annotations_a_v1.csv, annotations_b_v1.csv).",
+    "v2": "2026-10-20, context_dependent only, re-annotated blind by the same two models with guideline v2 (widened definition; context_v2_a.csv, context_v2_b.csv). annotations_a.csv and annotations_b.csv hold the v1 tags for the other four phenomena and the v2 context_dependent tag."
+  }
 }

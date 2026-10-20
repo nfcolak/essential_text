@@ -21,7 +21,8 @@ exposure, risk(s), restructuring, short (position), bear/bearish, volatility, cl
 
 - Include: the term is used as a financial or accounting item or concept.
 - Exclude: the same word in a non-financial sense (a "charge" of assault, "bear" the animal, "claims" in an
-  argument unrelated to insurance or legal claims against a company).
+  argument unrelated to insurance or legal claims against a company). Role senses of "charge" are not financial:
+  "takes charge as CEO", "in charge of", "charge of" (responsibility), "additional charge(s) of" (responsibility).
 
 Positive examples (invented):
 1. "Quarterly depreciation of the plant rose with the new equipment."
@@ -38,7 +39,7 @@ lack/lacked.
 
 - Include: the negator changes what is claimed in the clause.
 - Exclude: fixed names or labels ("No. 1 supplier", "Not Applicable" column headers), "no" as an abbreviation
-  of "number".
+  of "number" ("No. 1", "No.5").
 
 Positive examples (invented):
 1. "The company did not meet its delivery schedule."
@@ -74,6 +75,8 @@ year-on-year, y-o-y, doubled, halved.
 - Include: a quantity is placed against another quantity, a past value or a change in value.
 - Exclude: a number without any comparison or change ("Sales were 12 million"), a comparison without any
   number ("sales were higher"), except doubled/halved which imply a number.
+- "up"/"down" count only with a digit or % within 3 tokens ("shares were up 5 percent"); phrasal or noun uses
+  such as "start-up", "sign up", "pick up" never count.
 
 Positive examples (invented):
 1. "Net sales rose to 52 million from 47 million a year earlier."
@@ -85,22 +88,42 @@ Negative examples (invented):
 
 ### 5. context_dependent (context_dependent)
 
-The polarity of the sentence depends on the direction applied to a polarity-loaded target, so word-level polarity
-misleads: decrease in losses, costs fell, loss narrowed, debt reduced, increased loss, cut jobs, lower costs.
-Rule of thumb: a direction word (increase, decrease, fall, rise, reduce, narrow, widen, cut, lower, higher)
-within 4 tokens of a negative-valence financial noun (loss, cost, debt, deficit, expense, liability,
-impairment, unemployment, layoffs).
+The polarity of the sentence comes from a direction applied to a polarity-loaded financial target, so the same
+direction word means the opposite with a target of opposite valence: "profit fell" is bad news, "costs fell" is
+good news. Word-level polarity misleads (decrease in losses, loss narrowed, debt reduced, increased loss, lower
+costs, profit decreased, sales rose). Job cuts count too (cut jobs, laid off staff).
+Rule of thumb: a direction word (increase, decrease, fall, rise, reduce, narrow, widen, cut, lower, higher,
+improve, worsen) within 4 tokens of a target noun.
 
+- Negative-valence targets: loss, cost, debt, deficit, expense, liability, impairment, unemployment, layoffs,
+  write-down, provision.
+- Positive-valence targets: profit, earnings, income, sales, revenue, turnover, margin, EBIT, EBITDA, EBT, result,
+  orders, order intake, demand, dividend, market share.
+- Job cuts: cut/eliminate/reduce/shed/lay off within 3 tokens of jobs, staff, employees, people, positions,
+  workforce or personnel; also "N people ... laid off".
 - Include: you need the direction AND the target to tell whether the news is good or bad.
-- Exclude: a direction word with a neutral target ("sales rose"), or a negative noun without any direction.
+- Exclude: a direction word with a target that carries no valence ("the meeting was moved higher on the agenda"),
+  or a target without any direction ("Operating costs are listed in the annex").
 
 Positive examples (invented):
 1. "The deficit narrowed during the second half."
 2. "Operating costs fell after the move to the new site."
+3. "The workshop will cut 40 jobs next spring."
+4. "Gross margin decreased compared with the previous year."
+5. "Order intake grew strongly in the autumn."
+6. "The retailer laid off 25 people at the old depot."
 
 Negative examples (invented):
-1. "Sales rose during the second half."
-2. "Operating costs are listed in the annex."
+1. "Operating costs are listed in the annex."
+2. "Profit is reported in the annex."
+3. "The bakery opened a second shop near the station."
+
+### Changelog
+
+- v2 (2026-10-20): context_dependent now covers targets of both valences (positive-valence targets such as profit,
+  sales, revenue and job-cut patterns added), not only negative-valence nouns. Exclusions added to other
+  sections: bare "up"/"down" only count with a number (no "start-up", "sign up", "pick up"); "No." before a digit
+  is not a negation; "takes charge", "in charge of" are not financial charges.
 
 ## Output format
 

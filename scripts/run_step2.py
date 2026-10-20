@@ -45,11 +45,14 @@ DEFAULT_SEEDS = (42, 100, 2026)
 BASELINE_SEED = 42
 EXTERNAL_DIR = "external_only"
 EXTERNAL_FILE = "sentfin_dedup.json"
+SHA256SUMS_FILE = "SHA256SUMS"
 
 STAGES = ("baselines", "finetune", "cv", "zeroshot", "all")
 
-# model key -> Step 1 model name understood by colab.run_step1_colab.instantiate_fresh_model
+# model key -> descriptive model name (the factory is src.baselines.registry.make_baseline(key, seed))
 BASELINE_KEYS = {
+    "vader_official": "VADER (official vaderSentiment lexicon)",
+    "lm_official": "Loughran-McDonald (official Master Dictionary)",
     "vader": "VADER",
     "loughran_mcdonald": "Loughran-McDonald",
     "tfidf_logreg": "TF-IDF + Logistic Regression",
@@ -210,7 +213,42 @@ def _check_prob(prob: Any, n: int, name: str) -> np.ndarray:
     arr = np.asarray(prob, dtype=np.float32)
     if arr.shape != (n, 3):
         raise ValueError(f"{name} probabilities have shape {arr.shape}, expected ({n}, 3).")
+    if not np.isfinite(arr).all():
+        raise ValueError(f"{name} probabilities contain non-finite values (NaN or inf).")
     return arr
+
+
+def _check_not_degenerate(prob: np.ndarray, name: str) -> None:
+    """A trained transformer that predicts one class for every validation sentence has collapsed."""
+    if len(np.unique(np.argmax(prob, axis=1))) < 2:
+        raise ValueError(f"{name} predictions are degenerate: fewer than 2 distinct argmax classes.")
+
+
+def _read_sha256sums(path: str) -> dict[str, str]:
+    """Parse a `shasum -a 256` file into {file name: hex digest}."""
+    sums: dict[str, str] = {}
+    with open(path, encoding="utf-8") as handle:
+        for line in handle:
+            parts = line.split(None, 1)
+            if len(parts) == 2:
+                sums[os.path.basename(parts[1].strip().lstrip("*"))] = parts[0].lower()
+    return sums
+
+
+def verify_split_hashes(paths: Sequence[str], splits_dir: str) -> list[str]:
+    """Return the input files whose SHA-256 differs from `<splits_dir>/SHA256SUMS`.
+
+    Without a SHA256SUMS file nothing is checked (a warning is printed); files it does not list are skipped.
+    """
+    sums_path = os.path.join(splits_dir, SHA256SUMS_FILE)
+    if not os.path.isfile(sums_path):
+        print(f"warning: {sums_path} not found; split files were not hash-checked.", file=sys.stderr)
+        return []
+    expected = _read_sha256sums(sums_path)
+    return [
+        path for path in paths
+        if os.path.basename(path) in expected and file_sha256(path) != expected[os.path.basename(path)]
+    ]
 
 
 class _Data:
@@ -272,10 +310,12 @@ def _execute_run(
         external_sha = file_sha256(data.external_path)
         model_name = ZERO_SHOT_KEYS[run.model_key]
         config = _make_config(run.seed, None)
+        full_config = config.to_dict()
         prob = zero_shot_fn(model_name, ext_texts, config, revision=MODEL_REVISIONS.get(model_name))
         ids["external"], ys["external"] = ext_ids, ext_y
         probs["external"] = _check_prob(prob, len(ext_texts), "external")
-        hyperparams = config.to_dict()
+        # inference only: training hyperparameters would be misleading here
+        hyperparams = {k: full_config.get(k) for k in ("max_length", "eval_batch_size", "device")}
         n_ext = len(ext_texts)
     else:
         manifest = data.manifest(run.config)
@@ -299,7 +339,7 @@ def _execute_run(
         ids["val"], ys["val"] = val_ids, va_y
 
         if run.model_key in BASELINE_KEYS:
-            model = baseline_factory(BASELINE_KEYS[run.model_key], seed=run.seed)
+            model = baseline_factory(run.model_key, seed=run.seed)
             model.fit(tr_texts, tr_y, val_texts=va_texts, val_labels=va_y)
             probs["val"] = _check_prob(model.predict_proba(va_texts), n_val, "val")
             hyperparams = dict(getattr(model, "best_params_", {}) or {})
@@ -317,6 +357,7 @@ def _execute_run(
                 revision=MODEL_REVISIONS.get(model_name),
             )
             probs["val"] = _check_prob(out["val_prob"], n_val, "val")
+            _check_not_degenerate(probs["val"], "val")
             if run.stage == "finetune":
                 probs["test"] = _check_prob(out["eval_probs"]["test"], n_test, "test")
                 probs["external"] = _check_prob(out["eval_probs"]["external"], n_ext, "external")
@@ -409,9 +450,9 @@ def _default_zero_shot_fn() -> Callable[..., Any]:
 
 
 def _default_baseline_factory() -> Callable[..., Any]:
-    from colab.run_step1_colab import instantiate_fresh_model
+    from src.baselines.registry import make_baseline
 
-    return instantiate_fresh_model
+    return make_baseline
 
 
 def _free_memory() -> None:
@@ -467,6 +508,12 @@ def main(
     if missing:
         for path in missing:
             print(f"error: missing input file: {path}", file=sys.stderr)
+        return 2
+
+    mismatched = verify_split_hashes(needed, args.splits_dir)
+    if mismatched:
+        for path in mismatched:
+            print(f"error: SHA-256 of {path} does not match {SHA256SUMS_FILE}.", file=sys.stderr)
         return 2
 
     pending = 0

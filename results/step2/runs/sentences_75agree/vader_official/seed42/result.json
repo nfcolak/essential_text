@@ -1,0 +1,170 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_75agree",
+  "model_key": "vader_official",
+  "model_name": "VADER (official vaderSentiment lexicon)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "thresholds": [
+      -0.05,
+      0.05
+    ],
+    "tuned": false,
+    "lexicon": "vaderSentiment 3.3.2",
+    "lexicon_size": 7506
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.5733590733590733,
+      "macro_f1": 0.5095903045903046,
+      "per_class": {
+        "negative": {
+          "precision": 0.3958333333333333,
+          "recall": 0.30158730158730157,
+          "f1": 0.34234234234234234,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.8423645320197044,
+          "recall": 0.531055900621118,
+          "f1": 0.6514285714285715,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.40074906367041196,
+          "recall": 0.8045112781954887,
+          "f1": 0.535,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          19,
+          16,
+          28
+        ],
+        [
+          19,
+          171,
+          132
+        ],
+        [
+          10,
+          16,
+          107
+        ]
+      ],
+      "neutral_to_negative_rate": 0.059006211180124224,
+      "ece": 0.42389158323464715
+    },
+    "test": {
+      "accuracy": 0.5772200772200772,
+      "macro_f1": 0.5150949361181884,
+      "per_class": {
+        "negative": {
+          "precision": 0.425531914893617,
+          "recall": 0.31746031746031744,
+          "f1": 0.36363636363636365,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.8063063063063063,
+          "recall": 0.5559006211180124,
+          "f1": 0.6580882352941176,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.40160642570281124,
+          "recall": 0.7518796992481203,
+          "f1": 0.5235602094240838,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          20,
+          16,
+          27
+        ],
+        [
+          21,
+          179,
+          122
+        ],
+        [
+          6,
+          27,
+          100
+        ]
+      ],
+      "neutral_to_negative_rate": 0.06521739130434782,
+      "ece": 0.41807413572970503
+    },
+    "external": {
+      "accuracy": 0.5251585623678647,
+      "macro_f1": 0.525000760226454,
+      "per_class": {
+        "negative": {
+          "precision": 0.6557649667405765,
+          "recall": 0.4381481481481482,
+          "f1": 0.5253108348134992,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.48087039693926353,
+          "recall": 0.5899090642417131,
+          "f1": 0.5298379660123831,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.510650546919977,
+          "recall": 0.5293942106833781,
+          "f1": 0.5198534798534798,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1183,
+          880,
+          637
+        ],
+        [
+          335,
+          2011,
+          1063
+        ],
+        [
+          286,
+          1291,
+          1774
+        ]
+      ],
+      "neutral_to_negative_rate": 0.0982692871809915,
+      "ece": 0.4697208881504188
+    }
+  },
+  "n": {
+    "train": 2417,
+    "val": 518,
+    "test": 518,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "3a40318cdb1be7e064ba4e6d129798e5165408f48661708aa0361a96ab492d2d",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.19458293914794922,
+  "timestamp": "2026-10-20T14:22:44.401075+00:00"
+}

@@ -29,6 +29,51 @@ def _file_sha256(path: str) -> str:
     return h.hexdigest()
 
 
+def check_split_hashes(splits_dir: str, paths: list[str]) -> str | None:
+    """Compare the loaded split files with <splits_dir>/SHA256SUMS. Returns the first mismatching path, else None.
+
+    A missing SHA256SUMS file only prints a warning; files not listed in it are not checked.
+    """
+    sums_path = os.path.join(splits_dir, "SHA256SUMS")
+    if not os.path.isfile(sums_path):
+        print("WARNING: {} not found, split hashes not verified".format(sums_path), file=sys.stderr)
+        return None
+    expected: dict[str, str] = {}
+    with open(sums_path, "r", encoding="utf-8") as f:
+        for line in f:
+            parts = line.strip().split(None, 1)
+            if len(parts) == 2:
+                expected[os.path.basename(parts[1].lstrip("*"))] = parts[0].lower()
+    for path in paths:
+        want = expected.get(os.path.basename(path))
+        if want is not None and _file_sha256(path) != want:
+            return path
+    return None
+
+
+def _rule_tags_only(out_dir: str, execute: bool) -> int:
+    items_path = os.path.join(out_dir, "diagnostic_items.csv")
+    if not os.path.isfile(items_path):
+        print("Missing items file: {}".format(items_path), file=sys.stderr)
+        return 2
+    with open(items_path, "r", encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    ids = [r["diag_id"] for r in rows]
+    tags = tag_many([r["text"] for r in rows])
+    print("rule-tags-only: {} items from {}".format(len(rows), items_path))
+    print("rule-tag prevalence: {}".format({ph: sum(t[ph] for t in tags) for ph in PHENOMENA}))
+    if not execute:
+        print("Plan only (no --execute). Would rewrite {} only.".format(os.path.join(out_dir, "rule_tags.csv")))
+        return 0
+    with open(os.path.join(out_dir, "rule_tags.csv"), "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["diag_id"] + list(PHENOMENA))
+        for d, t in zip(ids, tags):
+            w.writerow([d] + [t[ph] for ph in PHENOMENA])
+    print("Wrote rule_tags.csv for {} items".format(len(rows)))
+    return 0
+
+
 def largest_remainder_counts(class_sizes: dict[int, int], n: int) -> dict[int, int]:
     """Per-class counts ~ n * class share, adjusted by largest remainder so they sum to n."""
     total = sum(class_sizes.values())
@@ -49,11 +94,21 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--splits-dir", default="data/splits")
     p.add_argument("--out-dir", default="data/diagnostic")
     p.add_argument("--execute", action="store_true")
+    p.add_argument("--rule-tags-only", action="store_true",
+                   help="with --execute: recompute rule_tags.csv from the existing diagnostic_items.csv in --out-dir; "
+                        "diagnostic_key.json and diagnostic_items.csv stay untouched")
     args = p.parse_args(argv)
+
+    if args.rule_tags_only:
+        return _rule_tags_only(args.out_dir, args.execute)
 
     manifest_path = os.path.join(args.splits_dir, "{}_manifest.json".format(args.config))
     if not os.path.isfile(manifest_path):
         print("Missing manifest: {}".format(manifest_path), file=sys.stderr)
+        return 2
+    bad = check_split_hashes(args.splits_dir, [manifest_path])
+    if bad is not None:
+        print("SHA-256 mismatch against SHA256SUMS: {}".format(bad), file=sys.stderr)
         return 2
     with open(manifest_path, "r", encoding="utf-8") as f:
         manifest = json.load(f)

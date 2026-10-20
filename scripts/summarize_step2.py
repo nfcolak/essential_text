@@ -27,17 +27,24 @@ import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
+plt.rcParams.update({
+    "figure.facecolor": "white", "axes.facecolor": "white", "savefig.facecolor": "white",
+    "text.color": "black", "axes.labelcolor": "black", "axes.edgecolor": "black",
+    "xtick.color": "black", "ytick.color": "black",
+})
+
 from src.evaluation.metrics import CLASS_NAMES  # noqa: E402
 from src.evaluation.multiseed import (  # noqa: E402
     holm_bonferroni,
     load_runs,
     mean_sd,
     seed_averaged_bootstrap,
+    seed_sentence_bootstrap,
 )
 from src.evaluation.stats import mcnemar_test  # noqa: E402
 
 CONFIGS = ("sentences_allagree", "sentences_75agree", "sentences_50agree")
-BASELINE_MODELS = ("vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
+BASELINE_MODELS = ("vader_official", "lm_official", "vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
 TRANSFORMER_MODELS = ("bert_base", "finbert_mlm")
 MODELS = BASELINE_MODELS + TRANSFORMER_MODELS
 ZEROSHOT_MODEL = "prosus_finbert"
@@ -54,6 +61,15 @@ FIGURES = (
     "step2_attribution.png",
     "step2_confusion_matrices_allagree.png",
 )
+
+
+def display_name(key: str) -> str:
+    """Display name of a model key (lazy registry import; the key itself when unavailable)."""
+    try:
+        from src.baselines.registry import DISPLAY_NAMES
+    except ImportError:
+        return key
+    return DISPLAY_NAMES.get(key, key)
 
 
 def _seed_of(tag: str) -> int | None:
@@ -238,26 +254,56 @@ def compare_pair(
     for s in seeds:
         res = mcnemar_test(y, _pick(preds_a, s), _pick(preds_b, s))
         per_seed[str(s)] = {k: res[k] for k in ("n10", "n01", "chi2", "p_value")}
-    primary_seed = PRIMARY_SEED if PRIMARY_SEED in seeds else seeds[0]
-    boot = seed_averaged_bootstrap(
+    boot = seed_sentence_bootstrap(
         y, list(preds_a.values()), list(preds_b.values()), metric="macro_f1", B=B, seed=seed
     )
     return {
         "mcnemar_by_seed": per_seed,
-        "primary_seed": primary_seed,
-        "p_primary": per_seed[str(primary_seed)]["p_value"],
         "bootstrap_macro_f1": boot,
         "n_seeds_a": len(preds_a),
         "n_seeds_b": len(preds_b),
     }
 
 
+def _family_p(res: dict[str, Any], seed: int) -> float:
+    """Raw McNemar p of a pair in the family of ``seed``; a single-run pair counts in every family."""
+    per_seed = res["mcnemar_by_seed"]
+    if str(seed) in per_seed:
+        return float(per_seed[str(seed)]["p_value"])
+    return float(next(iter(per_seed.values()))["p_value"])
+
+
+def apply_seed_families(results: dict[str, Any]) -> list[int]:
+    """Holm per seed family; adds ``p_min``, ``p_max``, ``p_holm_by_seed``, ``n_seeds_significant``.
+
+    One family per fine-tuning seed present in any pair; a pair of single-run models contributes its
+    one p-value to every family. Returns the family seeds.
+    """
+    family_seeds = sorted({int(s) for res in results.values() for s in res["mcnemar_by_seed"]})
+    holm_by_seed = {
+        s: holm_bonferroni({k: _family_p(res, s) for k, res in results.items()}) for s in family_seeds
+    }
+    for key, res in results.items():
+        raw = [_family_p(res, s) for s in family_seeds]
+        adjusted = {str(s): holm_by_seed[s][key] for s in family_seeds}
+        res["p_min"] = float(min(raw))
+        res["p_max"] = float(max(raw))
+        res["p_holm_by_seed"] = adjusted
+        res["n_seeds_significant"] = int(sum(1 for v in adjusted.values() if v < 0.05))
+        res["n_families"] = len(family_seeds)
+    return family_seeds
+
+
 def build_comparisons(table: RunTable, B: int, seed: int) -> dict[str, Any]:
     out: dict[str, Any] = {
         "note": (
-            "McNemar per seed; p_primary is the seed-42 pairing; p_holm is Holm-Bonferroni over the "
-            "pairs listed for that config and split (15 pairs on test; 21 on external, the 15 plus the "
-            "6 prosus_finbert pairs)."
+            "McNemar per seed pairing; there is no primary seed. Holm-Bonferroni is applied separately "
+            "within each seed family (all pairs of one config and split under that seed; pairs of "
+            "single-run models appear with their one run in every family). p_min / p_max are the "
+            "smallest and largest raw McNemar p over the families; n_seeds_significant counts the "
+            "families in which the Holm-adjusted p is below 0.05. Pairs: 28 on test; 36 on external "
+            "(the 28 plus the 8 prosus_finbert pairs). The bootstrap is the seed+sentence two-level "
+            "bootstrap of the Macro-F1 difference."
         ),
         "configs": {},
     }
@@ -281,10 +327,8 @@ def build_comparisons(table: RunTable, B: int, seed: int) -> dict[str, Any]:
                 if res is not None:
                     res.update({"model_a": a, "model_b": b})
                     results[f"{a}__vs__{b}"] = res
-            holm = holm_bonferroni({k: v["p_primary"] for k, v in results.items()})
-            for key, p_holm in holm.items():
-                results[key]["p_holm"] = p_holm
-            out["configs"][config][split] = {"n": int(len(y)), "pairs": results}
+            family_seeds = apply_seed_families(results)
+            out["configs"][config][split] = {"n": int(len(y)), "family_seeds": family_seeds, "pairs": results}
     return out
 
 
@@ -306,11 +350,31 @@ def select_tfidf_best(table: RunTable, config: str) -> tuple[str, dict[str, floa
     return best, scores
 
 
+def attribution_cell(
+    y: np.ndarray, a: list[np.ndarray], b: list[np.ndarray], metric: str, B: int, seed: int
+) -> dict[str, Any]:
+    """Seed+sentence bootstrap result plus per-seed delta summary and the conditional (old) result."""
+    cell = seed_sentence_bootstrap(y, a, b, metric=metric, B=B, seed=seed)
+    deltas = cell["per_seed_delta"]
+    stats = mean_sd(deltas)
+    mean = stats["mean"]
+    cell["per_seed_delta_mean"] = mean
+    cell["per_seed_delta_sd"] = stats["sd"] if stats["n"] > 1 else None
+    cell["n_seeds_same_sign"] = int(sum(1 for d in deltas if d * mean > 0)) if mean else 0
+    cell["n_seed_deltas"] = len(deltas)
+    cell["conditional_on_seeds"] = seed_averaged_bootstrap(y, a, b, metric=metric, B=B, seed=seed)
+    return cell
+
+
 def build_attribution(table: RunTable, B: int, seed: int) -> dict[str, Any]:
     out: dict[str, Any] = {
         "definition": {
             "delta_arch": "bert_base - tfidf_best (tfidf_best chosen by validation Macro-F1)",
             "delta_domain": "finbert_mlm - bert_base",
+            "ci": (
+                "seed+sentence two-level bootstrap (sentences and trained seeds both resampled); "
+                "conditional_on_seeds is the sentence-only bootstrap with the seeds held fixed"
+            ),
         },
         "configs": {},
     }
@@ -332,9 +396,7 @@ def build_attribution(table: RunTable, B: int, seed: int) -> dict[str, Any]:
             for name, (a, b) in {"delta_arch": (bert, tf), "delta_domain": (fin, bert)}.items():
                 if a and b:
                     entry[name] = {
-                        metric: seed_averaged_bootstrap(
-                            y, list(a.values()), list(b.values()), metric=metric, B=B, seed=seed
-                        )
+                        metric: attribution_cell(y, list(a.values()), list(b.values()), metric, B, seed)
                         for metric in ("macro_f1", "accuracy")
                     }
             out["configs"][config][split] = entry
@@ -359,7 +421,7 @@ def _val(entry: dict | None, split: str, metric: str = "macro_f1") -> tuple[floa
 
 
 def fig_macro_f1_by_config(summary: dict, path: str) -> None:
-    fig, axes = plt.subplots(1, len(CONFIGS), figsize=(15, 4.5), sharey=True)
+    fig, axes = plt.subplots(1, len(CONFIGS), figsize=(20, 5.5), sharey=True)
     for ax, config in zip(axes, CONFIGS):
         entries = summary["configs"].get(config, {})
         if not entries:
@@ -368,7 +430,7 @@ def fig_macro_f1_by_config(summary: dict, path: str) -> None:
         vals = [_val(entries.get(m), "test") for m in MODELS]
         ax.bar(range(len(MODELS)), [v[0] for v in vals], yerr=[v[1] for v in vals], capsize=3, color="#4c78a8")
         ax.set_xticks(range(len(MODELS)))
-        ax.set_xticklabels(MODELS, rotation=45, ha="right")
+        ax.set_xticklabels([display_name(m) for m in MODELS], rotation=45, ha="right", fontsize=8)
         ax.set_title(config)
         ax.set_ylim(0, 1)
     axes[0].set_ylabel("test Macro-F1 (mean ± sd over seeds)")
@@ -378,7 +440,7 @@ def fig_macro_f1_by_config(summary: dict, path: str) -> None:
 
 
 def fig_external(summary: dict, path: str) -> None:
-    fig, ax = plt.subplots(figsize=(10, 4.5))
+    fig, ax = plt.subplots(figsize=(14, 5.5))
     width = 0.8 / max(1, len(CONFIGS))
     for k, config in enumerate(CONFIGS):
         entries = summary["configs"].get(config, {})
@@ -387,9 +449,9 @@ def fig_external(summary: dict, path: str) -> None:
         ax.bar(xs, [v[0] for v in vals], width, yerr=[v[1] for v in vals], capsize=2, label=f"trained on {config}")
     zs = summary["zeroshot"].get(ZEROSHOT_MODEL)
     if zs and zs.get("external"):
-        ax.axhline(zs["external"]["macro_f1"], color="black", linestyle="--", label="prosus_finbert (zero-shot)")
+        ax.axhline(zs["external"]["macro_f1"], color="black", linestyle="--", label=f"{display_name(ZEROSHOT_MODEL)}")
     ax.set_xticks(np.arange(len(MODELS)) + width * (len(CONFIGS) - 1) / 2)
-    ax.set_xticklabels(MODELS, rotation=30, ha="right")
+    ax.set_xticklabels([display_name(m) for m in MODELS], rotation=30, ha="right", fontsize=8)
     ax.set_ylabel("SEntFiN 1.0 Macro-F1")
     ax.set_ylim(0, 1)
     ax.legend(fontsize=8)
@@ -422,7 +484,7 @@ def fig_attribution(attribution: dict, path: str) -> None:
         ax.axhline(0, color="black", linewidth=0.8)
         ax.set_xticks(x)
         ax.set_xticklabels(labels)
-        ax.set_title(f"{split} (Macro-F1 difference, 95% CI)")
+        ax.set_title(f"{split} (Macro-F1 difference, 95% seed+sentence CI)")
     axes[0].legend(fontsize=8)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
@@ -448,7 +510,7 @@ def fig_confusions(table: RunTable, path: str) -> None:
         ax.set_yticklabels(CLASS_NAMES)
         ax.set_xlabel("predicted")
         ax.set_ylabel("gold")
-        ax.set_title(f"{model} (test, summed over {len(mats)} seeds)")
+        ax.set_title(f"{display_name(model)} (test, summed over {len(mats)} seeds)")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -462,14 +524,20 @@ def fig_confusions(table: RunTable, path: str) -> None:
 def _pm(stat: dict | None, digits: int = 3) -> str:
     if not stat or stat.get("mean") is None:
         return "n/a"
+    if stat.get("n", 0) < 2 or stat.get("sd") is None:
+        return f"{stat['mean']:.{digits}f} (sd n/a)"
     return f"{stat['mean']:.{digits}f} ± {stat['sd']:.{digits}f}"
+
+
+def _p_txt(pv: float, B: int) -> str:
+    """p-value text; 0 means no resample crossed zero, i.e. p below the resolution 2 / B."""
+    return f"p < {2.0 / B:.4g}" if pv == 0 else f"p={pv:.4f}"
 
 
 def _ci(boot: dict | None) -> str:
     if not boot:
         return "n/a"
-    pv = boot['p_value']
-    p_txt = f"p<{1.0 / boot['B']:.4g}" if pv == 0 else f"p={pv:.4f}"
+    p_txt = _p_txt(boot["p_value"], boot["B"])
     return f"{boot['delta']:+.3f} [{boot['ci_low']:+.3f}, {boot['ci_high']:+.3f}], {p_txt}"
 
 
@@ -487,16 +555,32 @@ def build_report(summary: dict, comparisons: dict, attribution: dict, missing: l
               "- The epoch is selected by validation Macro-F1 only; the test split and SEntFiN are scored once "
               "with the selected checkpoint.",
               "- Fine-tuned models run with several seeds; tables show mean ± sample sd over seeds. Baselines are "
-              "deterministic and have the single run `seed42`.",
+              "deterministic and have the single run `seed42` (sd shown as n/a).",
+              "- Baseline fitting: the official lexicons (VADER, Loughran-McDonald) use fixed published rules and "
+              "nothing is tuned. The finance-adjusted lexicon variants tune their decision thresholds on the "
+              "validation split of each config, and the TF-IDF models tune their hyperparameters on validation per "
+              "config.",
               "- The 5-fold CV on `sentences_allagree` is scored on the fold validation part, the same part used "
               "for epoch selection (as in Step 1 CV), so it is an optimistic estimate and not a test score.",
-              "- `prosus_finbert` is scored only on SEntFiN 1.0 (it was fine-tuned on Financial PhraseBank, so "
-              "scoring it there would leak).",
-              "- Paired tests: McNemar per seed (primary p = seed 42 pairing), Holm-Bonferroni over the pairs of "
-              "one config and split, and a paired sentence bootstrap of the seed-averaged Macro-F1 difference "
-              f"(B = {args.bootstrap_samples}, 95% percentile CI).",
-              "- Attribution: `delta_arch` = `bert_base` − `tfidf_best` and `delta_domain` = `finbert_mlm` − "
-              "`bert_base`; `tfidf_best` is the TF-IDF model with the higher validation Macro-F1 in that config.", ""]
+              "- The three PhraseBank levels (allagree, 75agree, 50agree) are nested: a sentence in a stricter "
+              "level is also in the looser ones. Models and test splits are never mixed across levels, so tables "
+              "are compared within a config and across configs only descriptively.",
+              "- `prosus_finbert` (ProsusAI/finbert) is zero-shot and scored only on SEntFiN 1.0 (it was "
+              "fine-tuned on Financial PhraseBank, so scoring it there would leak).",
+              "- Confidence intervals include seed variation: the bootstrap resamples sentences and, for the "
+              "fine-tuned models, the trained seeds (two-level, seed+sentence). The earlier sentence-only "
+              "interval, conditional on the three seeds, is stored as `conditional_on_seeds` in `attribution.json`.",
+              f"- Bootstrap p-value (B = {args.bootstrap_samples}): p = min(1, 2 * min(P(d <= 0), P(d >= 0))) over "
+              f"the resampled differences d, so the smallest non-zero value is 2/B; 0 is printed as "
+              f"p < {2.0 / args.bootstrap_samples:.4g}.",
+              "- McNemar is a per-seed diagnostic. There is no primary seed: each seed pairing forms its own "
+              "family, Holm-Bonferroni is applied within each family (pairs of single-run models enter every "
+              "family with their one run), and the report gives p_min, p_max and the number of seed families "
+              "with Holm-adjusted p < 0.05. The seed+sentence bootstrap of the Macro-F1 difference is the "
+              "headline test.",
+              "- Attribution: `delta_arch` = BERT − `tfidf_best` and `delta_domain` = FinBERT-MLM − BERT; "
+              "`tfidf_best` is the TF-IDF model with the higher validation Macro-F1 in that config. Per-seed "
+              "deltas are listed beside each interval.", ""]
 
     for split, title in (("test", "In-domain test"), ("external", "SEntFiN 1.0 (external)")):
         lines += [f"## {title}: Macro-F1 / accuracy (mean ± sd)", ""]
@@ -511,12 +595,12 @@ def build_report(summary: dict, comparisons: dict, attribution: dict, missing: l
                 if not e:
                     continue
                 s = e[split]
-                lines.append(f"| {model} | {e['n_runs']} | {_pm(s['macro_f1'])} | {_pm(s['accuracy'])} | "
+                lines.append(f"| {display_name(model)} | {e['n_runs']} | {_pm(s['macro_f1'])} | {_pm(s['accuracy'])} | "
                              f"{_pm(s['neutral_to_negative_rate'])} | {_pm(s['ece'])} |")
             lines.append("")
     zs = summary["zeroshot"].get(ZEROSHOT_MODEL)
     if zs and zs.get("external"):
-        lines += ["### prosus_finbert (zero-shot, SEntFiN only)", "",
+        lines += [f"### {display_name(ZEROSHOT_MODEL)} (SEntFiN only)", "",
                   f"Macro-F1 {zs['external']['macro_f1']:.3f}, accuracy {zs['external']['accuracy']:.3f}.", ""]
 
     if summary["cv"]:
@@ -525,10 +609,11 @@ def build_report(summary: dict, comparisons: dict, attribution: dict, missing: l
         for model in MODELS:
             e = summary["cv"].get(model)
             if e:
-                lines.append(f"| {model} | {e['n_folds']} | {_pm(e['val']['macro_f1'])} | {_pm(e['val']['accuracy'])} |")
+                lines.append(f"| {display_name(model)} | {e['n_folds']} | {_pm(e['val']['macro_f1'])} | {_pm(e['val']['accuracy'])} |")
         lines.append("")
 
     lines += ["## Architecture vs domain-pretraining attribution", "",
+              "Differences with the 95% seed+sentence bootstrap CI.", "",
               "| config | split | tfidf_best | delta_arch Macro-F1 | delta_arch accuracy | "
               "delta_domain Macro-F1 | delta_domain accuracy |", "|---|---|---|---|---|---|---|"]
     for config, cfg in attribution["configs"].items():
@@ -537,8 +622,30 @@ def build_report(summary: dict, comparisons: dict, attribution: dict, missing: l
             if not e:
                 continue
             arch, dom = e.get("delta_arch", {}), e.get("delta_domain", {})
-            lines.append(f"| {config} | {split} | {cfg['tfidf_best']} | {_ci(arch.get('macro_f1'))} | "
+            lines.append(f"| {config} | {split} | {display_name(cfg['tfidf_best'])} | {_ci(arch.get('macro_f1'))} | "
                          f"{_ci(arch.get('accuracy'))} | {_ci(dom.get('macro_f1'))} | {_ci(dom.get('accuracy'))} |")
+    lines.append("")
+
+    lines += ["### Per-seed Macro-F1 deltas", "",
+              "| config | split | delta | per-seed deltas | mean ± sd | seeds with the mean's sign | "
+              "sentence-only CI (seeds fixed) |", "|---|---|---|---|---|---|---|"]
+    for config, cfg in attribution["configs"].items():
+        for split in SPLITS:
+            e = cfg.get(split)
+            if not e:
+                continue
+            for name in ("delta_arch", "delta_domain"):
+                cell = e.get(name, {}).get("macro_f1")
+                if not cell:
+                    continue
+                per_seed = ", ".join(f"{d:+.3f}" for d in cell["per_seed_delta"])
+                sd = cell["per_seed_delta_sd"]
+                spread = f"{cell['per_seed_delta_mean']:+.3f} ± {sd:.3f}" if sd is not None else \
+                    f"{cell['per_seed_delta_mean']:+.3f} (sd n/a)"
+                cond = cell["conditional_on_seeds"]
+                lines.append(f"| {config} | {split} | {name} | {per_seed} | {spread} | "
+                             f"{cell['n_seeds_same_sign']}/{cell['n_seed_deltas']} | "
+                             f"[{cond['ci_low']:+.3f}, {cond['ci_high']:+.3f}] |")
     lines.append("")
 
     for split, title in (("test", "In-domain test"), ("external", "SEntFiN 1.0")):
@@ -548,13 +655,17 @@ def build_report(summary: dict, comparisons: dict, attribution: dict, missing: l
             if not block:
                 continue
             lines += [f"### {config} (N = {block['n']})", "",
-                      "| pair | McNemar p (seed 42) | Holm p | per-seed p | bootstrap ΔMacro-F1 [95% CI] |",
+                      "| pair | McNemar p range (min–max) | seed families Holm p < 0.05 | per-seed p | "
+                      "seed+sentence bootstrap ΔMacro-F1 [95% CI] |",
                       "|---|---|---|---|---|"]
             for key, res in block["pairs"].items():
                 per_seed = ", ".join(f"{s}: {v['p_value']:.3g}" for s, v in res["mcnemar_by_seed"].items())
                 b = res["bootstrap_macro_f1"]
-                lines.append(f"| {res['model_a']} vs {res['model_b']} | {res['p_primary']:.3g} | {res['p_holm']:.3g} | "
-                             f"{per_seed} | {b['delta']:+.3f} [{b['ci_low']:+.3f}, {b['ci_high']:+.3f}] |")
+                lines.append(f"| {display_name(res['model_a'])} vs {display_name(res['model_b'])} | "
+                             f"{res['p_min']:.3g}–{res['p_max']:.3g} | "
+                             f"{res['n_seeds_significant']}/{res['n_families']} | {per_seed} | "
+                             f"{b['delta']:+.3f} [{b['ci_low']:+.3f}, {b['ci_high']:+.3f}], "
+                             f"{_p_txt(b['p_value'], b['B'])} |")
             lines.append("")
 
     lines += ["## Figures", ""] + [f"- `{name}`" for name in FIGURES] + [""]

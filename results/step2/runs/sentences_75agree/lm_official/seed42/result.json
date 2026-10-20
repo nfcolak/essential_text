@@ -1,0 +1,173 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_75agree",
+  "model_key": "lm_official",
+  "model_name": "Loughran-McDonald (official Master Dictionary)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "thresholds": [
+      -1e-09,
+      1e-09
+    ],
+    "tuned": false,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    }
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6486486486486487,
+      "macro_f1": 0.487357025442894,
+      "per_class": {
+        "negative": {
+          "precision": 0.4107142857142857,
+          "recall": 0.36507936507936506,
+          "f1": 0.3865546218487395,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.6908212560386473,
+          "recall": 0.8881987577639752,
+          "f1": 0.7771739130434783,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.5625,
+          "recall": 0.20300751879699247,
+          "f1": 0.2983425414364641,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          23,
+          38,
+          2
+        ],
+        [
+          17,
+          286,
+          19
+        ],
+        [
+          16,
+          90,
+          27
+        ]
+      ],
+      "neutral_to_negative_rate": 0.052795031055900624,
+      "ece": 0.2789796501052886
+    },
+    "test": {
+      "accuracy": 0.666023166023166,
+      "macro_f1": 0.5176560221241883,
+      "per_class": {
+        "negative": {
+          "precision": 0.3939393939393939,
+          "recall": 0.4126984126984127,
+          "f1": 0.40310077519379844,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.7,
+          "recall": 0.8913043478260869,
+          "f1": 0.7841530054644809,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.7619047619047619,
+          "recall": 0.24060150375939848,
+          "f1": 0.3657142857142857,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          26,
+          35,
+          2
+        ],
+        [
+          27,
+          287,
+          8
+        ],
+        [
+          13,
+          88,
+          32
+        ]
+      ],
+      "neutral_to_negative_rate": 0.08385093167701864,
+      "ece": 0.2623043762210714
+    },
+    "external": {
+      "accuracy": 0.5001057082452431,
+      "macro_f1": 0.4661633520355153,
+      "per_class": {
+        "negative": {
+          "precision": 0.6871794871794872,
+          "recall": 0.397037037037037,
+          "f1": 0.5032863849765258,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4244851258581236,
+          "recall": 0.8706365503080082,
+          "f1": 0.5707143543890011,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.7610132158590308,
+          "recall": 0.20620710235750522,
+          "f1": 0.324489316741019,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1072,
+          1544,
+          84
+        ],
+        [
+          308,
+          2968,
+          133
+        ],
+        [
+          180,
+          2480,
+          691
+        ]
+      ],
+      "neutral_to_negative_rate": 0.09034907597535935,
+      "ece": 0.4329661936891003
+    }
+  },
+  "n": {
+    "train": 2417,
+    "val": 518,
+    "test": 518,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "3a40318cdb1be7e064ba4e6d129798e5165408f48661708aa0361a96ab492d2d",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.17851805686950684,
+  "timestamp": "2026-10-20T14:22:44.613342+00:00"
+}

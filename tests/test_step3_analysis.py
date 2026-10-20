@@ -17,9 +17,13 @@ from src.analysis.attribution import (
     agreement_table,
     cohen_kappa,
     consensus_tags,
+    holm_adjust,
+    loss_only_ids,
+    normalise_cue,
     phenomenon_attribution,
     phenomenon_error_rates,
     read_annotations,
+    rq1_cue_breakdown,
     rq1_terminology_comparison,
 )
 
@@ -92,6 +96,9 @@ class TestAgreementAndConsensus(unittest.TestCase):
         self.assertAlmostEqual(neg["prevalence_b"], 0.25)
         self.assertAlmostEqual(neg["prevalence_rule"], 0.5)
         self.assertEqual(table["numerical_comparison"]["kappa_ab"], 1.0)  # both constant 0
+        # both-consensus negation = d1 only; the rules mark d1 and d2 -> one difference
+        self.assertEqual(neg["n_consensus_vs_rule_diff"], 1)
+        self.assertEqual(table["hedging"]["n_consensus_vs_rule_diff"], 0)
 
     def test_read_annotations_validates(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -155,7 +162,10 @@ class TestErrorRatesAndAttribution(unittest.TestCase):
         self.assertTrue(neg["small_n"])
         self.assertLessEqual(neg["delta_arch"]["ci_low"], neg["delta_arch"]["delta"])
         self.assertGreaterEqual(neg["delta_arch"]["ci_high"], neg["delta_arch"]["delta"])
-        self.assertTrue(0.0 <= neg["delta_arch"]["p_value"] <= 1.0)
+        # n = 4 < 20: CI only, no p-value and no Holm p
+        self.assertIsNone(neg["delta_arch"]["p_value"])
+        self.assertIsNone(neg["delta_arch"]["p_holm"])
+        self.assertEqual(len(neg["delta_arch"]["per_seed_delta"]), 2)
         self.assertEqual(attr["hedging"]["n"], 0)
         self.assertIsNone(attr["hedging"]["delta_arch"]["delta"])
 
@@ -167,6 +177,131 @@ class TestErrorRatesAndAttribution(unittest.TestCase):
         attr = phenomenon_attribution(tags, y, preds, "tfidf_svm", B=50, seed=1)
         self.assertFalse(attr["hedging"]["small_n"])
         self.assertEqual(attr["hedging"]["delta_arch"]["p_value"], 1.0)
+        self.assertEqual(attr["hedging"]["delta_arch"]["p_holm"], 1.0)
+
+    def test_balanced_error_and_gold_mix(self) -> None:
+        # 10 gold-neutral and 2 gold-negative sentences tagged; the model errs on both negatives
+        ids = [f"b{i}" for i in range(12)]
+        y = {i: (0 if k < 2 else 1) for k, i in enumerate(ids)}
+        tags = {i: _tags(hedging=1) for i in ids}
+        preds = {"m": [{i: (1 if k < 2 else 1) for k, i in enumerate(ids)}]}
+        rates = phenomenon_error_rates(tags, y, preds, B=200, seed=1)["hedging"]
+        entry = rates["models"]["m"]["tag1"]
+        self.assertAlmostEqual(entry["error_rate"], 2 / 12)
+        self.assertAlmostEqual(entry["balanced_error"], 0.5)  # (1.0 + 0.0) / 2 classes present
+        self.assertLessEqual(entry["balanced_ci_low"], entry["balanced_error"])
+        self.assertGreaterEqual(entry["balanced_ci_high"], entry["balanced_error"])
+        self.assertEqual(rates["gold_mix_tag1"], {"n_neg": 2, "n_neu": 10, "n_pos": 0})
+        self.assertEqual(rates["gold_mix_tag0"], {"n_neg": 0, "n_neu": 0, "n_pos": 0})
+        self.assertIsNone(rates["models"]["m"]["tag0"]["balanced_error"])
+
+    def test_balanced_equals_raw_with_one_gold_class(self) -> None:
+        rates = phenomenon_error_rates(self.tags, self.y, self.preds, B=200, seed=1)
+        entry = rates["negation"]["models"]["tfidf_svm"]["tag1"]
+        self.assertAlmostEqual(entry["balanced_error"], entry["error_rate"])
+
+    def test_two_level_bootstrap_widens_ci_when_seeds_disagree(self) -> None:
+        ids = [f"w{i}" for i in range(40)]
+        y = {i: 1 for i in ids}
+        tags = {i: _tags(hedging=1) for i in ids}
+        wrong_sets = [set(), set(ids[:20]), set(ids[20:])]
+        preds_multi = {m: [_preds(ids, w) for w in wrong_sets] for m in ("bert_base",)}
+        preds_multi["tfidf_svm"] = [_preds(ids, set())]
+        preds_multi["finbert_mlm"] = [_preds(ids, set())]
+        multi = phenomenon_error_rates(tags, y, preds_multi, B=2000, seed=3)["hedging"]
+        bert = multi["models"]["bert_base"]["tag1"]
+        # conditional on the seed mean (sentence-only) the CI is much narrower than seed+sentence
+        mean_err = np.mean([[1.0 if i in w else 0.0 for i in ids] for w in wrong_sets], axis=0)
+        draws = np.random.default_rng(3).integers(0, 40, size=(2000, 40))
+        sentence_only = np.percentile(mean_err[draws].mean(axis=1), [2.5, 97.5])
+        self.assertGreater(bert["ci_high"] - bert["ci_low"], sentence_only[1] - sentence_only[0])
+        attr = phenomenon_attribution(tags, y, preds_multi, "tfidf_svm", B=2000, seed=3)["hedging"]
+        arch = attr["delta_arch"]
+        self.assertLess(arch["ci_low"], 0.0)  # seeds disagree in sign -> the interval reaches zero side
+        self.assertEqual(len(arch["per_seed_delta"]), 3)
+
+    def test_single_seed_matches_plain_sentence_bootstrap(self) -> None:
+        ids = [f"s{i}" for i in range(30)]
+        y = {i: 1 for i in ids}
+        tags = {i: _tags(hedging=1) for i in ids}
+        wrong = set(ids[:6])
+        preds = {"m": [_preds(ids, wrong)]}
+        rates = phenomenon_error_rates(tags, y, preds, B=1000, seed=5)["hedging"]["models"]["m"]
+        entry = rates["tag1"]
+        err = np.array([1.0 if i in wrong else 0.0 for i in ids])
+        self.assertAlmostEqual(entry["error_rate"], 0.2)
+        # plain bootstrap interval of a 6/30 rate is about [0.07, 0.37]
+        self.assertTrue(0.03 < entry["ci_low"] < 0.12)
+        self.assertTrue(0.30 < entry["ci_high"] < 0.43)
+        self.assertEqual(entry["per_seed"], [float(err.mean())])
+
+    def test_holm_adjust(self) -> None:
+        self.assertEqual(holm_adjust([0.01, 0.04, 0.03]), [0.03, 0.06, 0.06])
+        self.assertEqual(holm_adjust([0.5]), [0.5])
+        self.assertEqual(holm_adjust([0.4, 0.9]), [0.8, 0.9])
+
+    def test_holm_within_attribution_table_and_no_p_for_small_n(self) -> None:
+        ids = [f"h{i}" for i in range(30)]
+        y = {i: 1 for i in ids}
+        tags = {i: _tags(hedging=1, negation=int(k < 5)) for k, i in enumerate(ids)}
+        preds = {"tfidf_svm": [_preds(ids, set(ids[:12]))],
+                 "bert_base": [_preds(ids, set(ids[:3]))],
+                 "finbert_mlm": [_preds(ids, set())]}
+        attr = phenomenon_attribution(tags, y, preds, "tfidf_svm", B=500, seed=2)
+        self.assertIsNone(attr["negation"]["delta_arch"]["p_value"])  # n = 5
+        self.assertIsNone(attr["negation"]["delta_arch"]["p_holm"])
+        self.assertIsNotNone(attr["negation"]["delta_arch"]["ci_low"])
+        tested = [attr["hedging"][k] for k in ("delta_arch", "delta_domain")]
+        for t in tested:
+            self.assertGreaterEqual(t["p_holm"], t["p_value"])
+            self.assertLessEqual(t["p_holm"], 1.0)
+        # smallest p is multiplied by the number of tested rows (2), a zero p enters as 2/B
+        p_min = max(min(t["p_value"] for t in tested), 2 / 500)
+        self.assertAlmostEqual(min(t["p_holm"] for t in tested), min(1.0, 2 * p_min))
+
+    def test_normalise_cue_and_loss_only(self) -> None:
+        self.assertEqual(normalise_cue("Losses"), "loss")
+        self.assertEqual(normalise_cue("costs"), "cost")
+        self.assertEqual(normalise_cue("taxes"), "tax")
+        self.assertEqual(normalise_cue("liabilities"), "liability")
+        self.assertEqual(normalise_cue("charges"), "charge")
+        self.assertEqual(normalise_cue("write-downs"), "write-down")
+        self.assertEqual(normalise_cue("loss"), "loss")
+        cues = {"a": ["loss"], "b": ["losses", "Loss"], "c": ["loss", "cost"], "d": []}
+        self.assertEqual(loss_only_ids(cues), {"a", "b"})
+
+    def test_cue_breakdown_and_excluding_loss(self) -> None:
+        ids = [f"c{i}" for i in range(12)]
+        y = {i: 1 for i in ids}
+        cues = {ids[k]: ["losses"] for k in range(6)}
+        cues.update({ids[k]: ["cost"] for k in range(6, 12)})
+        # model calls every loss sentence negative and no cost sentence negative
+        preds = {"m": [{i: (0 if k < 6 else 1) for k, i in enumerate(ids)}]}
+        out = rq1_cue_breakdown(cues, y, preds, B=200, seed=1)
+        self.assertEqual(list(out), ["cost", "loss"])  # tie on n -> alphabetical
+        self.assertEqual(out["loss"]["n"], 6)
+        self.assertAlmostEqual(out["loss"]["models"]["m"]["rate"], 1.0)
+        self.assertAlmostEqual(out["cost"]["models"]["m"]["rate"], 0.0)
+        self.assertFalse(out["loss"]["na"])
+        tags = {i: _tags(financial_terminology=1) for i in ids}
+        tags.update({f"z{i}": _tags() for i in range(6)})
+        y.update({f"z{i}": 1 for i in range(6)})
+        preds["m"][0].update({f"z{i}": 1 for i in range(6)})
+        full = rq1_terminology_comparison(tags, y, preds, B=200, seed=1)["m"]
+        resid = rq1_terminology_comparison(tags, y, preds, B=200, seed=1,
+                                           drop_ids=loss_only_ids(cues))["m"]
+        self.assertAlmostEqual(full["term1"]["rate"], 0.5)
+        self.assertEqual(resid["term1"]["n"], 6)
+        self.assertAlmostEqual(resid["term1"]["rate"], 0.0)
+
+    def test_rq1_small_group_is_na(self) -> None:
+        ids = [f"n{i}" for i in range(8)]
+        y = {i: 1 for i in ids}
+        tags = {i: _tags(financial_terminology=int(k < 3)) for k, i in enumerate(ids)}
+        preds = {"m": [{i: 0 for i in ids}]}
+        out = rq1_terminology_comparison(tags, y, preds, B=100, seed=1)["m"]
+        self.assertTrue(out["term1"]["na"])
+        self.assertFalse(out["term0"]["na"])
 
     def test_rq1_comparison(self) -> None:
         ids = [f"n{i}" for i in range(8)]
@@ -228,6 +363,7 @@ class TestEndToEnd(unittest.TestCase):
         labels = {i: r["label"] for i, r in records.items()}
         ext_labels = {r["id"]: r["label"] for r in ext}
         wrong = {
+            "vader_official": set(self.test_ids[::6]), "lm_official": set(self.test_ids[::8]),
             "vader": set(self.test_ids[::2]), "loughran_mcdonald": set(self.test_ids[::3]),
             "tfidf_logreg": set(self.test_ids[::4]), "tfidf_svm": set(self.test_ids[::5]),
             "bert_base": set(self.test_ids[::7]), "finbert_mlm": set(self.test_ids[::9]),
@@ -292,6 +428,42 @@ class TestEndToEnd(unittest.TestCase):
         rq1 = full["test"]["rq1_financial_terminology"]["bert_base"]
         self.assertGreaterEqual(rq1["term1"]["n"] + rq1["term0"]["n"], 1)
         self.assertIn("delta_arch", analysis["diagnostic"]["attribution"]["negation"])
+        self.assertEqual(len(run_step3_analysis.MODELS), 8)
+        models = analysis["diagnostic"]["error_rates"]["negation"]["models"]
+        self.assertEqual(list(models), list(run_step3_analysis.MODELS))
+        self.assertIn("balanced_error", models["vader_official"]["tag1"])
+        self.assertIn("gold_mix_tag1", analysis["diagnostic"]["error_rates"]["negation"])
+        self.assertEqual(agreement["agreement"]["negation"]["n_consensus_vs_rule_diff"], 4)
+        # SEntFiN block: cue breakdown and the loss-excluded table are present, diag has none
+        ext = full["external"]
+        self.assertIn("cost", ext["rq1_cue_breakdown"])
+        self.assertIn("rq1_excluding_loss", ext)
+        self.assertIn("rq1_cue_breakdown", full["test"])
+        self.assertNotIn("rq1_cue_breakdown", analysis["diagnostic"])
+        for p in PHENOMENA:
+            a = analysis["diagnostic"]["attribution"][p]["delta_arch"]
+            if analysis["diagnostic"]["attribution"][p]["small_n"]:
+                self.assertIsNone(a["p_value"])
+        with open(os.path.join(self.out, "STEP3_REPORT.md"), encoding="utf-8") as handle:
+            text = handle.read()
+        self.assertIn("Both models may have seen Financial PhraseBank during pretraining", text)
+        self.assertIn("label-balanced error", text)
+        self.assertIn("gold-label mix", text)
+        self.assertIn("excluding sentences whose only cue is loss/losses", text)
+        self.assertIn("RQ1 by cue word", text)
+        self.assertIn("consensus differs from rule", text)
+        self.assertIn("Holm p", text)
+        self.assertIn("(n=0*)", text)  # small-n star in headers
+
+    def test_tmp_run_dirs_are_ignored(self) -> None:
+        stale = os.path.join(self.runs, CONFIG, "bert_base", "seed7.tmp")
+        os.makedirs(stale)  # no result.json: would raise "Missing run" if globbed
+        self.assertEqual(self._run(), 0)
+
+    def test_missing_official_baseline_exits_two(self) -> None:
+        import shutil
+        shutil.rmtree(os.path.join(self.runs, CONFIG, "lm_official"))
+        self.assertEqual(self._run(), 2)
 
     def test_either_consensus_runs(self) -> None:
         self.assertEqual(self._run("--consensus", "either"), 0)

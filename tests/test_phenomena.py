@@ -11,7 +11,7 @@ import tempfile
 import unittest
 
 from scripts import build_diagnostic_set as bds
-from src.analysis.phenomena import PHENOMENA, tag_many, tag_sentence
+from src.analysis.phenomena import PHENOMENA, context_dependent_v1, financial_terms, tag_many, tag_sentence
 
 
 class TestTagger(unittest.TestCase):
@@ -40,7 +40,31 @@ class TestTagger(unittest.TestCase):
 
     def test_context_dependent(self):
         self.assertEqual(tag_sentence("The deficit narrowed during the second half.")["context_dependent"], 1)
-        self.assertEqual(tag_sentence("Sales rose during the second half.")["context_dependent"], 0)
+        self.assertEqual(tag_sentence("The board approved the budget during the second half.")["context_dependent"], 0)
+
+    def test_context_dependent_v2(self):
+        for text in ("Operating profit decreased to EUR 1.7 mn.", "Operating costs fell.", "The company will cut 80 jobs.",
+                     "Net sales rose in the second half.", "The company laid off 40 people."):
+            self.assertEqual(tag_sentence(text)["context_dependent"], 1, text)
+        self.assertEqual(tag_sentence("Costs are listed in the annex.")["context_dependent"], 0)
+        self.assertEqual(context_dependent_v1("Operating profit decreased to EUR 1.7 mn."), 0)
+        self.assertEqual(context_dependent_v1("Operating costs fell."), 1)
+
+    def test_up_down_needs_number(self):
+        self.assertEqual(tag_sentence("Shares were up 5 percent.")["numerical_comparison"], 1)
+        self.assertEqual(tag_sentence("The shares were up on the news.")["numerical_comparison"], 0)
+        self.assertEqual(tag_sentence("The start-up company has 12 staff.")["numerical_comparison"], 0)
+        self.assertEqual(tag_sentence("Please sign up before 5 May.")["numerical_comparison"], 0)
+
+    def test_no_abbreviation_is_not_negation(self):
+        self.assertEqual(tag_sentence("It is the No. 1 supplier.")["negation"], 0)
+        self.assertEqual(tag_sentence("There is no supplier.")["negation"], 1)
+
+    def test_charge_role_sense_excluded(self):
+        self.assertEqual(tag_sentence("Smith takes charge as CEO.")["financial_terminology"], 0)
+        self.assertEqual(tag_sentence("She is in charge of sales.")["financial_terminology"], 0)
+        self.assertEqual(tag_sentence("The firm booked a one-off charge.")["financial_terminology"], 1)
+        self.assertEqual(financial_terms("Taxes and a restructuring charge."), ["taxes", "restructuring", "charge"])
 
     def test_context_window_is_four_tokens(self):
         near = "Costs a b c fell."          # distance 4 -> tagged
@@ -137,6 +161,48 @@ class TestBuildDiagnosticSet(unittest.TestCase):
             tag_rows = list(csv.reader(f))
         self.assertEqual(tag_rows[0], ["diag_id"] + list(PHENOMENA))
         self.assertEqual(len(tag_rows), 51)
+
+    def test_rule_tags_only_keeps_key_and_items(self):
+        out = os.path.join(self.tmp.name, "diag")
+        self.assertEqual(_run(self._args(out, execute=True)), 0)
+        key_path = os.path.join(out, "diagnostic_key.json")
+        items_path = os.path.join(out, "diagnostic_items.csv")
+        tags_path = os.path.join(out, "rule_tags.csv")
+        with open(key_path, "rb") as f:
+            key_before = f.read()
+        with open(items_path, "rb") as f:
+            items_before = f.read()
+        with open(tags_path, "w", encoding="utf-8") as f:
+            f.write("stale\n")
+        self.assertEqual(_run(["--rule-tags-only", "--out-dir", out]), 0)       # plan only
+        with open(tags_path, encoding="utf-8") as f:
+            self.assertEqual(f.read(), "stale\n")
+        self.assertEqual(_run(["--rule-tags-only", "--execute", "--out-dir", out]), 0)
+        with open(tags_path, encoding="utf-8", newline="") as f:
+            rows = list(csv.reader(f))
+        self.assertEqual(rows[0], ["diag_id"] + list(PHENOMENA))
+        self.assertEqual(len(rows), 51)
+        with open(key_path, "rb") as f:
+            self.assertEqual(f.read(), key_before)
+        with open(items_path, "rb") as f:
+            self.assertEqual(f.read(), items_before)
+
+    def test_rule_tags_only_missing_items_exit_2(self):
+        out = os.path.join(self.tmp.name, "empty")
+        os.makedirs(out)
+        self.assertEqual(_run(["--rule-tags-only", "--execute", "--out-dir", out]), 2)
+
+    def test_sha256sums_mismatch_exit_2_and_match_ok(self):
+        out = os.path.join(self.tmp.name, "diag")
+        manifest_path = os.path.join(self.splits, "cfg_manifest.json")
+        sums = os.path.join(self.splits, "SHA256SUMS")
+        with open(sums, "w", encoding="utf-8") as f:
+            f.write("{}  cfg_manifest.json\n".format("0" * 64))
+        self.assertEqual(_run(self._args(out, execute=True)), 2)
+        self.assertFalse(os.path.exists(out))
+        with open(sums, "w", encoding="utf-8") as f:
+            f.write("{}  cfg_manifest.json\n".format(bds._file_sha256(manifest_path)))
+        self.assertEqual(_run(self._args(out, execute=True)), 0)
 
     def test_largest_remainder_sums_to_n(self):
         counts = bds.largest_remainder_counts({0: 1, 1: 1, 2: 1}, 10)

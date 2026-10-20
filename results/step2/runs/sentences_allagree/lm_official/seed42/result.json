@@ -1,0 +1,173 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_allagree",
+  "model_key": "lm_official",
+  "model_name": "Loughran-McDonald (official Master Dictionary)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "thresholds": [
+      -1e-09,
+      1e-09
+    ],
+    "tuned": false,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    }
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6411764705882353,
+      "macro_f1": 0.4804374494296975,
+      "per_class": {
+        "negative": {
+          "precision": 0.37037037037037035,
+          "recall": 0.4444444444444444,
+          "f1": 0.40404040404040403,
+          "support": 45
+        },
+        "neutral": {
+          "precision": 0.696969696969697,
+          "recall": 0.8803827751196173,
+          "f1": 0.7780126849894292,
+          "support": 209
+        },
+        "positive": {
+          "precision": 0.6363636363636364,
+          "recall": 0.16279069767441862,
+          "f1": 0.25925925925925924,
+          "support": 86
+        }
+      },
+      "confusion_matrix": [
+        [
+          20,
+          22,
+          3
+        ],
+        [
+          20,
+          184,
+          5
+        ],
+        [
+          14,
+          58,
+          14
+        ]
+      ],
+      "neutral_to_negative_rate": 0.09569377990430622,
+      "ece": 0.2885125398635864
+    },
+    "test": {
+      "accuracy": 0.6519174041297935,
+      "macro_f1": 0.4977894391701789,
+      "per_class": {
+        "negative": {
+          "precision": 0.475,
+          "recall": 0.41304347826086957,
+          "f1": 0.4418604651162791,
+          "support": 46
+        },
+        "neutral": {
+          "precision": 0.6750902527075813,
+          "recall": 0.8990384615384616,
+          "f1": 0.7711340206185567,
+          "support": 208
+        },
+        "positive": {
+          "precision": 0.6818181818181818,
+          "recall": 0.17647058823529413,
+          "f1": 0.2803738317757009,
+          "support": 85
+        }
+      },
+      "confusion_matrix": [
+        [
+          19,
+          26,
+          1
+        ],
+        [
+          15,
+          187,
+          6
+        ],
+        [
+          6,
+          64,
+          15
+        ]
+      ],
+      "neutral_to_negative_rate": 0.07211538461538461,
+      "ece": 0.27409170247108894
+    },
+    "external": {
+      "accuracy": 0.5001057082452431,
+      "macro_f1": 0.4661633520355153,
+      "per_class": {
+        "negative": {
+          "precision": 0.6871794871794872,
+          "recall": 0.397037037037037,
+          "f1": 0.5032863849765258,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4244851258581236,
+          "recall": 0.8706365503080082,
+          "f1": 0.5707143543890011,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.7610132158590308,
+          "recall": 0.20620710235750522,
+          "f1": 0.324489316741019,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1072,
+          1544,
+          84
+        ],
+        [
+          308,
+          2968,
+          133
+        ],
+        [
+          180,
+          2480,
+          691
+        ]
+      ],
+      "neutral_to_negative_rate": 0.09034907597535935,
+      "ece": 0.4329661936891003
+    }
+  },
+  "n": {
+    "train": 1585,
+    "val": 340,
+    "test": 339,
+    "external": 9460
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "probe": false,
+  "wall_seconds": 0.17804598808288574,
+  "timestamp": "2026-10-20T14:22:44.173395+00:00"
+}

@@ -12,7 +12,13 @@ import numpy as np
 
 from scripts import summarize_step2 as summ
 from src.evaluation.metrics import compute_classification_metrics
-from src.evaluation.multiseed import holm_bonferroni, load_runs, mean_sd, seed_averaged_bootstrap
+from src.evaluation.multiseed import (
+    holm_bonferroni,
+    load_runs,
+    mean_sd,
+    seed_averaged_bootstrap,
+    seed_sentence_bootstrap,
+)
 
 N_ROWS = 60
 SEEDS = (42, 100, 2026)
@@ -62,7 +68,7 @@ def build_full_matrix(runs_dir, logreg_val=0.9, svm_val=0.8, svm_test_acc=0.99, 
     test_ids = np.array([f"t{i}" for i in range(N_ROWS)])
     ext_ids = np.array([f"e{i}" for i in range(N_ROWS)])
     val_ids = np.array([f"v{i}" for i in range(N_ROWS)])
-    accs = {"vader": 0.4, "loughran_mcdonald": 0.45, "tfidf_logreg": logreg_test_acc, "tfidf_svm": svm_test_acc,
+    accs = {"vader_official": 0.35, "lm_official": 0.38, "vader": 0.4, "loughran_mcdonald": 0.45, "tfidf_logreg": logreg_test_acc, "tfidf_svm": svm_test_acc,
             "bert_base": 0.8, "finbert_mlm": 0.9}
 
     def splits(model, with_val=True):
@@ -141,6 +147,100 @@ class BootstrapTests(unittest.TestCase):
             seed_averaged_bootstrap(self.y, [self.right], [self.wrong], metric="auc", B=10)
 
 
+class SeedSentenceBootstrapTests(unittest.TestCase):
+    def setUp(self):
+        rng = np.random.default_rng(3)
+        self.y = rng.integers(0, 3, size=300)
+        self.right = self.y.copy()
+        self.wrong = (self.y + 1) % 3
+
+    def _noisy(self, accuracy, seed):
+        rng = np.random.default_rng(seed)
+        pred = self.y.copy()
+        flip = rng.random(len(self.y)) > accuracy
+        pred[flip] = (self.y[flip] + 1) % 3
+        return pred
+
+    def test_single_seed_reduces_to_sentence_bootstrap(self):
+        a, b = self._noisy(0.8, 10), self._noisy(0.7, 11)
+        two = seed_sentence_bootstrap(self.y, [a], [b], B=300, seed=5)
+        one = seed_averaged_bootstrap(self.y, [a], [b], B=300, seed=5)
+        for key in ("delta", "ci_low", "ci_high", "p_value", "B", "n", "metric"):
+            self.assertAlmostEqual(two[key], one[key], places=12, msg=key)
+        self.assertEqual(two["method"], "seed+sentence")
+        self.assertAlmostEqual(two["per_seed_delta"][0], two["delta"])
+
+    def test_disagreeing_seeds_widen_ci_and_contain_zero(self):
+        # model A beats B under two seeds and loses under the third: seed noise dominates
+        good, bad = self._noisy(0.85, 1), self._noisy(0.55, 2)
+        a_list = [good, bad, good]
+        b_list = [self._noisy(0.7, 3)] * 3
+        wide = seed_sentence_bootstrap(self.y, a_list, b_list, B=600, seed=7)
+        narrow = seed_averaged_bootstrap(self.y, a_list, b_list, B=600, seed=7)
+        self.assertGreater(wide["ci_high"] - wide["ci_low"], narrow["ci_high"] - narrow["ci_low"])
+        self.assertLess(wide["ci_low"], 0.0)
+        self.assertGreater(wide["ci_high"], 0.0)
+        self.assertEqual(len(wide["per_seed_delta"]), 3)
+        self.assertGreater(max(wide["per_seed_delta"]), 0)
+        self.assertLess(min(wide["per_seed_delta"]), 0)
+
+    def test_per_seed_delta_pairing_rules(self):
+        a_list = [self.right, self.wrong]
+        equal = seed_sentence_bootstrap(self.y, a_list, [self.wrong, self.wrong], B=20)
+        self.assertEqual(len(equal["per_seed_delta"]), 2)
+        self.assertGreater(equal["per_seed_delta"][0], 0)
+        self.assertEqual(equal["per_seed_delta"][1], 0.0)
+        unequal = seed_sentence_bootstrap(self.y, a_list, [self.wrong], B=20)
+        self.assertEqual(unequal["per_seed_delta"], equal["per_seed_delta"])
+
+    def test_deterministic_and_validates_input(self):
+        a, b = self._noisy(0.8, 10), self._noisy(0.7, 11)
+        first = seed_sentence_bootstrap(self.y, [a, b], [b], B=50, seed=9)
+        self.assertEqual(first, seed_sentence_bootstrap(self.y, [a, b], [b], B=50, seed=9))
+        with self.assertRaises(ValueError):
+            seed_sentence_bootstrap(self.y, [a], [b], metric="auc", B=10)
+        with self.assertRaises(ValueError):
+            seed_sentence_bootstrap(self.y, [], [b], B=10)
+        with self.assertRaises(ValueError):
+            seed_sentence_bootstrap(self.y, [a[:-1]], [b], B=10)
+
+
+class FamilyAndFormatTests(unittest.TestCase):
+    def test_models_list_has_eight_in_design_order(self):
+        self.assertEqual(
+            list(summ.MODELS),
+            ["vader_official", "lm_official", "vader", "loughran_mcdonald",
+             "tfidf_logreg", "tfidf_svm", "bert_base", "finbert_mlm"],
+        )
+
+    def test_holm_is_applied_per_seed_family(self):
+        def pair(p42, p100, p2026):
+            return {"mcnemar_by_seed": {"42": {"p_value": p42}, "100": {"p_value": p100},
+                                        "2026": {"p_value": p2026}}}
+
+        single = {"mcnemar_by_seed": {"42": {"p_value": 0.01}}}
+        results = {"x": pair(0.001, 0.5, 0.02), "y": pair(0.02, 0.001, 0.04), "base": single}
+        seeds = summ.apply_seed_families(results)
+        self.assertEqual(seeds, [42, 100, 2026])
+        # family 42: ordered x .001*3, base .01*2, y .02*1 -> .003, .02, .02
+        self.assertAlmostEqual(results["x"]["p_holm_by_seed"]["42"], 0.003)
+        self.assertAlmostEqual(results["base"]["p_holm_by_seed"]["42"], 0.02)
+        # family 100: y .001*3, base .01*2, x .5 -> base keeps its single run in this family
+        self.assertAlmostEqual(results["y"]["p_holm_by_seed"]["100"], 0.003)
+        self.assertAlmostEqual(results["base"]["p_holm_by_seed"]["100"], 0.02)
+        self.assertAlmostEqual(results["x"]["p_holm_by_seed"]["100"], 0.5)
+        self.assertEqual((results["x"]["p_min"], results["x"]["p_max"]), (0.001, 0.5))
+        self.assertEqual(results["x"]["n_seeds_significant"], 2)  # 0.003 (42), 2026: .02*2 =.04 < .05
+        self.assertEqual(results["base"]["n_families"], 3)
+        self.assertEqual(results["base"]["p_min"], results["base"]["p_max"])
+
+    def test_single_run_prints_na_sd_and_zero_p_uses_resolution(self):
+        self.assertEqual(summ._pm(mean_sd([0.5])), "0.500 (sd n/a)")
+        self.assertEqual(summ._pm(mean_sd([0.5, 0.7])), "0.600 ± 0.141")
+        self.assertEqual(summ._p_txt(0.0, 10000), "p < 0.0002")
+        self.assertEqual(summ._p_txt(0.0123, 10000), "p=0.0123")
+
+
 class SummarizerTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -171,15 +271,28 @@ class SummarizerTests(unittest.TestCase):
         with open(os.path.join(self.out, "statistical_comparisons.json"), encoding="utf-8") as handle:
             comps = json.load(handle)
         test_pairs = comps["configs"]["sentences_allagree"]["test"]["pairs"]
-        self.assertEqual(len(test_pairs), 15)
+        self.assertEqual(len(test_pairs), 28)
         pair = test_pairs["bert_base__vs__finbert_mlm"]
         self.assertEqual(sorted(pair["mcnemar_by_seed"]), ["100", "2026", "42"])
-        self.assertGreaterEqual(pair["p_holm"], pair["p_primary"])
-        self.assertEqual(len(comps["configs"]["sentences_allagree"]["external"]["pairs"]), 21)
+        self.assertNotIn("p_primary", pair)
+        self.assertLessEqual(pair["p_min"], pair["p_max"])
+        per_seed_p = [v["p_value"] for v in pair["mcnemar_by_seed"].values()]
+        self.assertAlmostEqual(pair["p_min"], min(per_seed_p))
+        self.assertAlmostEqual(pair["p_max"], max(per_seed_p))
+        self.assertEqual(sorted(pair["p_holm_by_seed"]), ["100", "2026", "42"])
+        self.assertTrue(0 <= pair["n_seeds_significant"] <= 3)
+        self.assertEqual(pair["bootstrap_macro_f1"]["method"], "seed+sentence")
+        self.assertEqual(len(comps["configs"]["sentences_allagree"]["external"]["pairs"]), 36)
         with open(os.path.join(self.out, "STEP2_REPORT.md"), encoding="utf-8") as handle:
             report = handle.read()
         self.assertIn("## Protocol", report)
         self.assertIn("prosus_finbert", report)
+        self.assertIn("never mixed across levels", report)
+        self.assertIn("p_min", report)
+        self.assertIn("(sd n/a)", report)
+        vader_rows = [ln for ln in report.splitlines() if ln.startswith(("| VADER (official lexicon) | 1 |", "| vader_official | 1 |"))]
+        self.assertTrue(vader_rows)
+        self.assertTrue(all("±" not in ln and "(sd n/a)" in ln for ln in vader_rows))
 
     def test_single_seed_baseline_list_case(self):
         build_full_matrix(self.runs)
@@ -189,6 +302,10 @@ class SummarizerTests(unittest.TestCase):
         pair = comps["configs"]["sentences_allagree"]["test"]["pairs"]["vader__vs__tfidf_svm"]
         self.assertEqual(list(pair["mcnemar_by_seed"]), ["42"])
         self.assertEqual((pair["n_seeds_a"], pair["n_seeds_b"]), (1, 1))
+        # a baseline-only pair enters every seed family with its single run
+        self.assertEqual(pair["n_families"], 3)
+        self.assertEqual(pair["p_min"], pair["p_max"])
+        self.assertEqual(len(set(pair["p_holm_by_seed"].values())), 1)
 
     def test_tfidf_best_chosen_by_validation_not_test(self):
         # svm is far better on test, logreg is better on validation: validation must win.
@@ -202,6 +319,13 @@ class SummarizerTests(unittest.TestCase):
             self.assertIn("delta_arch", entry)
             self.assertIn("delta_domain", entry)
             self.assertGreater(entry["delta_arch"]["macro_f1"]["delta"], 0)
+            cell = entry["delta_domain"]["macro_f1"]
+            self.assertEqual(cell["method"], "seed+sentence")
+            self.assertEqual(len(cell["per_seed_delta"]), 3)
+            self.assertAlmostEqual(cell["per_seed_delta_mean"], float(np.mean(cell["per_seed_delta"])))
+            self.assertLessEqual(cell["n_seeds_same_sign"], 3)
+            self.assertEqual(cell["conditional_on_seeds"]["B"], cell["B"])
+            self.assertNotIn("per_seed_delta", cell["conditional_on_seeds"])
 
     def test_missing_run_is_refused_unless_allowed(self):
         build_full_matrix(self.runs)
