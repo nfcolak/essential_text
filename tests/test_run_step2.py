@@ -12,13 +12,14 @@ import unittest
 
 import numpy as np
 
-from colab.run_step1_colab import instantiate_fresh_model
 from scripts import run_step2
+from src.baselines.lexicon_official import LMOfficialBaseline
+from src.baselines.registry import make_baseline
 from src.data.download import generate_synthetic_dataset
 from src.data.io import CONFIGS, cv_fold_arrays, file_sha256, load_external, load_manifest, split_arrays
 from src.data.splits import build_records, create_stratified_splits
 
-BASELINES = ("vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
+BASELINES = ("vader_official", "lm_official", "vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
 SEEDS = (42, 100, 2026)
 RESULT_KEYS = {
     "status", "stage", "config", "model_key", "model_name", "seed", "fold", "hyperparams", "best_epoch",
@@ -62,13 +63,20 @@ class StubCalls:
         return self._prob(len(texts), 7)
 
 
-def run_main(argv, stub=None):
+def baseline_factory(model_key, seed=42):
+    """Registry factory, but the official LM dictionary is replaced by tiny injected lists (no data/raw)."""
+    if model_key == "lm_official":
+        return LMOfficialBaseline(words=({"profit", "gain"}, {"loss", "decline"}))
+    return make_baseline(model_key, seed=seed)
+
+
+def run_main(argv, stub=None, factory=baseline_factory):
     stub = stub or StubCalls()
     out, err = io.StringIO(), io.StringIO()
     with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
         code = run_step2.main(
             argv, finetune_fn=stub.finetune_fn, zero_shot_fn=stub.zero_shot_fn,
-            baseline_factory=instantiate_fresh_model,
+            baseline_factory=factory,
         )
     return code, out.getvalue(), err.getvalue()
 
@@ -137,7 +145,7 @@ class RunStep2Test(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertFalse(os.path.exists(out))
         lines = [ln for ln in stdout.splitlines() if ln.startswith("[")]
-        self.assertEqual(len(lines), 12 + 18 + 30 + 1)
+        self.assertEqual(len(lines), 18 + 18 + 40 + 1)
         self.assertTrue(all(ln.endswith(" pending") for ln in lines))
 
     # ---- full matrix ------------------------------------------------------------------------
@@ -164,6 +172,17 @@ class RunStep2Test(unittest.TestCase):
                 self.assertIn("predictions.npz", files)
         self.assertEqual(found, expected)
         self.assertFalse([d for d, _, _ in os.walk(self.full_out) if d.endswith(".tmp")])
+
+    def test_official_baselines_have_fixed_rules(self):
+        vader = self.read_result("sentences_allagree/vader_official/seed42")
+        self.assertEqual(vader["model_key"], "vader_official")
+        self.assertFalse(vader["hyperparams"]["tuned"])
+        self.assertEqual(vader["hyperparams"]["thresholds"], [-0.05, 0.05])
+        lm = self.read_result("sentences_75agree/lm_official/seed42")
+        self.assertFalse(lm["hyperparams"]["tuned"])
+        self.assertEqual(lm["stage"], "baselines")
+        cv = self.read_result("sentences_allagree/lm_official/cv_fold2")
+        self.assertEqual(cv["stage"], "cv")
 
     def test_prosus_never_scores_phrasebank(self):
         for cfg in CONFIGS:
@@ -198,6 +217,7 @@ class RunStep2Test(unittest.TestCase):
         zs = self.read_result("external_only/prosus_finbert/zeroshot")
         self.assertIsNone(zs["manifest_sha256"])
         self.assertEqual(len(zs["external_sha256"]), 64)
+        self.assertEqual(set(zs["hyperparams"]), {"max_length", "eval_batch_size", "device"})
         ft = self.read_result("sentences_75agree/bert_base/seed100")
         self.assertEqual(ft["seed"], 100)
         self.assertEqual(ft["best_epoch"], 2)
@@ -237,8 +257,8 @@ class RunStep2Test(unittest.TestCase):
     def test_journal_has_start_and_end_for_every_run(self):
         with open(os.path.join(self.full_out, "journal.jsonl"), encoding="utf-8") as fh:
             events = [json.loads(ln) for ln in fh]
-        self.assertEqual(sum(e["event"] == "start" for e in events), 61)
-        self.assertEqual(sum(e["event"] == "end" for e in events), 61)
+        self.assertEqual(sum(e["event"] == "start" for e in events), 77)
+        self.assertEqual(sum(e["event"] == "end" for e in events), 77)
         self.assertFalse(any(e["event"] == "error" for e in events))
         self.assertEqual(set(events[0]), {"event", "run_dir", "wall_seconds", "timestamp", "error"})
 
@@ -318,6 +338,113 @@ class RunStep2Test(unittest.TestCase):
         self.assertTrue(res["probe"])
         self.assertEqual(res["n"]["train"], 20)
         self.assertEqual(res["hyperparams"]["max_epochs"], 1)
+
+    def _copy_splits(self, name):
+        path = self.fresh_out(name)
+        shutil.copytree(self.splits, path)
+        return path
+
+    @staticmethod
+    def _write_sums(splits_dir, overrides=None):
+        lines = []
+        for fname in sorted(os.listdir(splits_dir)):
+            if fname == "SHA256SUMS":
+                continue
+            digest = (overrides or {}).get(fname) or file_sha256(os.path.join(splits_dir, fname))
+            lines.append(f"{digest}  {fname}")
+        with open(os.path.join(splits_dir, "SHA256SUMS"), "w", encoding="utf-8") as fh:
+            fh.write("\n".join(lines) + "\n")
+
+    def test_sha256sums_match_runs(self):
+        splits = self._copy_splits("sums_ok")
+        self._write_sums(splits)
+        out = self.fresh_out("sums_ok_out")
+        code, stdout, _ = run_main(["--splits-dir", splits, "--out-dir", out, "--stage", "baselines",
+                                    "--configs", "sentences_allagree", "--models", "vader_official"])
+        self.assertEqual(code, 0)
+        self.assertIn("plan: 1 runs", stdout)
+
+    def test_sha256sums_mismatch_exits_2_naming_file(self):
+        splits = self._copy_splits("sums_bad")
+        self._write_sums(splits, {"sentences_allagree_manifest.json": "0" * 64})
+        out = self.fresh_out("sums_bad_out")
+        code, _, stderr = run_main(["--splits-dir", splits, "--out-dir", out, "--execute",
+                                    "--stage", "baselines", "--configs", "sentences_allagree"])
+        self.assertEqual(code, 2)
+        self.assertIn("sentences_allagree_manifest.json", stderr)
+        self.assertFalse(os.path.exists(out))
+
+    def test_sha256sums_mismatch_of_external_file_exits_2(self):
+        splits = self._copy_splits("sums_bad_ext")
+        self._write_sums(splits, {"sentfin_dedup.json": "f" * 64})
+        code, _, stderr = run_main(["--splits-dir", splits, "--out-dir", self.fresh_out("sums_bad_ext_out"),
+                                    "--stage", "zeroshot"])
+        self.assertEqual(code, 2)
+        self.assertIn("sentfin_dedup.json", stderr)
+
+    def test_missing_sha256sums_is_only_a_warning(self):
+        code, _, stderr = run_main(self.argv(self.fresh_out("no_sums"), "--stage", "zeroshot"))
+        self.assertEqual(code, 0)
+        self.assertIn("SHA256SUMS", stderr)
+
+    def test_nonfinite_probabilities_fail_the_run(self):
+        out = self.fresh_out("nan")
+
+        class NanBaseline:
+            def fit(self, *args, **kwargs):
+                return self
+
+            def predict_proba(self, texts):
+                prob = np.full((len(texts), 3), 1 / 3)
+                prob[0, 0] = np.nan
+                return prob
+
+        code, _, stderr = run_main(
+            self.argv(out, "--stage", "baselines", "--configs", "sentences_allagree",
+                      "--models", "vader_official", "--execute"),
+            factory=lambda key, seed=42: NanBaseline(),
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("non-finite", stderr)
+        self.assertFalse(os.path.exists(os.path.join(out, "sentences_allagree", "vader_official", "seed42")))
+
+    def test_degenerate_transformer_output_fails_the_run(self):
+        out = self.fresh_out("degenerate")
+
+        class CollapsedStub(StubCalls):
+            def finetune_fn(self, model_name, train_texts, train_labels, val_texts, val_labels, eval_sets,
+                            config, revision=None, model_loader=None):
+                res = super().finetune_fn(model_name, train_texts, train_labels, val_texts, val_labels,
+                                          eval_sets, config, revision, model_loader)
+                res["val_prob"] = np.tile(np.array([0.1, 0.8, 0.1], dtype=np.float32), (len(val_texts), 1))
+                return res
+
+        code, _, stderr = run_main(
+            self.argv(out, "--stage", "finetune", "--configs", "sentences_allagree", "--models", "bert_base",
+                      "--seeds", "42", "--execute"),
+            CollapsedStub(),
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("degenerate", stderr)
+        with open(os.path.join(out, "journal.jsonl"), encoding="utf-8") as fh:
+            events = [json.loads(ln) for ln in fh]
+        self.assertTrue(any(e["event"] == "error" and "degenerate" in e["error"] for e in events))
+
+    def test_baseline_factory_receives_model_key(self):
+        seen = []
+
+        def factory(model_key, seed=42):
+            seen.append((model_key, seed))
+            return baseline_factory(model_key, seed=seed)
+
+        out = self.fresh_out("factory")
+        code, _, _ = run_main(
+            self.argv(out, "--stage", "baselines", "--configs", "sentences_allagree",
+                      "--models", "lm_official", "tfidf_svm", "--execute"),
+            factory=factory,
+        )
+        self.assertEqual(code, 0)
+        self.assertEqual(seen, [("lm_official", 42), ("tfidf_svm", 42)])
 
     def test_missing_inputs_exit_2(self):
         empty = os.path.join(self.tmp, "empty_splits")

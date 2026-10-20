@@ -5,6 +5,7 @@ Provides:
 - ``mean_sd``: seed mean and sample standard deviation
 - ``holm_bonferroni``: step-down Holm adjustment of a family of p-values
 - ``seed_averaged_bootstrap``: paired sentence bootstrap of a seed-averaged metric difference
+- ``seed_sentence_bootstrap``: two-level (sentences and seeds) bootstrap of the same difference
 """
 
 from __future__ import annotations
@@ -184,4 +185,89 @@ def seed_averaged_bootstrap(
         "B": int(B),
         "n": int(n),
         "metric": metric,
+    }
+
+
+def seed_sentence_bootstrap(
+    y_true: Sequence[int],
+    preds_a: Sequence[Sequence[int]],
+    preds_b: Sequence[Sequence[int]],
+    metric: str = "macro_f1",
+    B: int = 10000,
+    seed: int = 42,
+) -> dict[str, Any]:
+    """Two-level bootstrap of ``mean_s metric(A_s) - mean_s metric(B_s)`` over sentences and seeds.
+
+    Per resample, ``n`` sentence indices are drawn with replacement and, independently for A and
+    B, ``k`` seed indices are drawn with replacement from that model's ``k`` prediction vectors
+    (``k = 1`` always selects the one run). The statistic is the mean over the drawn seeds of the
+    metric of A minus the same for B, both scored on the drawn sentences. Sentences and seeds use
+    separate random streams, so with one run per model the result equals ``seed_averaged_bootstrap``.
+
+    Returns the keys of ``seed_averaged_bootstrap`` plus ``"per_seed_delta"`` (``metric(A_i) -
+    metric(B_i)`` for equal seed positions when both models have ``k`` seeds, else ``A_i - B_0``)
+    and ``"method": "seed+sentence"``. The two-sided p-value is ``min(1, 2 * min(P(d <= 0),
+    P(d >= 0)))``, so the smallest non-zero value is ``2 / B``.
+    """
+    if metric not in _METRICS:
+        raise ValueError(f"metric must be one of {_METRICS}, got {metric!r}")
+    y = np.asarray(y_true, dtype=np.int64)
+    n = len(y)
+    a_list = [np.asarray(p, dtype=np.int64) for p in preds_a]
+    b_list = [np.asarray(p, dtype=np.int64) for p in preds_b]
+    if not a_list or not b_list:
+        raise ValueError("preds_a and preds_b must each hold at least one prediction vector")
+    if n == 0:
+        raise ValueError("y_true is empty")
+    for pred in a_list + b_list:
+        if len(pred) != n:
+            raise ValueError(f"Length mismatch: len(y_true)={n}, len(pred)={len(pred)}")
+
+    n_models = len(a_list) + len(b_list)
+    k_a, k_b = len(a_list), len(b_list)
+    onehot = _cell_onehot(y, a_list + b_list)
+
+    def per_model_metrics(counts: np.ndarray) -> np.ndarray:
+        """(rows, n_models) metric of every prediction vector for every row of ``counts``."""
+        return np.stack(
+            [_metric_from_counts(counts[:, 9 * j : 9 * (j + 1)], metric) for j in range(n_models)], axis=1
+        )
+
+    observed = per_model_metrics(onehot.sum(axis=0, keepdims=True))[0]
+    delta_obs = float(np.mean(observed[:k_a]) - np.mean(observed[k_a:]))
+    if k_a == k_b:
+        per_seed_delta = [float(observed[i] - observed[k_a + i]) for i in range(k_a)]
+    else:
+        per_seed_delta = [float(observed[i] - observed[k_a]) for i in range(k_a)]
+
+    sentence_rng = np.random.default_rng(seed)
+    seed_rng = np.random.default_rng([seed, 1])
+    deltas = np.empty(B, dtype=np.float64)
+    chunk = max(1, min(B, 250))
+    done = 0
+    while done < B:
+        size = min(chunk, B - done)
+        idx = sentence_rng.integers(0, n, size=(size, n))
+        flat = (idx + (np.arange(size) * n)[:, None]).ravel()
+        weights = np.bincount(flat, minlength=size * n).reshape(size, n).astype(np.float64)
+        scores = per_model_metrics(weights @ onehot)
+        pick_a = seed_rng.integers(0, k_a, size=(size, k_a))
+        pick_b = seed_rng.integers(0, k_b, size=(size, k_b))
+        mean_a = np.take_along_axis(scores[:, :k_a], pick_a, axis=1).mean(axis=1)
+        mean_b = np.take_along_axis(scores[:, k_a:], pick_b, axis=1).mean(axis=1)
+        deltas[done : done + size] = mean_a - mean_b
+        done += size
+
+    ci_low, ci_high = np.percentile(deltas, [2.5, 97.5])
+    tail = min(float(np.mean(deltas <= 0.0)), float(np.mean(deltas >= 0.0)))
+    return {
+        "delta": delta_obs,
+        "ci_low": float(ci_low),
+        "ci_high": float(ci_high),
+        "p_value": float(min(1.0, 2.0 * tail)),
+        "B": int(B),
+        "n": int(n),
+        "metric": metric,
+        "per_seed_delta": per_seed_delta,
+        "method": "seed+sentence",
     }
