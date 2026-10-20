@@ -694,8 +694,9 @@ def build_report(
               "test on the discordant pairs; the continuity-corrected chi-squared is stored alongside. The "
               "seed+sentence bootstrap of the Macro-F1 difference is the headline test.",
               "- `runs/journal.jsonl` is an append-only event log: it also records the six runs that hit Apple MPS "
-              "memory errors and were rerun, one deliberately stopped run and the TF-IDF refit after the C grid "
-              "gained 0.01. The `result.json` files are authoritative.",
+              "memory errors and were rerun, one deliberately stopped run and the later baseline refits (TF-IDF after "
+              "the C grid gained 0.01, the val-tuned LM after a tokenisation fix; predictions unchanged). The "
+              "`result.json` files are authoritative.",
               "- RQ1 boundary: R_neu is the recall of gold-neutral sentences and P_neg the precision of the "
               "negative class (seed means; deltas use the seed+sentence bootstrap). The McNemar test in that "
               "section is restricted to gold-neutral sentences (correct = predicted neutral), with Holm within "

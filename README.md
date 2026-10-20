@@ -304,7 +304,8 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 - McNemar p-values are the exact binomial test on the discordant pairs (the continuity-corrected χ² is stored
   alongside). For a pair of two single-run models (lexicons, TF-IDF) the per-seed "families" repeat one test.
 - `results/step2/runs/journal.jsonl` is an append-only event log; it also records the six MPS reruns, one
-  deliberately stopped run and the TF-IDF refit. The `result.json` files are authoritative.
+  deliberately stopped run and the later baseline refits (TF-IDF C grid, LM tokenisation fix; predictions
+  unchanged). The `result.json` files are authoritative.
 
 ### Deviations from the proposal
 
