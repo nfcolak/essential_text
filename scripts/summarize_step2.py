@@ -44,7 +44,8 @@ from src.evaluation.multiseed import (  # noqa: E402
 from src.evaluation.stats import mcnemar_test  # noqa: E402
 
 CONFIGS = ("sentences_allagree", "sentences_75agree", "sentences_50agree")
-BASELINE_MODELS = ("vader_official", "lm_official", "vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
+BASELINE_MODELS = ("vader_official", "vader_official_tuned", "lm_official", "lm_official_tuned",
+                   "vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
 TRANSFORMER_MODELS = ("bert_base", "finbert_mlm")
 MODELS = BASELINE_MODELS + TRANSFORMER_MODELS
 ZEROSHOT_MODEL = "prosus_finbert"
@@ -54,6 +55,16 @@ PRIMARY_SEED = 42
 DEFAULT_SEEDS = (42, 100, 2026)
 CV_FOLDS = (0, 1, 2, 3, 4)
 SPLITS = ("test", "external")
+# RQ1 boundary pairs (a, b), compared on every config x {test, external}
+BOUNDARY_PAIRS = (
+    ("vader_official", "lm_official"),
+    ("vader_official_tuned", "lm_official_tuned"),
+    ("vader", "loughran_mcdonald"),
+    ("bert_base", "finbert_mlm"),
+)
+# extra pairs on the external split only (zero-shot ProsusAI/finbert against the fine-tuned encoders)
+BOUNDARY_PAIRS_EXTERNAL = (("prosus_finbert", "bert_base"), ("prosus_finbert", "finbert_mlm"))
+PER_CLASS_STATS = ("precision", "recall", "f1")
 
 FIGURES = (
     "step2_macro_f1_by_config.png",
@@ -182,6 +193,11 @@ def _metric_values(runs: list[dict], split: str) -> dict[str, Any]:
         "per_class_f1": {
             name: mean_sd([m["per_class"][name]["f1"] for m in metrics]) for name in CLASS_NAMES
         },
+        # seed mean +- sd of per-class precision / recall / F1, read from result.json metrics ``per_class``
+        "per_class": {
+            name: {stat: mean_sd([m["per_class"][name][stat] for m in metrics]) for stat in PER_CLASS_STATS}
+            for name in CLASS_NAMES
+        },
     }
     return out
 
@@ -301,8 +317,8 @@ def build_comparisons(table: RunTable, B: int, seed: int) -> dict[str, Any]:
             "within each seed family (all pairs of one config and split under that seed; pairs of "
             "single-run models appear with their one run in every family). p_min / p_max are the "
             "smallest and largest raw McNemar p over the families; n_seeds_significant counts the "
-            "families in which the Holm-adjusted p is below 0.05. Pairs: 28 on test; 36 on external "
-            "(the 28 plus the 8 prosus_finbert pairs). The bootstrap is the seed+sentence two-level "
+            "families in which the Holm-adjusted p is below 0.05. Pairs: 45 on test; 55 on external "
+            "(the 45 plus the 10 prosus_finbert pairs). The bootstrap is the seed+sentence two-level "
             "bootstrap of the Macro-F1 difference."
         ),
         "configs": {},
@@ -324,6 +340,85 @@ def build_comparisons(table: RunTable, B: int, seed: int) -> dict[str, Any]:
                 if not preds[a] or not preds[b]:
                     continue
                 res = compare_pair(y, preds[a], preds[b], B, seed)
+                if res is not None:
+                    res.update({"model_a": a, "model_b": b})
+                    results[f"{a}__vs__{b}"] = res
+            family_seeds = apply_seed_families(results)
+            out["configs"][config][split] = {"n": int(len(y)), "family_seeds": family_seeds, "pairs": results}
+    return out
+
+
+# ---------------------------------------------------------------------------
+# rq1_boundary.json
+# ---------------------------------------------------------------------------
+
+
+def _boundary_rates(y: np.ndarray, pred: np.ndarray) -> tuple[float, float]:
+    """(neutral recall, negative precision) of one prediction vector; 0 when the denominator is 0."""
+    gold_neu = y == 1
+    pred_neg = pred == 0
+    r_neu = float(np.mean(pred[gold_neu] == 1)) if gold_neu.any() else 0.0
+    p_neg = float(np.mean(y[pred_neg] == 0)) if pred_neg.any() else 0.0
+    return r_neu, p_neg
+
+
+def _boundary_model(y: np.ndarray, preds: dict[int, np.ndarray]) -> dict[str, float]:
+    rates = [_boundary_rates(y, p) for p in preds.values()]
+    return {"neutral_recall": float(np.mean([r[0] for r in rates])),
+            "negative_precision": float(np.mean([r[1] for r in rates])), "n_seeds": len(rates)}
+
+
+def compare_boundary_pair(
+    y: np.ndarray, preds_a: dict[int, np.ndarray], preds_b: dict[int, np.ndarray], B: int, seed: int
+) -> dict[str, Any] | None:
+    """R_neu / P_neg of both models, their seed+sentence bootstrap deltas and the gold-neutral McNemar."""
+    seeds = _pair_seeds(preds_a, preds_b)
+    neutral = y == 1
+    if not seeds or not neutral.any():
+        return None
+    per_seed = {}
+    for s in seeds:
+        res = mcnemar_test(y[neutral], _pick(preds_a, s)[neutral], _pick(preds_b, s)[neutral])
+        per_seed[str(s)] = {k: res[k] for k in ("n10", "n01", "chi2", "p_value")}
+    out: dict[str, Any] = {
+        "a": _boundary_model(y, preds_a),
+        "b": _boundary_model(y, preds_b),
+        "n_neutral": int(neutral.sum()),
+        "mcnemar_by_seed": per_seed,
+    }
+    for metric in ("neutral_recall", "negative_precision"):
+        out[f"delta_{metric}"] = seed_sentence_bootstrap(
+            y, list(preds_a.values()), list(preds_b.values()), metric=metric, B=B, seed=seed
+        )
+    return out
+
+
+def build_rq1_boundary(table: RunTable, B: int, seed: int) -> dict[str, Any]:
+    out: dict[str, Any] = {
+        "note": (
+            "R_neu = recall of gold-neutral sentences (predicted neutral / gold neutral); P_neg = precision of "
+            "the negative class (gold negative / predicted negative); both are seed means. delta_* = A - B with "
+            "the seed+sentence bootstrap. McNemar is restricted to gold-neutral sentences (correct = predicted "
+            "neutral), one test per seed pairing; Holm-Bonferroni within each seed family over the pairs of one "
+            "config x split block."
+        ),
+        "configs": {},
+    }
+    for config in CONFIGS:
+        out["configs"][config] = {}
+        for split in SPLITS:
+            ref = _reference(table, config, split)
+            if ref is None:
+                continue
+            ids, y = ref
+            pairs = list(BOUNDARY_PAIRS) + (list(BOUNDARY_PAIRS_EXTERNAL) if split == "external" else [])
+            results: dict[str, Any] = {}
+            for a, b in pairs:
+                preds_a = _model_preds(table, config, a, split, ids)
+                preds_b = _model_preds(table, config, b, split, ids)
+                if not preds_a or not preds_b:
+                    continue
+                res = compare_boundary_pair(y, preds_a, preds_b, B, seed)
                 if res is not None:
                     res.update({"model_a": a, "model_b": b})
                     results[f"{a}__vs__{b}"] = res
@@ -541,7 +636,9 @@ def _ci(boot: dict | None) -> str:
     return f"{boot['delta']:+.3f} [{boot['ci_low']:+.3f}, {boot['ci_high']:+.3f}], {p_txt}"
 
 
-def build_report(summary: dict, comparisons: dict, attribution: dict, missing: list[str], args: Any) -> str:
+def build_report(
+    summary: dict, comparisons: dict, attribution: dict, boundary: dict, missing: list[str], args: Any
+) -> str:
     lines = ["# Step 2 Report: Transformer Fine-Tuning vs Baselines", ""]
     lines += [f"Generated {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')} from `{args.runs_dir}`.", ""]
     if missing:
@@ -578,6 +675,12 @@ def build_report(summary: dict, comparisons: dict, attribution: dict, missing: l
               "family with their one run), and the report gives p_min, p_max and the number of seed families "
               "with Holm-adjusted p < 0.05. The seed+sentence bootstrap of the Macro-F1 difference is the "
               "headline test.",
+              "- RQ1 boundary: R_neu is the recall of gold-neutral sentences and P_neg the precision of the "
+              "negative class (seed means; deltas use the seed+sentence bootstrap). The McNemar test in that "
+              "section is restricted to gold-neutral sentences (correct = predicted neutral), with Holm within "
+              "each seed family over the pairs of one config and split.",
+              "- Per-class precision, recall and F1 are the seed mean ± sd of the values stored in each "
+              "`result.json` (`metrics.<split>.per_class`).",
               "- Attribution: `delta_arch` = BERT − `tfidf_best` and `delta_domain` = FinBERT-MLM − BERT; "
               "`tfidf_best` is the TF-IDF model with the higher validation Macro-F1 in that config. Per-seed "
               "deltas are listed beside each interval.", ""]
@@ -611,6 +714,41 @@ def build_report(summary: dict, comparisons: dict, attribution: dict, missing: l
             if e:
                 lines.append(f"| {display_name(model)} | {e['n_folds']} | {_pm(e['val']['macro_f1'])} | {_pm(e['val']['accuracy'])} |")
         lines.append("")
+
+    lines += ["## Per-class precision / recall / F1 (sentences_allagree)", ""]
+    for split, title in (("test", "In-domain test"), ("external", "SEntFiN 1.0 (allagree-trained)")):
+        entries = summary["configs"].get(CV_CONFIG, {})
+        if not entries:
+            continue
+        header = ["model"] + [f"{name} {stat}" for name in CLASS_NAMES for stat in ("P", "R", "F1")]
+        lines += [f"### {title}", "", "| " + " | ".join(header) + " |", "|" + "---|" * len(header)]
+        for model in MODELS:
+            e = entries.get(model)
+            if not e or not e[split].get("per_class"):
+                continue
+            cells = [_pm(e[split]["per_class"][name][stat]) for name in CLASS_NAMES for stat in PER_CLASS_STATS]
+            lines.append(f"| {display_name(model)} | " + " | ".join(cells) + " |")
+        lines.append("")
+
+    lines += ["## RQ1: neutral/negative boundary", "",
+              "R_neu = recall of gold-neutral sentences, P_neg = precision of the negative class (seed means); "
+              "Δ = A − B with the 95% seed+sentence bootstrap CI. McNemar covers gold-neutral sentences only.", ""]
+    for split, title in (("test", "In-domain test"), ("external", "SEntFiN 1.0")):
+        for config, per_split in boundary["configs"].items():
+            block = per_split.get(split)
+            if not block or not block["pairs"]:
+                continue
+            lines += [f"### {title}: {config} (N = {block['n']})", "",
+                      "| pair (A vs B) | R_neu A / B | P_neg A / B | ΔR_neu [95% CI] | ΔP_neg [95% CI] | "
+                      "neutral-only McNemar p range | families Holm p < 0.05 |", "|---|---|---|---|---|---|---|"]
+            for res in block["pairs"].values():
+                lines.append(
+                    f"| {display_name(res['model_a'])} vs {display_name(res['model_b'])} | "
+                    f"{res['a']['neutral_recall']:.3f} / {res['b']['neutral_recall']:.3f} | "
+                    f"{res['a']['negative_precision']:.3f} / {res['b']['negative_precision']:.3f} | "
+                    f"{_ci(res['delta_neutral_recall'])} | {_ci(res['delta_negative_precision'])} | "
+                    f"{res['p_min']:.3g}–{res['p_max']:.3g} | {res['n_seeds_significant']}/{res['n_families']} |")
+            lines.append("")
 
     lines += ["## Architecture vs domain-pretraining attribution", "",
               "Differences with the 95% seed+sentence bootstrap CI.", "",
@@ -703,6 +841,7 @@ def main(argv: list[str] | None = None) -> int:
     summary = build_summary(table)
     comparisons = build_comparisons(table, args.bootstrap_samples, args.seed)
     attribution = build_attribution(table, args.bootstrap_samples, args.seed)
+    boundary = build_rq1_boundary(table, args.bootstrap_samples, args.seed)
     summary["missing_runs"] = missing
 
     def dump(name: str, obj: Any) -> None:
@@ -712,13 +851,14 @@ def main(argv: list[str] | None = None) -> int:
     dump("summary_metrics.json", summary)
     dump("statistical_comparisons.json", comparisons)
     dump("attribution.json", attribution)
+    dump("rq1_boundary.json", boundary)
 
     fig_macro_f1_by_config(summary, os.path.join(args.out_dir, FIGURES[0]))
     fig_external(summary, os.path.join(args.out_dir, FIGURES[1]))
     fig_attribution(attribution, os.path.join(args.out_dir, FIGURES[2]))
     fig_confusions(table, os.path.join(args.out_dir, FIGURES[3]))
 
-    report = build_report(summary, comparisons, attribution, missing, args)
+    report = build_report(summary, comparisons, attribution, boundary, missing, args)
     with open(os.path.join(args.out_dir, "STEP2_REPORT.md"), "w", encoding="utf-8") as handle:
         handle.write(report)
     print(f"Wrote summary to {args.out_dir} ({len(table.runs)} runs, {len(missing)} missing)")

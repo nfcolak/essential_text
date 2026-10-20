@@ -364,6 +364,7 @@ class TestEndToEnd(unittest.TestCase):
         ext_labels = {r["id"]: r["label"] for r in ext}
         wrong = {
             "vader_official": set(self.test_ids[::6]), "lm_official": set(self.test_ids[::8]),
+            "vader_official_tuned": set(self.test_ids[::10]), "lm_official_tuned": set(self.test_ids[::11]),
             "vader": set(self.test_ids[::2]), "loughran_mcdonald": set(self.test_ids[::3]),
             "tfidf_logreg": set(self.test_ids[::4]), "tfidf_svm": set(self.test_ids[::5]),
             "bert_base": set(self.test_ids[::7]), "finbert_mlm": set(self.test_ids[::9]),
@@ -428,7 +429,7 @@ class TestEndToEnd(unittest.TestCase):
         rq1 = full["test"]["rq1_financial_terminology"]["bert_base"]
         self.assertGreaterEqual(rq1["term1"]["n"] + rq1["term0"]["n"], 1)
         self.assertIn("delta_arch", analysis["diagnostic"]["attribution"]["negation"])
-        self.assertEqual(len(run_step3_analysis.MODELS), 8)
+        self.assertEqual(len(run_step3_analysis.MODELS), 10)
         models = analysis["diagnostic"]["error_rates"]["negation"]["models"]
         self.assertEqual(list(models), list(run_step3_analysis.MODELS))
         self.assertIn("balanced_error", models["vader_official"]["tag1"])

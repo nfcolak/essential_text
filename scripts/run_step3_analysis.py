@@ -37,8 +37,8 @@ from src.analysis.attribution import (  # noqa: E402
 )
 
 CONFIGS = ("sentences_allagree", "sentences_75agree", "sentences_50agree")
-BASELINES = ("vader_official", "lm_official", "vader", "loughran_mcdonald", "tfidf_logreg",
-             "tfidf_svm")
+BASELINES = ("vader_official", "vader_official_tuned", "lm_official", "lm_official_tuned", "vader",
+             "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
 FINETUNED = ("bert_base", "finbert_mlm")
 MODELS = BASELINES + FINETUNED
 ZERO_SHOT = ("external_only", "prosus_finbert", "zeroshot")

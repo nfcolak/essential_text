@@ -8,8 +8,16 @@ BASELINE_SPECS: dict[str, dict[str, Any]] = {
     "vader_official": {
         "display": "VADER (official lexicon)", "family": "lexicon", "variant": "official",
     },
+    "vader_official_tuned": {
+        "display": "VADER (official lexicon, val-tuned thresholds)", "family": "lexicon",
+        "variant": "official_tuned",
+    },
     "lm_official": {
         "display": "Loughran-McDonald (official dictionary)", "family": "lexicon", "variant": "official",
+    },
+    "lm_official_tuned": {
+        "display": "Loughran-McDonald (official dictionary, negation + val-tuned thresholds)",
+        "family": "lexicon", "variant": "official_tuned",
     },
     "vader": {
         "display": "VADER-style (finance-adjusted, custom)", "family": "lexicon", "variant": "finance_adjusted",
@@ -47,6 +55,14 @@ def make_baseline(key: str, seed: int = 42) -> Any:
         from src.baselines.lexicon_official import LMOfficialBaseline
 
         return LMOfficialBaseline()
+    if key == "vader_official_tuned":
+        from src.baselines.lexicon_official import VaderOfficialTunedBaseline
+
+        return VaderOfficialTunedBaseline()
+    if key == "lm_official_tuned":
+        from src.baselines.lexicon_official import LMOfficialTunedBaseline
+
+        return LMOfficialTunedBaseline()
     if key in _STEP1_NAMES:
         from colab.run_step1_colab import instantiate_fresh_model
 

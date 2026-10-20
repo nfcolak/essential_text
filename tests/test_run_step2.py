@@ -13,13 +13,16 @@ import unittest
 import numpy as np
 
 from scripts import run_step2
-from src.baselines.lexicon_official import LMOfficialBaseline
+from src.baselines.lexicon_official import LMOfficialBaseline, LMOfficialTunedBaseline
 from src.baselines.registry import make_baseline
 from src.data.download import generate_synthetic_dataset
 from src.data.io import CONFIGS, cv_fold_arrays, file_sha256, load_external, load_manifest, split_arrays
 from src.data.splits import build_records, create_stratified_splits
 
-BASELINES = ("vader_official", "lm_official", "vader", "loughran_mcdonald", "tfidf_logreg", "tfidf_svm")
+BASELINES = (
+    "vader_official", "vader_official_tuned", "lm_official", "lm_official_tuned", "vader", "loughran_mcdonald",
+    "tfidf_logreg", "tfidf_svm",
+)
 SEEDS = (42, 100, 2026)
 RESULT_KEYS = {
     "status", "stage", "config", "model_key", "model_name", "seed", "fold", "hyperparams", "best_epoch",
@@ -67,6 +70,8 @@ def baseline_factory(model_key, seed=42):
     """Registry factory, but the official LM dictionary is replaced by tiny injected lists (no data/raw)."""
     if model_key == "lm_official":
         return LMOfficialBaseline(words=({"profit", "gain"}, {"loss", "decline"}))
+    if model_key == "lm_official_tuned":
+        return LMOfficialTunedBaseline(words=({"profit", "gain"}, {"loss", "decline"}))
     return make_baseline(model_key, seed=seed)
 
 
@@ -145,7 +150,7 @@ class RunStep2Test(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertFalse(os.path.exists(out))
         lines = [ln for ln in stdout.splitlines() if ln.startswith("[")]
-        self.assertEqual(len(lines), 18 + 18 + 40 + 1)
+        self.assertEqual(len(lines), 24 + 18 + 50 + 1)
         self.assertTrue(all(ln.endswith(" pending") for ln in lines))
 
     # ---- full matrix ------------------------------------------------------------------------
@@ -183,6 +188,19 @@ class RunStep2Test(unittest.TestCase):
         self.assertEqual(lm["stage"], "baselines")
         cv = self.read_result("sentences_allagree/lm_official/cv_fold2")
         self.assertEqual(cv["stage"], "cv")
+
+    def test_tuned_official_baselines_are_in_the_plan_and_tuned(self):
+        self.assertIn("vader_official_tuned", run_step2.BASELINE_KEYS)
+        self.assertIn("lm_official_tuned", run_step2.BASELINE_KEYS)
+        for cfg in ("sentences_allagree", "sentences_75agree"):
+            for key in ("vader_official_tuned", "lm_official_tuned"):
+                res = self.read_result(f"{cfg}/{key}/seed42")
+                self.assertEqual(res["model_key"], key)
+                self.assertEqual(res["stage"], "baselines")
+                self.assertTrue(res["hyperparams"]["tuned"])
+        cv = self.read_result("sentences_allagree/lm_official_tuned/cv_fold1")
+        self.assertEqual(cv["stage"], "cv")
+        self.assertTrue(cv["hyperparams"]["negation"])
 
     def test_prosus_never_scores_phrasebank(self):
         for cfg in CONFIGS:
@@ -257,8 +275,8 @@ class RunStep2Test(unittest.TestCase):
     def test_journal_has_start_and_end_for_every_run(self):
         with open(os.path.join(self.full_out, "journal.jsonl"), encoding="utf-8") as fh:
             events = [json.loads(ln) for ln in fh]
-        self.assertEqual(sum(e["event"] == "start" for e in events), 77)
-        self.assertEqual(sum(e["event"] == "end" for e in events), 77)
+        self.assertEqual(sum(e["event"] == "start" for e in events), 93)
+        self.assertEqual(sum(e["event"] == "end" for e in events), 93)
         self.assertFalse(any(e["event"] == "error" for e in events))
         self.assertEqual(set(events[0]), {"event", "run_dir", "wall_seconds", "timestamp", "error"})
 

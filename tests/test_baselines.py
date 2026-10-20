@@ -318,7 +318,7 @@ class TestTfidfMLBaseline(unittest.TestCase):
 
             self.assertIn("C", model.best_params_)
             self.assertIn("class_weight", model.best_params_)
-            self.assertIn(model.best_params_["C"], {0.1, 1.0, 10.0})
+            self.assertIn(model.best_params_["C"], {0.01, 0.1, 1.0, 10.0})
             self.assertIn(model.best_params_["class_weight"], {None, "balanced"})
             self.assertIsNotNone(model.best_params_["val_macro_f1"])
 

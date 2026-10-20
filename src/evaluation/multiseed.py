@@ -17,7 +17,7 @@ from typing import Any, Sequence
 import numpy as np
 
 _SPLITS = ("val", "test", "external")
-_METRICS = ("macro_f1", "accuracy")
+_METRICS = ("macro_f1", "accuracy", "neutral_recall", "negative_precision")
 
 
 def load_runs(runs_dir: str) -> list[dict]:
@@ -108,11 +108,21 @@ def _cell_onehot(y_true: np.ndarray, preds: Sequence[np.ndarray]) -> np.ndarray:
 
 
 def _metric_from_counts(counts: np.ndarray, metric: str) -> np.ndarray:
-    """Metric per row of ``counts`` (rows x 9, row-major 3x3 confusion matrix: true x predicted)."""
+    """Metric per row of ``counts`` (rows x 9, row-major 3x3 confusion matrix: true x predicted).
+
+    ``neutral_recall`` = cm[1,1] / true-neutral row sum, ``negative_precision`` = cm[0,0] / predicted-negative
+    column sum; both 0 when the denominator is 0.
+    """
     cm = counts.reshape(-1, 3, 3)
     tp = np.einsum("bii->bi", cm)
     if metric == "accuracy":
         return tp.sum(axis=1) / np.maximum(cm.sum(axis=(1, 2)), 1.0)
+    if metric == "neutral_recall":
+        row = cm[:, 1, :].sum(axis=1)
+        return np.where(row > 0, cm[:, 1, 1] / np.maximum(row, 1.0), 0.0)
+    if metric == "negative_precision":
+        col = cm[:, :, 0].sum(axis=1)
+        return np.where(col > 0, cm[:, 0, 0] / np.maximum(col, 1.0), 0.0)
     pp = cm.sum(axis=1)
     ap = cm.sum(axis=2)
     denom = pp + ap

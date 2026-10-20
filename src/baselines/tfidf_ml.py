@@ -3,7 +3,7 @@
 Implements:
 - Strict train-only vocabulary fitting:
   TfidfVectorizer(ngram_range=(1, 3), sublinear_tf=True, max_features=25000)
-- Hyperparameter tuning over C in {0.1, 1.0, 10.0} and class_weight in [None, "balanced"]
+- Hyperparameter tuning over C in {0.01, 0.1, 1.0, 10.0} and class_weight in [None, "balanced"]
   maximizing validation Macro-F1
 - Calibrated 3-class probability outputs for both Logistic Regression and Linear SVM
   (via Platt/sigmoid scaling) satisfying the probability simplex (rows sum to 1.0)
@@ -120,7 +120,7 @@ class TfidfMLBaseline:
     ) -> TfidfMLBaseline:
         """Fit vectorizer strictly on train_texts and tune hyperparameters on validation set.
 
-        Sweeps C in {0.1, 1.0, 10.0} and class_weight in [None, "balanced"] to maximize
+        Sweeps C in {0.01, 0.1, 1.0, 10.0} and class_weight in [None, "balanced"] to maximize
         validation Macro-F1.
         """
         # Strictly fit vectorizer ONLY on train_texts
@@ -140,7 +140,7 @@ class TfidfMLBaseline:
             x_val = self.vectorizer.transform(target_val_texts)
             y_val = np.asarray(target_val_labels, dtype=int)
 
-            c_candidates = [0.1, 1.0, 10.0]
+            c_candidates = [0.01, 0.1, 1.0, 10.0]
             weight_candidates = [None, "balanced"]
 
             best_f1 = -1.0
