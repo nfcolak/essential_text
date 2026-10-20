@@ -414,6 +414,22 @@ def _default_baseline_factory() -> Callable[..., Any]:
     return instantiate_fresh_model
 
 
+def _free_memory() -> None:
+    """Release Python and accelerator caches between runs (MPS keeps freed blocks cached otherwise)."""
+    import gc
+
+    gc.collect()
+    try:
+        import torch
+
+        if torch.backends.mps.is_available():
+            torch.mps.empty_cache()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception:
+        pass
+
+
 def main(
     argv: Sequence[str] | None = None,
     finetune_fn: Callable[..., dict[str, Any]] | None = None,
@@ -492,6 +508,7 @@ def main(
             _journal(args.out_dir, "error", run_dir, time.time() - started, message)
             print(f"ERROR {run_dir}: {message}", file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
+        _free_memory()
     if errors:
         print(f"{errors} run(s) failed; see {os.path.join(args.out_dir, 'journal.jsonl')}", file=sys.stderr)
         return 1

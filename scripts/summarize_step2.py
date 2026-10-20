@@ -468,7 +468,9 @@ def _pm(stat: dict | None, digits: int = 3) -> str:
 def _ci(boot: dict | None) -> str:
     if not boot:
         return "n/a"
-    return f"{boot['delta']:+.3f} [{boot['ci_low']:+.3f}, {boot['ci_high']:+.3f}], p={boot['p_value']:.4f}"
+    pv = boot['p_value']
+    p_txt = f"p<{1.0 / boot['B']:.4g}" if pv == 0 else f"p={pv:.4f}"
+    return f"{boot['delta']:+.3f} [{boot['ci_low']:+.3f}, {boot['ci_high']:+.3f}], {p_txt}"
 
 
 def build_report(summary: dict, comparisons: dict, attribution: dict, missing: list[str], args: Any) -> str:

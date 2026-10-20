@@ -198,18 +198,20 @@ def _heatmap(path: str, rates: dict, title: str) -> None:
             value = rates[name]["models"][model]["tag1"]["error_rate"]
             if value is not None:
                 grid[i, j] = value
-    fig, ax = plt.subplots(figsize=(8, 4.5))
+    fig, ax = plt.subplots(figsize=(9.5, 5.5))
     im = ax.imshow(grid, cmap="viridis_r", vmin=0, vmax=max(0.05, np.nanmax(grid)
                                                              if np.isfinite(grid).any() else 1))
     ax.set_xticks(range(len(PHENOMENA)))
-    ax.set_xticklabels([f"{p}\n(n={rates[p]['n_tag1']})" for p in PHENOMENA], fontsize=8)
+    ax.set_xticklabels([f"{p.replace('_', ' ')}\n(n={rates[p]['n_tag1']})" for p in PHENOMENA], fontsize=8,
+                       rotation=30, ha="right", rotation_mode="anchor")
     ax.set_yticks(range(len(MODELS)))
     ax.set_yticklabels(MODELS, fontsize=8)
     for i in range(len(MODELS)):
         for j in range(len(PHENOMENA)):
             if np.isfinite(grid[i, j]):
-                ax.text(j, i, f"{grid[i, j]:.2f}", ha="center", va="center", color="white",
-                        fontsize=8)
+                vmax = im.get_clim()[1]
+                ax.text(j, i, f"{grid[i, j]:.2f}", ha="center", va="center",
+                        color="white" if grid[i, j] > 0.45 * vmax else "black", fontsize=8)
     fig.colorbar(im, ax=ax, label="error rate on tagged sentences")
     ax.set_title(title, fontsize=10)
     fig.tight_layout()
@@ -396,7 +398,10 @@ def _fmt_delta(d: dict, p: bool = True) -> str:
     if d.get("delta") is None:
         return "n/a"
     text = f"{d['delta']:+.3f} [{d['ci_low']:+.3f}, {d['ci_high']:+.3f}]"
-    return text + (f" (p={d['p_value']:.3f})" if p and d.get("p_value") is not None else "")
+    if not p or d.get("p_value") is None:
+        return text
+    pv, b = d["p_value"], d.get("B")
+    return text + (f" (p<{1.0 / b:.4g})" if pv == 0 and b else f" (p={pv:.3f})")
 
 
 def _fmt_rate(d: dict) -> str:

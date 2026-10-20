@@ -180,6 +180,11 @@ def finetune_and_predict(model_name_or_path: str, train_texts, train_labels, val
             labels = torch.as_tensor(train_labels[idx], dtype=torch.long, device=device)
             optimizer.zero_grad()
             loss = model(**enc, labels=labels).loss
+            if not torch.isfinite(loss).item():
+                # Seen on Apple MPS under memory pressure ("command buffer exited with error status /
+                # Insufficient Memory"): kernels are skipped silently and the loss turns NaN. Fail the run
+                # loudly instead of returning a degenerate model as "completed".
+                raise RuntimeError(f"non-finite training loss at epoch {epoch} (device {device})")
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), config.grad_clip)
             optimizer.step()

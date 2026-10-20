@@ -246,6 +246,7 @@ def phenomenon_attribution(tags: dict, y_true: dict, preds_by_model: dict[str, l
                 "ci_low": low,
                 "ci_high": high,
                 "p_value": _p_two_sided(draws),
+                "B": int(len(draws)),
             }
         result[name] = entry
     return result
