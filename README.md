@@ -14,6 +14,29 @@ This repository contains the reproducible evaluation pipeline, leakage-free data
 2. **RQ2 (Controlled Architecture vs. Domain Adaptation):** Under a strictly leakage-free evaluation protocol, how much classification improvement stems from domain-adaptive pretraining (`yiyanghkust/finbert-pretrain`) versus general-domain `bert-base-uncased` and traditional machine-learning baselines?
 3. **RQ3 (Linguistic Phenomenon Attribution):** Which linguistic phenomena—financial terminology, negation, hedging, numerical comparisons, or context-dependent expressions—drive model divergence?
 
+### Results at a Glance
+
+Macro-F1; models trained on `sentences_allagree`, fine-tuned models averaged over 3 seeds. Details, intervals and
+tests are in the Step 2 and Step 3 sections below.
+
+| Model | PhraseBank test (N = 339) | SEntFiN 1.0 (N = 9,460) |
+|---|---:|---:|
+| `bert-base-uncased` | **0.974** | 0.685 |
+| FinBERT-MLM (`yiyanghkust/finbert-pretrain`) | 0.944 | 0.669 |
+| TF-IDF + Linear SVM | 0.870 | 0.450 |
+| VADER (official lexicon) | 0.500 | 0.525 |
+| Loughran–McDonald (official dictionary) | 0.498 | 0.466 |
+| `ProsusAI/finbert` (off-the-shelf, zero-shot; SEntFiN only) | – | **0.727** |
+
+- **The pretrained encoder drives the gain:** BERT beats TF-IDF by about +0.10 in-domain and +0.20 to +0.24 on
+  SEntFiN (all intervals exclude zero).
+- **Financial pretraining adds nothing measurable** under one shared recipe: FinBERT-MLM is 0.01–0.03 below BERT
+  in-domain; the only positive cell is SEntFiN after 50agree training (+0.03).
+- **RQ1:** the general-purpose VADER lexicon recovers 14–34 points fewer gold-neutral sentences than
+  Loughran–McDonald; the fine-tuned encoders show no such gap.
+- **Domain shift remains large:** the best controlled model reaches about 0.69 Macro-F1 on SEntFiN.
+- **Main open question:** FinBERT-MLM was not tuned separately, so its lag may reflect the shared recipe.
+
 ---
 
 ## Step 1 Experimental Results (Leakage-Free Splits & Tier 1/2 Baselines)
