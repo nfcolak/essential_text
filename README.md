@@ -442,3 +442,23 @@ essential_text/
 │   └── step1_data_and_baselines_colab.ipynb
 └── tests/                     # Offline unittest suite (189 tests)
 ```
+
+### Code Structure: Three Independent Parts
+
+The pipeline is split into three parts. Each part owns its own folders and output files and is changed only by
+its owner; the parts talk to each other only through the hand-off files listed below.
+
+| Part | What it does | Code | Outputs |
+| :--- | :--- | :--- | :--- |
+| **A. Data & Evaluation** | Dataset download, dedup, locked splits; metrics, McNemar, bootstrap, multi-seed statistics, attribution, reports and figures | `src/data/`, `src/evaluation/`, `src/analysis/attribution.py`, `scripts/export_split_assignments.py`, `scripts/summarize_step2.py`, `scripts/run_step3_analysis.py` | `data/splits/`, `results/step2/*.json` and figures, `results/step3/` |
+| **B. Baselines & Phenomena** | Tier 1 lexicons, Tier 2 TF-IDF + LR/SVM; five-phenomenon tagger and the 300-sentence diagnostic set | `src/baselines/`, `src/analysis/phenomena.py`, `scripts/build_diagnostic_set.py`, `annotation/`, Step 1 runners (`colab/`, `notebooks/`) | `results/step1/`, baseline runs in `results/step2/runs/`, `data/diagnostic/` |
+| **C. Transformers** | Tier 3 fine-tuning (`bert-base-uncased`, FinBERT-MLM), 5-fold CV, zero-shot SEntFiN scoring; the run matrix | `src/transformer/`, `scripts/run_step2.py` | transformer runs in `results/step2/runs/` |
+
+Hand-off files (read-only for the other parts):
+
+1. **A → B, C:** locked splits in `data/splits/` (checked against `data/splits/SHA256SUMS`).
+2. **B → C:** baselines are exposed through `src/baselines/registry.py` (`make_baseline(key, seed)`), which the run matrix calls.
+3. **B, C → A:** one folder per run, `results/step2/runs/<config>/<model>/seed<N>/` with `result.json` and `predictions.npz`.
+4. **B → A:** diagnostic items and the two independent annotation files in `data/diagnostic/`.
+
+Each part keeps its own tests in `tests/`; the full suite must pass before a change is merged.
