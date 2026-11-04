@@ -35,7 +35,12 @@ tests are in the Step 2 and Step 3 sections below.
 - **RQ1:** the general-purpose VADER lexicon recovers 14–34 points fewer gold-neutral sentences than
   Loughran–McDonald; the fine-tuned encoders show no such gap.
 - **Domain shift remains large:** the best controlled model reaches about 0.69 Macro-F1 on SEntFiN.
-- **Main open question:** FinBERT-MLM was not tuned separately, so its lag may reflect the shared recipe.
+- **Main open question:** FinBERT-MLM was not tuned separately, so its lag may reflect the shared recipe. It also
+  uses its own vocabulary (only about 42% of BERT's word pieces are shared), so `Δdomain` measures corpus,
+  vocabulary and pretraining budget together. A controlled arm (BERT further pretrained on 42M tokens of 10-K text,
+  same vocabulary) moves BERT by at most about 0.03 with no consistent sign; where FinBERT-MLM wins (Twitter
+  Financial News, +0.03 to +0.05), the gain comes from its own vocabulary and much larger corpus
+  (see [Extensions](#extensions-post-hoc-robustness-checks)).
 
 ---
 
@@ -310,6 +315,11 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 
 - One shared fine-tuning recipe, no per-model hyperparameter search; FinBERT-MLM may need a different learning
   rate or more epochs, so `Δdomain` measures "domain pretraining under the BERT recipe".
+- `Δdomain` is not a pure corpus effect. FinBERT-MLM has its own uncased vocabulary (30,868 entries without special
+  tokens vs 29,523 for BERT; 12,493 shared) and a different pretraining corpus and budget (4.9B tokens of 10-K/10-Q
+  reports, earnings calls and analyst reports vs BooksCorpus + Wikipedia), so the contrast mixes all three. The
+  vocabulary-controlled DAPT arm in [Extensions](#extensions-post-hoc-robustness-checks) separates the text part, but
+  only at about 1% of FinBERT's corpus size, and vocabulary and corpus size stay mixed in the remainder.
 - The Step 1 tables come from Google Colab. Rerun locally, the splits and lexicon baselines are identical, while
   TF-IDF Macro-F1 moves by up to 0.012 (different scikit-learn/scipy builds). Steps 2 and 3 use the local refit
   throughout, which is why their TF-IDF numbers differ slightly from Step 1.
@@ -344,11 +354,17 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
   (`scripts/export_split_assignments.py --check` verifies them against the manifests).
 - **Pre-tagger.** The proposal planned lexical/dependency pre-tagging; negation scope is detected with token windows
   and regular expressions (`src/analysis/phenomena.py`), not a dependency parser.
-- **FiQA.** The proposal mentioned FiQA headlines next to SEntFiN 1.0 as external data; only SEntFiN 1.0 is used.
+- **FiQA.** The proposal mentioned FiQA headlines next to SEntFiN 1.0 as external data; Steps 2 and 3 use only
+  SEntFiN 1.0. FiQA 2018 (and Twitter Financial News) are scored in [Extensions](#extensions-post-hoc-robustness-checks)
+  with rerun models.
 - **Cross-validation.** 5-fold stratified CV is run on the allagree training partition only (all baselines and both
   encoders); the 75agree and 50agree levels use the single locked 70/15/15 split with three seeds.
 - **SEntFiN size.** The proposal planned a 2,000-sentence holdout; all 9,460 unambiguous, deduplicated headlines
   are used.
+- **SEntFiN single-entity filter.** The proposal filters SEntFiN to "unambiguous single-entity" headlines; the
+  pipeline keeps every headline whose entities share one label, so 1,607 of the 9,460 name two or more entities.
+  The single-entity subset (7,853) is reported in [Extensions](#extensions-post-hoc-robustness-checks); on it every
+  model's SEntFiN Macro-F1 moves by at most 0.012.
 - **κ criterion.** The proposal's acceptance criterion κ ≥ 0.75 failed for context-dependent in round 1 (0.593); it
   holds after the v2 re-annotation, with the caveat above.
 - **Phenomenon deltas.** Defined on F1 in the proposal; Step 3 reports them on accuracy because several subsets
@@ -368,6 +384,119 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 - **Not delivered.** The audit's lexicon-domain effect Δlex-domain and a `pyproject.toml` (requirements files are
   provided instead); the manifest file name in the audit (`splits/fpb_splits_sha256.json`) is replaced by
   `data/splits/SHA256SUMS` and `data/splits/assignments/`.
+
+---
+
+## Extensions: Post-hoc Robustness Checks
+
+Four analyses added after the Step 2 and Step 3 results were known, so they are robustness checks, not
+pre-registered tests. Sections 1 and 2 refit nothing and re-read the stored per-sentence predictions in
+`results/step2/runs/`; sections 3 and 4 retrain the encoders (same recipe) into `results/extensions/runs/`.
+Outputs: [`results/extensions/`](results/extensions/).
+
+### 1. Vocabulary: what `Δdomain` actually compares (`scripts/analyze_tokenizers.py`)
+
+| | `bert-base-uncased` | FinBERT-MLM |
+|---|---:|---:|
+| Vocabulary (without special / `[unused]` tokens) | 29,523 | 30,868 |
+| Shared entries | 12,493 (42.3%) | 12,493 (40.5%) |
+| Pieces per word, PhraseBank (4,846 sentences) | 1.133 | 1.122 |
+| Pieces per word, SEntFiN (9,460 headlines) | 1.230 | 1.225 |
+| Pretraining corpus | BooksCorpus + Wikipedia | 4.9B tokens: 10-K/10-Q, earnings calls, analyst reports |
+
+FinBERT-MLM keeps many finance terms whole that BERT splits (*depreciation* → `de ##pre ##ciation`, *EBITDA* →
+`e ##bit ##da`, *dividend* → `divide ##nd`, *bearish* → `bear ##ish`, *mln* → `ml ##n`), but on whole sentences the
+two tokenizers need almost the same number of pieces. So the two models share an architecture but differ in
+vocabulary, corpus and pretraining budget, and `Δdomain` cannot separate these. Grouping sentences by which
+tokenizer needs fewer pieces gives one consistent pattern: on SEntFiN, FinBERT-MLM does relatively best on headlines
+its tokenizer splits into fewer pieces (Δdomain accuracy +0.012 / +0.008 / +0.043 for allagree / 75agree / 50agree
+training, vs −0.034 / −0.035 / +0.018 where it needs more pieces). The group intervals overlap, so this is a
+direction, not an established effect; on the PhraseBank test splits there is no pattern.
+
+### 2. SEntFiN: single-entity headlines (`scripts/analyze_sentfin_entities.py`)
+
+The proposal's single-entity filter keeps 7,853 of the 9,460 headlines. Macro-F1 on SEntFiN (all / single-entity /
+multi-entity, models trained on allagree):
+
+| Model | All (9,460) | Single (7,853) | Multi (1,607) |
+|---|---:|---:|---:|
+| `bert-base-uncased` | 0.685 | 0.689 | 0.651 |
+| FinBERT-MLM | 0.669 | 0.669 | 0.657 |
+| TF-IDF + Linear SVM | 0.450 | 0.455 | 0.402 |
+| VADER (official lexicon) | 0.525 | 0.517 | 0.558 |
+| Loughran–McDonald (official dictionary) | 0.466 | 0.456 | 0.509 |
+| `ProsusAI/finbert` (zero-shot) | 0.727 | 0.734 | 0.684 |
+
+The conclusions do not change on the single-entity subset: Δarch stays large (+0.21 to +0.23, all intervals exclude
+zero) and Δdomain stays small (−0.020 [−0.053, +0.013], −0.030 [−0.076, +0.015], +0.024 [+0.002, +0.046] for
+allagree / 75agree / 50agree training). The RQ1 loss effect is not a multi-entity artefact: 43 of the 47 gold-neutral
+*loss* headlines name a single entity, and on single-entity headlines with a financial term (n = 124) the
+neutral-to-negative rates are VADER (official) 0.597, Loughran–McDonald (official) 0.508, BERT 0.341–0.406,
+FinBERT-MLM 0.151–0.401 and ProsusAI 0.435, against 0.031–0.112 on other neutral headlines (n = 2,535).
+
+### 3. Two more external test sets: FiQA 2018 and Twitter Financial News (`scripts/run_extra_external.py`)
+
+The Step 2 checkpoints were not saved, so the whole Step 2 matrix (24 baseline, 18 fine-tune and 1 zero-shot run;
+no CV) was rerun with the same code, splits, seeds and recipe, and two evaluation-only sets were scored after
+training (`scripts/prepare_extra_external.py`, pinned Hugging Face revisions, SHA-256 checked):
+
+- **FiQA 2018 Task 1** (`pauri32/fiqa-2018`): 1,110 sentences (435 headlines, 675 microblog posts) after dropping
+  1 duplicate; 682 positive / 84 neutral / 344 negative (release thresholds: score > 0.1 positive, < −0.1 negative).
+  Only 84 neutral sentences, so its Macro-F1 is noisy.
+- **Twitter Financial News** (`zeroshot/twitter-financial-news-sentiment`, MIT): 11,737 tweets after URL removal and
+  dropping 179 duplicates and 12 conflicting copies; bearish → negative, bullish → positive (a market-outlook label,
+  close to but not identical with PhraseBank sentiment).
+- Neither set has an exact or near duplicate (token Jaccard ≥ 0.80) in Financial PhraseBank.
+
+Macro-F1 (seed mean of 3 for the encoders; models trained on allagree / 75agree / 50agree):
+
+| Model | FiQA | FiQA headlines | Twitter |
+|---|---:|---:|---:|
+| VADER (official lexicon) | 0.386 | 0.458 | 0.439 |
+| Loughran–McDonald (official dictionary) | 0.311 | 0.375 | 0.464 |
+| TF-IDF + Linear SVM | 0.212 / 0.252 / 0.259 | 0.260 / 0.292 / 0.324 | 0.435 / 0.454 / 0.480 |
+| `bert-base-uncased` | 0.381 / 0.344 / 0.403 | 0.477 / 0.443 / 0.529 | 0.634 / 0.613 / 0.625 |
+| FinBERT-MLM | 0.348 / 0.314 / 0.395 | 0.407 / 0.406 / 0.502 | 0.663 / 0.657 / 0.673 |
+| `ProsusAI/finbert` (zero-shot) | 0.478 | 0.584 | 0.656 |
+
+Δarch stays large on both sets (FiQA +0.09 to +0.17, Twitter +0.14 to +0.20, all intervals exclude zero). Δdomain
+differs by set: on Twitter FinBERT-MLM is better under all three training levels (+0.029 [+0.007, +0.051], +0.045
+[+0.020, +0.070], +0.049 [+0.038, +0.059]); on FiQA it is not (−0.033 to −0.008, all intervals contain zero).
+
+**Reproducibility of the rerun.** Lexicon and TF-IDF runs reproduce the stored Step 2 predictions exactly, and so
+does ProsusAI. Fine-tuning on Apple MPS is not bit-deterministic: the rerun FinBERT-MLM models agree with the stored
+ones on 99.98% of test and 99.93% of SEntFiN labels, the rerun BERT models on 97.7% and 93.6% (lowest single run
+88.9% on SEntFiN). The headline tables above keep the stored Step 2 runs; this section compares only rerun models
+with each other (e.g. BERT on SEntFiN, allagree: 0.676 rerun vs 0.685 stored).
+
+### 4. Controlled DAPT arm: is the FinBERT effect the financial text or the vocabulary? (`scripts/dapt_mlm.py`)
+
+`bert_dapt` is `bert-base-uncased` with its own vocabulary, further pretrained with masked language modelling on
+financial text and then fine-tuned with the unchanged Step 2 recipe (3 levels × 3 seeds, Apple MPS, same runner):
+
+- Corpus (`scripts/build_dapt_corpus.py`): EDGAR-CORPUS (`eloukas/edgar-corpus`, Apache-2.0), 10-K Items 1 and 7 of
+  the 2017–2020 `validate` files, 5,007 sections, 41.7M word pieces; 218 sentences that matched an evaluation
+  sentence or shared an 8-token window with one (PhraseBank, SEntFiN, FiQA, Twitter) were removed.
+- Pretraining: one pass, 5,128 steps, batch 32 × 256 tokens, lr 5e-5, 15% masking, Kaggle T4 (fp16, 44 min); MLM
+  loss 2.33 (first 50 steps) → 1.38 (last steps). Vocabulary, token ids and the pooler (not trained) are unchanged
+  (checked). This is about 1% of FinBERT-MLM's 4.9B pretraining tokens. Logs: `results/extensions/dapt_train_log.json`,
+  `results/extensions/dapt_corpus_stats.json` (the checkpoint itself is not committed).
+
+This splits `Δdomain` into `Δcorpus = bert_dapt − BERT` (financial text, vocabulary fixed) and
+`Δrest = FinBERT-MLM − bert_dapt` (FinBERT's own vocabulary plus its much larger corpus). Macro-F1 deltas
+(allagree / 75agree / 50agree training; * = 95% interval excludes zero):
+
+| Test set | Δdomain | Δcorpus | Δrest |
+|---|---|---|---|
+| PhraseBank test | −0.027* / −0.019 / −0.028 | +0.007 / −0.001 / +0.000 | −0.035* / −0.018 / −0.029 |
+| SEntFiN | −0.007 / −0.005 / +0.022* | −0.001 / +0.019* / −0.026* | −0.006 / −0.024 / +0.048* |
+| FiQA | −0.033 / −0.030 / −0.008 | +0.015 / +0.032* / −0.008 | −0.049 / −0.062* / +0.000 |
+| Twitter | +0.029* / +0.045* / +0.049* | +0.009 / +0.018* / −0.004 | +0.021* / +0.026 / +0.053* |
+
+Continued pretraining on 42M tokens of 10-K text moves BERT by at most about 0.03 in either direction, with no consistent
+sign across sets or training levels. Where FinBERT-MLM does beat BERT (Twitter, and SEntFiN after 50agree training),
+the gain sits in `Δrest`, i.e. in FinBERT's own vocabulary and its 100× larger financial corpus, not in a modest
+amount of financial text alone. The two parts of `Δrest` cannot be separated here.
 
 ---
 
@@ -396,7 +525,18 @@ python3 scripts/build_diagnostic_set.py --execute --rule-tags-only   # recompute
 python3 scripts/run_step3_analysis.py                      # needs data/diagnostic/annotations_{a,b}.csv
 ```
 
-### 4. Unit tests (offline, synthetic fixtures, tiny local models)
+### 4. Extensions (post-hoc robustness checks)
+```bash
+HF_HUB_OFFLINE=1 python3 scripts/analyze_tokenizers.py      # vocabulary overlap, tokenization, Δdomain by tokenization
+python3 scripts/analyze_sentfin_entities.py                 # SEntFiN single- vs multi-entity headlines
+python3 scripts/prepare_extra_external.py --execute         # FiQA 2018 + Twitter Financial News -> data/splits/extra_external.json
+python3 scripts/build_dapt_corpus.py --execute              # 10-K corpus for the DAPT arm (data/raw/dapt/, git-ignored)
+python3 scripts/dapt_mlm.py --corpus data/raw/dapt/corpus.txt --out-dir models/dapt   # continued MLM (run on a CUDA GPU)
+python3 scripts/run_extra_external.py --dapt-model models/dapt/model   # plan; add --execute --only N per run
+python3 scripts/analyze_extra_external.py                   # tables, attribution, reproduction check
+```
+
+### 5. Unit tests (offline, synthetic fixtures, tiny local models)
 ```bash
 HF_HUB_OFFLINE=1 python3 -m unittest discover -s tests -v
 ```
@@ -422,13 +562,21 @@ essential_text/
 ├── results/
 │   ├── step1/                 # Step 1 outputs from Google Colab
 │   ├── step2/                 # Step 2 report, statistics, attribution, figures, runs/ with per-run predictions
-│   └── step3/                 # Step 3 report, agreement, phenomenon analysis, figures
+│   ├── step3/                 # Step 3 report, agreement, phenomenon analysis, figures
+│   └── extensions/            # Post-hoc robustness checks: tokenizer comparison, SEntFiN entity subsets
 ├── scripts/
 │   ├── run_step2.py           # Resumable Step 2 run matrix (baselines, fine-tune, CV, zero-shot)
 │   ├── summarize_step2.py     # Multi-seed statistics, McNemar + Holm, bootstrap, attribution, figures
 │   ├── build_diagnostic_set.py
 │   ├── run_step3_analysis.py  # Cohen's kappa, per-phenomenon errors and attribution, RQ1 analysis
-│   └── export_split_assignments.py  # Text-free split / CV-fold assignments with a --check mode
+│   ├── export_split_assignments.py  # Text-free split / CV-fold assignments with a --check mode
+│   ├── analyze_tokenizers.py  # Extension: BERT vs FinBERT-MLM vocabulary and tokenization
+│   ├── analyze_sentfin_entities.py  # Extension: SEntFiN single- vs multi-entity headlines
+│   ├── prepare_extra_external.py    # Extension: FiQA 2018 + Twitter Financial News (pinned, deduplicated)
+│   ├── run_extra_external.py        # Extension: Step 2 rerun scoring the extra sets; bert_dapt arm
+│   ├── build_dapt_corpus.py         # Extension: leakage-filtered 10-K corpus for continued pretraining
+│   ├── dapt_mlm.py                  # Extension: continued MLM pretraining of bert-base-uncased
+│   └── analyze_extra_external.py    # Extension: extra-set tables, Δcorpus / Δrest attribution
 ├── src/
 │   ├── data/                  # Hashing, Jaccard >= 0.80 clustering, split locking, dedup, IO, assignments.py
 │   ├── baselines/             # Tier 1 official + custom lexicons, Tier 2 TF-IDF + LR/SVM, registry
@@ -440,7 +588,7 @@ essential_text/
 ├── notebooks/
 │   ├── build_step1_notebook.py
 │   └── step1_data_and_baselines_colab.ipynb
-└── tests/                     # Offline unittest suite (189 tests)
+└── tests/                     # Offline unittest suite (199 tests)
 ```
 
 ### Code Structure: Three Independent Parts
@@ -450,7 +598,7 @@ its owner; the parts talk to each other only through the hand-off files listed b
 
 | Part | What it does | Code | Outputs |
 | :--- | :--- | :--- | :--- |
-| **A. Data & Evaluation** | Dataset download, dedup, locked splits; metrics, McNemar, bootstrap, multi-seed statistics, attribution, reports and figures | `src/data/`, `src/evaluation/`, `src/analysis/attribution.py`, `scripts/export_split_assignments.py`, `scripts/summarize_step2.py`, `scripts/run_step3_analysis.py` | `data/splits/`, `results/step2/*.json` and figures, `results/step3/` |
+| **A. Data & Evaluation** | Dataset download, dedup, locked splits; metrics, McNemar, bootstrap, multi-seed statistics, attribution, reports and figures | `src/data/`, `src/evaluation/`, `src/analysis/attribution.py`, `scripts/export_split_assignments.py`, `scripts/summarize_step2.py`, `scripts/run_step3_analysis.py`, `scripts/analyze_tokenizers.py`, `scripts/analyze_sentfin_entities.py`, `scripts/prepare_extra_external.py`, `scripts/run_extra_external.py`, `scripts/build_dapt_corpus.py`, `scripts/dapt_mlm.py`, `scripts/analyze_extra_external.py` | `data/splits/`, `results/step2/*.json` and figures, `results/step3/`, `results/extensions/` |
 | **B. Baselines & Phenomena** | Tier 1 lexicons, Tier 2 TF-IDF + LR/SVM; five-phenomenon tagger and the 300-sentence diagnostic set | `src/baselines/`, `src/analysis/phenomena.py`, `scripts/build_diagnostic_set.py`, `annotation/`, Step 1 runners (`colab/`, `notebooks/`) | `results/step1/`, baseline runs in `results/step2/runs/`, `data/diagnostic/` |
 | **C. Transformers** | Tier 3 fine-tuning (`bert-base-uncased`, FinBERT-MLM), 5-fold CV, zero-shot SEntFiN scoring; the run matrix | `src/transformer/`, `scripts/run_step2.py` | transformer runs in `results/step2/runs/` |
 

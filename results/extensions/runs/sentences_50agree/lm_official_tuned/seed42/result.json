@@ -1,0 +1,277 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_50agree",
+  "model_key": "lm_official_tuned",
+  "model_name": "Loughran-McDonald (official Master Dictionary, negation + val-tuned thresholds)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "threshold_neg": -0.05,
+    "threshold_pos": 0.05,
+    "val_macro_f1": 0.4967732103024509,
+    "tuned": true,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    },
+    "negation": true
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6208791208791209,
+      "macro_f1": 0.4967732103024509,
+      "per_class": {
+        "negative": {
+          "precision": 0.4090909090909091,
+          "recall": 0.391304347826087,
+          "f1": 0.4,
+          "support": 92
+        },
+        "neutral": {
+          "precision": 0.6636363636363637,
+          "recall": 0.8449074074074074,
+          "f1": 0.7433808553971487,
+          "support": 432
+        },
+        "positive": {
+          "precision": 0.5666666666666667,
+          "recall": 0.25,
+          "f1": 0.3469387755102041,
+          "support": 204
+        }
+      },
+      "confusion_matrix": [
+        [
+          36,
+          53,
+          3
+        ],
+        [
+          31,
+          365,
+          36
+        ],
+        [
+          21,
+          132,
+          51
+        ]
+      ],
+      "neutral_to_negative_rate": 0.07175925925925926,
+      "ece": 0.3753939799882553
+    },
+    "test": {
+      "accuracy": 0.6143250688705234,
+      "macro_f1": 0.5031713214930601,
+      "per_class": {
+        "negative": {
+          "precision": 0.4157303370786517,
+          "recall": 0.4111111111111111,
+          "f1": 0.4134078212290503,
+          "support": 90
+        },
+        "neutral": {
+          "precision": 0.6573556797020484,
+          "recall": 0.8209302325581396,
+          "f1": 0.7300930713547052,
+          "support": 430
+        },
+        "positive": {
+          "precision": 0.56,
+          "recall": 0.27184466019417475,
+          "f1": 0.3660130718954248,
+          "support": 206
+        }
+      },
+      "confusion_matrix": [
+        [
+          37,
+          52,
+          1
+        ],
+        [
+          34,
+          353,
+          43
+        ],
+        [
+          18,
+          132,
+          56
+        ]
+      ],
+      "neutral_to_negative_rate": 0.07906976744186046,
+      "ece": 0.38202609807334986
+    },
+    "external": {
+      "accuracy": 0.5020084566596195,
+      "macro_f1": 0.46890252702357976,
+      "per_class": {
+        "negative": {
+          "precision": 0.6955128205128205,
+          "recall": 0.40185185185185185,
+          "f1": 0.5093896713615024,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4245067200457535,
+          "recall": 0.8709298914637724,
+          "f1": 0.5707968855137941,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.7671081677704195,
+          "recall": 0.20740077588779468,
+          "f1": 0.3265210241954428,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1085,
+          1546,
+          69
+        ],
+        [
+          298,
+          2969,
+          142
+        ],
+        [
+          177,
+          2479,
+          695
+        ]
+      ],
+      "neutral_to_negative_rate": 0.08741566441771781,
+      "ece": 0.4943444168970902
+    },
+    "fiqa": {
+      "accuracy": 0.2963963963963964,
+      "macro_f1": 0.3194938157376022,
+      "per_class": {
+        "negative": {
+          "precision": 0.6540084388185654,
+          "recall": 0.45058139534883723,
+          "f1": 0.5335628227194492,
+          "support": 344
+        },
+        "neutral": {
+          "precision": 0.0773405698778833,
+          "recall": 0.6785714285714286,
+          "f1": 0.13885505481120586,
+          "support": 84
+        },
+        "positive": {
+          "precision": 0.8602941176470589,
+          "recall": 0.17155425219941348,
+          "f1": 0.2860635696821516,
+          "support": 682
+        }
+      },
+      "confusion_matrix": [
+        [
+          155,
+          176,
+          13
+        ],
+        [
+          21,
+          57,
+          6
+        ],
+        [
+          61,
+          504,
+          117
+        ]
+      ],
+      "neutral_to_negative_rate": 0.25,
+      "ece": 0.700328230052381
+    },
+    "twitter": {
+      "accuracy": 0.597767743034847,
+      "macro_f1": 0.4663529788846222,
+      "per_class": {
+        "negative": {
+          "precision": 0.37466902030008825,
+          "recall": 0.48211243611584326,
+          "f1": 0.4216538366029302,
+          "support": 1761
+        },
+        "neutral": {
+          "precision": 0.6921116504854369,
+          "recall": 0.750197316495659,
+          "f1": 0.719984850397677,
+          "support": 7602
+        },
+        "positive": {
+          "precision": 0.37692932575142163,
+          "recall": 0.1954507160909857,
+          "f1": 0.2574202496532594,
+          "support": 2374
+        }
+      },
+      "confusion_matrix": [
+        [
+          849,
+          840,
+          72
+        ],
+        [
+          1204,
+          5703,
+          695
+        ],
+        [
+          213,
+          1697,
+          464
+        ]
+      ],
+      "neutral_to_negative_rate": 0.15837937384898712,
+      "ece": 0.3987689862881404
+    }
+  },
+  "n": {
+    "train": 3392,
+    "val": 728,
+    "test": 726,
+    "external": 9460,
+    "fiqa": 1110,
+    "twitter": 11737
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "d11c912d24b8ea2db5c553bd042d204a96e9ed21d61459b1719d47dde4e195e2",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "extra_external_sha256": "d3df2ca67fe2825b794a19517f136fa6ebceded9c79a1b141300aa39a1b5cc62",
+  "reproduction_of_step2": {
+    "reference": "results/step2/runs/sentences_50agree/lm_official_tuned/seed42",
+    "val": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "test": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "external": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    }
+  },
+  "probe": false,
+  "wall_seconds": 1.3284659385681152,
+  "timestamp": "2026-11-04T18:59:57.374025+00:00"
+}
