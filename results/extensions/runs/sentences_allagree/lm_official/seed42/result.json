@@ -1,0 +1,277 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_allagree",
+  "model_key": "lm_official",
+  "model_name": "Loughran-McDonald (official Master Dictionary)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "thresholds": [
+      -1e-09,
+      1e-09
+    ],
+    "tuned": false,
+    "lexicon": "Loughran-McDonald Master Dictionary 1993-2025",
+    "lexicon_size": {
+      "positive": 354,
+      "negative": 2355
+    }
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.6411764705882353,
+      "macro_f1": 0.4804374494296975,
+      "per_class": {
+        "negative": {
+          "precision": 0.37037037037037035,
+          "recall": 0.4444444444444444,
+          "f1": 0.40404040404040403,
+          "support": 45
+        },
+        "neutral": {
+          "precision": 0.696969696969697,
+          "recall": 0.8803827751196173,
+          "f1": 0.7780126849894292,
+          "support": 209
+        },
+        "positive": {
+          "precision": 0.6363636363636364,
+          "recall": 0.16279069767441862,
+          "f1": 0.25925925925925924,
+          "support": 86
+        }
+      },
+      "confusion_matrix": [
+        [
+          20,
+          22,
+          3
+        ],
+        [
+          20,
+          184,
+          5
+        ],
+        [
+          14,
+          58,
+          14
+        ]
+      ],
+      "neutral_to_negative_rate": 0.09569377990430622,
+      "ece": 0.2885125398635864
+    },
+    "test": {
+      "accuracy": 0.6519174041297935,
+      "macro_f1": 0.4977894391701789,
+      "per_class": {
+        "negative": {
+          "precision": 0.475,
+          "recall": 0.41304347826086957,
+          "f1": 0.4418604651162791,
+          "support": 46
+        },
+        "neutral": {
+          "precision": 0.6750902527075813,
+          "recall": 0.8990384615384616,
+          "f1": 0.7711340206185567,
+          "support": 208
+        },
+        "positive": {
+          "precision": 0.6818181818181818,
+          "recall": 0.17647058823529413,
+          "f1": 0.2803738317757009,
+          "support": 85
+        }
+      },
+      "confusion_matrix": [
+        [
+          19,
+          26,
+          1
+        ],
+        [
+          15,
+          187,
+          6
+        ],
+        [
+          6,
+          64,
+          15
+        ]
+      ],
+      "neutral_to_negative_rate": 0.07211538461538461,
+      "ece": 0.27409170247108894
+    },
+    "external": {
+      "accuracy": 0.5001057082452431,
+      "macro_f1": 0.4661633520355153,
+      "per_class": {
+        "negative": {
+          "precision": 0.6871794871794872,
+          "recall": 0.397037037037037,
+          "f1": 0.5032863849765258,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4244851258581236,
+          "recall": 0.8706365503080082,
+          "f1": 0.5707143543890011,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.7610132158590308,
+          "recall": 0.20620710235750522,
+          "f1": 0.324489316741019,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1072,
+          1544,
+          84
+        ],
+        [
+          308,
+          2968,
+          133
+        ],
+        [
+          180,
+          2480,
+          691
+        ]
+      ],
+      "neutral_to_negative_rate": 0.09034907597535935,
+      "ece": 0.4329661936891003
+    },
+    "fiqa": {
+      "accuracy": 0.2882882882882883,
+      "macro_f1": 0.3108219638746808,
+      "per_class": {
+        "negative": {
+          "precision": 0.6333333333333333,
+          "recall": 0.4418604651162791,
+          "f1": 0.5205479452054794,
+          "support": 344
+        },
+        "neutral": {
+          "precision": 0.07692307692307693,
+          "recall": 0.6785714285714286,
+          "f1": 0.13818181818181818,
+          "support": 84
+        },
+        "positive": {
+          "precision": 0.8604651162790697,
+          "recall": 0.1627565982404692,
+          "f1": 0.27373612823674476,
+          "support": 682
+        }
+      },
+      "confusion_matrix": [
+        [
+          152,
+          179,
+          13
+        ],
+        [
+          22,
+          57,
+          5
+        ],
+        [
+          66,
+          505,
+          111
+        ]
+      ],
+      "neutral_to_negative_rate": 0.2619047619047619,
+      "ece": 0.651262111975266
+    },
+    "twitter": {
+      "accuracy": 0.5965749339694981,
+      "macro_f1": 0.46384062818643407,
+      "per_class": {
+        "negative": {
+          "precision": 0.3696785403996525,
+          "recall": 0.4832481544576945,
+          "f1": 0.4189022889490524,
+          "support": 1761
+        },
+        "neutral": {
+          "precision": 0.6921301918872965,
+          "recall": 0.7496711391739016,
+          "f1": 0.719752462743117,
+          "support": 7602
+        },
+        "positive": {
+          "precision": 0.37635303913405493,
+          "recall": 0.19039595619208088,
+          "f1": 0.25286713286713286,
+          "support": 2374
+        }
+      },
+      "confusion_matrix": [
+        [
+          851,
+          838,
+          72
+        ],
+        [
+          1226,
+          5699,
+          677
+        ],
+        [
+          225,
+          1697,
+          452
+        ]
+      ],
+      "neutral_to_negative_rate": 0.161273349118653,
+      "ece": 0.3398990004739293
+    }
+  },
+  "n": {
+    "train": 1585,
+    "val": 340,
+    "test": 339,
+    "external": 9460,
+    "fiqa": 1110,
+    "twitter": 11737
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "extra_external_sha256": "d3df2ca67fe2825b794a19517f136fa6ebceded9c79a1b141300aa39a1b5cc62",
+  "reproduction_of_step2": {
+    "reference": "results/step2/runs/sentences_allagree/lm_official/seed42",
+    "val": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "test": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "external": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    }
+  },
+  "probe": false,
+  "wall_seconds": 1.2143940925598145,
+  "timestamp": "2026-11-04T18:59:14.030236+00:00"
+}

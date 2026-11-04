@@ -1,0 +1,274 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_50agree",
+  "model_key": "vader_official_tuned",
+  "model_name": "VADER (official lexicon, val-tuned thresholds)",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "threshold_neg": -0.05,
+    "threshold_pos": 0.3,
+    "val_macro_f1": 0.49810180322339,
+    "tuned": true,
+    "lexicon": "vaderSentiment 3.3.2",
+    "lexicon_size": 7506,
+    "negation": false
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.5865384615384616,
+      "macro_f1": 0.49810180322339,
+      "per_class": {
+        "negative": {
+          "precision": 0.42857142857142855,
+          "recall": 0.2608695652173913,
+          "f1": 0.32432432432432434,
+          "support": 92
+        },
+        "neutral": {
+          "precision": 0.6797235023041475,
+          "recall": 0.6828703703703703,
+          "f1": 0.6812933025404158,
+          "support": 432
+        },
+        "positive": {
+          "precision": 0.453781512605042,
+          "recall": 0.5294117647058824,
+          "f1": 0.48868778280542985,
+          "support": 204
+        }
+      },
+      "confusion_matrix": [
+        [
+          24,
+          50,
+          18
+        ],
+        [
+          25,
+          295,
+          112
+        ],
+        [
+          7,
+          89,
+          108
+        ]
+      ],
+      "neutral_to_negative_rate": 0.05787037037037037,
+      "ece": 0.3008734628066912
+    },
+    "test": {
+      "accuracy": 0.5881542699724518,
+      "macro_f1": 0.5060933366786705,
+      "per_class": {
+        "negative": {
+          "precision": 0.39285714285714285,
+          "recall": 0.24444444444444444,
+          "f1": 0.3013698630136986,
+          "support": 90
+        },
+        "neutral": {
+          "precision": 0.7245179063360881,
+          "recall": 0.6116279069767442,
+          "f1": 0.6633039092055486,
+          "support": 430
+        },
+        "positive": {
+          "precision": 0.46254071661237783,
+          "recall": 0.6893203883495146,
+          "f1": 0.5536062378167641,
+          "support": 206
+        }
+      },
+      "confusion_matrix": [
+        [
+          22,
+          45,
+          23
+        ],
+        [
+          25,
+          263,
+          142
+        ],
+        [
+          9,
+          55,
+          142
+        ]
+      ],
+      "neutral_to_negative_rate": 0.05813953488372093,
+      "ece": 0.3096269621993556
+    },
+    "external": {
+      "accuracy": 0.5288583509513742,
+      "macro_f1": 0.5252811939706358,
+      "per_class": {
+        "negative": {
+          "precision": 0.6557649667405765,
+          "recall": 0.4381481481481482,
+          "f1": 0.5253108348134992,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4611899133175729,
+          "recall": 0.6867116456438839,
+          "f1": 0.551797289334119,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.5732558139534883,
+          "recall": 0.44136078782453,
+          "f1": 0.49873545776428935,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1183,
+          1149,
+          368
+        ],
+        [
+          335,
+          2341,
+          733
+        ],
+        [
+          286,
+          1586,
+          1479
+        ]
+      ],
+      "neutral_to_negative_rate": 0.0982692871809915,
+      "ece": 0.3689441317609702
+    },
+    "fiqa": {
+      "accuracy": 0.38288288288288286,
+      "macro_f1": 0.371914029003608,
+      "per_class": {
+        "negative": {
+          "precision": 0.6026200873362445,
+          "recall": 0.4011627906976744,
+          "f1": 0.4816753926701571,
+          "support": 344
+        },
+        "neutral": {
+          "precision": 0.0924956369982548,
+          "recall": 0.6309523809523809,
+          "f1": 0.1613394216133942,
+          "support": 84
+        },
+        "positive": {
+          "precision": 0.7597402597402597,
+          "recall": 0.34310850439882695,
+          "f1": 0.4727272727272727,
+          "support": 682
+        }
+      },
+      "confusion_matrix": [
+        [
+          138,
+          145,
+          61
+        ],
+        [
+          18,
+          53,
+          13
+        ],
+        [
+          73,
+          375,
+          234
+        ]
+      ],
+      "neutral_to_negative_rate": 0.21428571428571427,
+      "ece": 0.5210438942587055
+    },
+    "twitter": {
+      "accuracy": 0.5187867427792451,
+      "macro_f1": 0.44621017269098623,
+      "per_class": {
+        "negative": {
+          "precision": 0.3419147224456959,
+          "recall": 0.48268029528676887,
+          "f1": 0.4002825523899223,
+          "support": 1761
+        },
+        "neutral": {
+          "precision": 0.6815052776502983,
+          "recall": 0.5860299921073402,
+          "f1": 0.6301718650541057,
+          "support": 7602
+        },
+        "positive": {
+          "precision": 0.28887251289609434,
+          "recall": 0.33024431339511373,
+          "f1": 0.3081761006289308,
+          "support": 2374
+        }
+      },
+      "confusion_matrix": [
+        [
+          850,
+          719,
+          192
+        ],
+        [
+          1409,
+          4455,
+          1738
+        ],
+        [
+          227,
+          1363,
+          784
+        ]
+      ],
+      "neutral_to_negative_rate": 0.1853459615890555,
+      "ece": 0.37808145956315853
+    }
+  },
+  "n": {
+    "train": 3392,
+    "val": 728,
+    "test": 726,
+    "external": 9460,
+    "fiqa": 1110,
+    "twitter": 11737
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "d11c912d24b8ea2db5c553bd042d204a96e9ed21d61459b1719d47dde4e195e2",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "extra_external_sha256": "d3df2ca67fe2825b794a19517f136fa6ebceded9c79a1b141300aa39a1b5cc62",
+  "reproduction_of_step2": {
+    "reference": "results/step2/runs/sentences_50agree/vader_official_tuned/seed42",
+    "val": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "test": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "external": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    }
+  },
+  "probe": false,
+  "wall_seconds": 1.4705862998962402,
+  "timestamp": "2026-11-04T18:59:52.700957+00:00"
+}

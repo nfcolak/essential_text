@@ -1,0 +1,270 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_75agree",
+  "model_key": "vader",
+  "model_name": "VADER",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "threshold_neg": -0.05,
+    "threshold_pos": 0.05,
+    "val_macro_f1": 0.685971685971686
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.777992277992278,
+      "macro_f1": 0.685971685971686,
+      "per_class": {
+        "negative": {
+          "precision": 0.6458333333333334,
+          "recall": 0.49206349206349204,
+          "f1": 0.5585585585585585,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.8459302325581395,
+          "recall": 0.9037267080745341,
+          "f1": 0.8738738738738738,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.6428571428571429,
+          "recall": 0.6090225563909775,
+          "f1": 0.6254826254826255,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          31,
+          13,
+          19
+        ],
+        [
+          5,
+          291,
+          26
+        ],
+        [
+          12,
+          40,
+          81
+        ]
+      ],
+      "neutral_to_negative_rate": 0.015527950310559006,
+      "ece": 0.21851514412169293
+    },
+    "test": {
+      "accuracy": 0.7297297297297297,
+      "macro_f1": 0.645824013784648,
+      "per_class": {
+        "negative": {
+          "precision": 0.6727272727272727,
+          "recall": 0.5873015873015873,
+          "f1": 0.6271186440677966,
+          "support": 63
+        },
+        "neutral": {
+          "precision": 0.7916666666666666,
+          "recall": 0.8850931677018633,
+          "f1": 0.8357771260997068,
+          "support": 322
+        },
+        "positive": {
+          "precision": 0.5436893203883495,
+          "recall": 0.42105263157894735,
+          "f1": 0.4745762711864407,
+          "support": 133
+        }
+      },
+      "confusion_matrix": [
+        [
+          37,
+          9,
+          17
+        ],
+        [
+          7,
+          285,
+          30
+        ],
+        [
+          11,
+          66,
+          56
+        ]
+      ],
+      "neutral_to_negative_rate": 0.021739130434782608,
+      "ece": 0.26532323388059176
+    },
+    "external": {
+      "accuracy": 0.6360465116279069,
+      "macro_f1": 0.6250899068434147,
+      "per_class": {
+        "negative": {
+          "precision": 0.8406827880512091,
+          "recall": 0.43777777777777777,
+          "f1": 0.5757428153921091,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.540664586010648,
+          "recall": 0.8638897037254327,
+          "f1": 0.6650858175248419,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.7249712313003452,
+          "recall": 0.5640107430617726,
+          "f1": 0.6344410876132931,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          1182,
+          1141,
+          377
+        ],
+        [
+          124,
+          2945,
+          340
+        ],
+        [
+          100,
+          1361,
+          1890
+        ]
+      ],
+      "neutral_to_negative_rate": 0.03637430331475506,
+      "ece": 0.3594322423287225
+    },
+    "fiqa": {
+      "accuracy": 0.3783783783783784,
+      "macro_f1": 0.3741576036890277,
+      "per_class": {
+        "negative": {
+          "precision": 0.7971014492753623,
+          "recall": 0.31976744186046513,
+          "f1": 0.45643153526970953,
+          "support": 344
+        },
+        "neutral": {
+          "precision": 0.08656716417910448,
+          "recall": 0.6904761904761905,
+          "f1": 0.15384615384615385,
+          "support": 84
+        },
+        "positive": {
+          "precision": 0.8344370860927153,
+          "recall": 0.36950146627565983,
+          "f1": 0.5121951219512195,
+          "support": 682
+        }
+      },
+      "confusion_matrix": [
+        [
+          110,
+          203,
+          31
+        ],
+        [
+          7,
+          58,
+          19
+        ],
+        [
+          21,
+          409,
+          252
+        ]
+      ],
+      "neutral_to_negative_rate": 0.08333333333333333,
+      "ece": 0.6193009864102613
+    },
+    "twitter": {
+      "accuracy": 0.6779415523557979,
+      "macro_f1": 0.5495877004911622,
+      "per_class": {
+        "negative": {
+          "precision": 0.5338078291814946,
+          "recall": 0.34071550255536626,
+          "f1": 0.41594454072790293,
+          "support": 1761
+        },
+        "neutral": {
+          "precision": 0.7391505612776299,
+          "recall": 0.84017363851618,
+          "f1": 0.786431078002832,
+          "support": 7602
+        },
+        "positive": {
+          "precision": 0.4918864097363083,
+          "recall": 0.4085930918281382,
+          "f1": 0.446387482742752,
+          "support": 2374
+        }
+      },
+      "confusion_matrix": [
+        [
+          600,
+          951,
+          210
+        ],
+        [
+          423,
+          6387,
+          792
+        ],
+        [
+          101,
+          1303,
+          970
+        ]
+      ],
+      "neutral_to_negative_rate": 0.05564325177584846,
+      "ece": 0.3177674010318559
+    }
+  },
+  "n": {
+    "train": 2417,
+    "val": 518,
+    "test": 518,
+    "external": 9460,
+    "fiqa": 1110,
+    "twitter": 11737
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "3a40318cdb1be7e064ba4e6d129798e5165408f48661708aa0361a96ab492d2d",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "extra_external_sha256": "d3df2ca67fe2825b794a19517f136fa6ebceded9c79a1b141300aa39a1b5cc62",
+  "reproduction_of_step2": {
+    "reference": "results/step2/runs/sentences_75agree/vader/seed42",
+    "val": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "test": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "external": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    }
+  },
+  "probe": false,
+  "wall_seconds": 1.1432421207427979,
+  "timestamp": "2026-11-04T18:59:38.516149+00:00"
+}

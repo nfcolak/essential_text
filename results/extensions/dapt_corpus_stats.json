@@ -1,0 +1,26 @@
+{
+  "source": {
+    "repo": "eloukas/edgar-corpus",
+    "revision": "7e90f0f342569b35213445f809cfaf3b91f9964f",
+    "files": {
+      "2020": "89bba2f87645bf0e6639204987fe71434fcf6d63222cee7d92f85e192a2d9f59",
+      "2019": "9b220d29c23341cc9fa528dd81bdd06484aa246ad478231f57bb0097dd03b07e",
+      "2018": "f0c62c3cec722a9e7f1e92ceb81e7b213bd6dacbd8b7ab4869207109ac56666e",
+      "2017": "c231c1c1113cf2fd15a14b686163790c3afeb84aa98f88a1621446d48ada8285"
+    }
+  },
+  "sections": [
+    "section_1",
+    "section_7"
+  ],
+  "eval_sentences_indexed": 27141,
+  "eval_8grams_indexed": 170076,
+  "documents": 5007,
+  "sentences_seen": 1264010,
+  "sentences_dropped_leak": 218,
+  "sentences_kept": 1263792,
+  "tokens": 41682217,
+  "token_budget": 50000000,
+  "budget_reached": false,
+  "output_sha256": "bc60b28396fba3cb001529174e5c24dd034984466ffee93a937f72f5eb0dbca0"
+}

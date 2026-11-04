@@ -1,0 +1,696 @@
+{
+  "tokenizers": {
+    "bert_base": {
+      "name": "google-bert/bert-base-uncased",
+      "vocab_size": 30522,
+      "pretraining": {
+        "corpus": "BooksCorpus (800M words) + English Wikipedia (2,500M words)",
+        "source": "Devlin et al. 2019, BERT, section 3.1"
+      }
+    },
+    "finbert_mlm": {
+      "name": "yiyanghkust/finbert-pretrain",
+      "vocab_size": 30873,
+      "pretraining": {
+        "corpus": "10-K/10-Q reports (2.5B tokens), earnings call transcripts (1.3B), analyst reports (1.1B); 4.9B tokens in total",
+        "source": "https://huggingface.co/yiyanghkust/finbert-pretrain (model card)"
+      }
+    }
+  },
+  "vocab_overlap": {
+    "all": {
+      "a": 29523,
+      "b": 30868,
+      "shared": 12493,
+      "share_of_a": 0.4231616028181418,
+      "share_of_b": 0.404723338084748,
+      "jaccard": 0.2608250866424485
+    },
+    "whole_words": {
+      "a": 23695,
+      "b": 25186,
+      "shared": 10132,
+      "share_of_a": 0.4276007596539354,
+      "share_of_b": 0.40228698483284364,
+      "jaccard": 0.2614777155539498
+    },
+    "continuation_pieces": {
+      "a": 5828,
+      "b": 5682,
+      "shared": 2361,
+      "share_of_a": 0.40511324639670554,
+      "share_of_b": 0.4155227032734953,
+      "jaccard": 0.2580609902721609
+    }
+  },
+  "corpora": {
+    "financial_phrasebank_all": {
+      "bert_base": {
+        "n_sentences": 4846,
+        "pieces_per_sentence": 28.605654147750723,
+        "pieces_per_word": 1.133383479547703,
+        "share_words_split": 0.08685378835572198,
+        "unk_rate": 0.0,
+        "share_over_max_length": 0.0002063557573256294
+      },
+      "finbert_mlm": {
+        "n_sentences": 4846,
+        "pieces_per_sentence": 28.321295914156003,
+        "pieces_per_word": 1.1221169333409642,
+        "share_words_split": 0.08182554023007302,
+        "unk_rate": 0.00014572479871762176,
+        "share_over_max_length": 0.0002063557573256294
+      }
+    },
+    "sentfin": {
+      "bert_base": {
+        "n_sentences": 9460,
+        "pieces_per_sentence": 14.182980972515857,
+        "pieces_per_word": 1.2295954837881926,
+        "share_words_split": 0.16869810663685184,
+        "unk_rate": 0.0,
+        "share_over_max_length": 0.0
+      },
+      "finbert_mlm": {
+        "n_sentences": 9460,
+        "pieces_per_sentence": 14.130655391120508,
+        "pieces_per_word": 1.225059110320937,
+        "share_words_split": 0.17121831411866054,
+        "unk_rate": 0.0,
+        "share_over_max_length": 0.0
+      }
+    }
+  },
+  "finance_terms": {
+    "cost": {
+      "bert_base": [
+        "cost"
+      ],
+      "finbert_mlm": [
+        "cost"
+      ]
+    },
+    "costs": {
+      "bert_base": [
+        "costs"
+      ],
+      "finbert_mlm": [
+        "costs"
+      ]
+    },
+    "liability": {
+      "bert_base": [
+        "liability"
+      ],
+      "finbert_mlm": [
+        "liability"
+      ]
+    },
+    "liabilities": {
+      "bert_base": [
+        "lia",
+        "##bilities"
+      ],
+      "finbert_mlm": [
+        "liabilities"
+      ]
+    },
+    "debt": {
+      "bert_base": [
+        "debt"
+      ],
+      "finbert_mlm": [
+        "debt"
+      ]
+    },
+    "depreciation": {
+      "bert_base": [
+        "de",
+        "##pre",
+        "##ciation"
+      ],
+      "finbert_mlm": [
+        "depreciation"
+      ]
+    },
+    "amortization": {
+      "bert_base": [
+        "amor",
+        "##ti",
+        "##zation"
+      ],
+      "finbert_mlm": [
+        "amortization"
+      ]
+    },
+    "amortisation": {
+      "bert_base": [
+        "amor",
+        "##tis",
+        "##ation"
+      ],
+      "finbert_mlm": [
+        "amorti",
+        "##sation"
+      ]
+    },
+    "impairment": {
+      "bert_base": [
+        "impairment"
+      ],
+      "finbert_mlm": [
+        "impairment"
+      ]
+    },
+    "impairments": {
+      "bert_base": [
+        "impairment",
+        "##s"
+      ],
+      "finbert_mlm": [
+        "impairments"
+      ]
+    },
+    "writedown": {
+      "bert_base": [
+        "write",
+        "##down"
+      ],
+      "finbert_mlm": [
+        "writedown"
+      ]
+    },
+    "write-off": {
+      "bert_base": [
+        "write",
+        "-",
+        "off"
+      ],
+      "finbert_mlm": [
+        "write",
+        "-",
+        "off"
+      ]
+    },
+    "provision": {
+      "bert_base": [
+        "provision"
+      ],
+      "finbert_mlm": [
+        "provision"
+      ]
+    },
+    "provisions": {
+      "bert_base": [
+        "provisions"
+      ],
+      "finbert_mlm": [
+        "provisions"
+      ]
+    },
+    "restructuring": {
+      "bert_base": [
+        "restructuring"
+      ],
+      "finbert_mlm": [
+        "restructuring"
+      ]
+    },
+    "ebitda": {
+      "bert_base": [
+        "e",
+        "##bit",
+        "##da"
+      ],
+      "finbert_mlm": [
+        "ebitda"
+      ]
+    },
+    "ebit": {
+      "bert_base": [
+        "e",
+        "##bit"
+      ],
+      "finbert_mlm": [
+        "ebit"
+      ]
+    },
+    "dividend": {
+      "bert_base": [
+        "divide",
+        "##nd"
+      ],
+      "finbert_mlm": [
+        "dividend"
+      ]
+    },
+    "dividends": {
+      "bert_base": [
+        "divide",
+        "##nds"
+      ],
+      "finbert_mlm": [
+        "dividends"
+      ]
+    },
+    "revenue": {
+      "bert_base": [
+        "revenue"
+      ],
+      "finbert_mlm": [
+        "revenue"
+      ]
+    },
+    "revenues": {
+      "bert_base": [
+        "revenues"
+      ],
+      "finbert_mlm": [
+        "revenues"
+      ]
+    },
+    "profit": {
+      "bert_base": [
+        "profit"
+      ],
+      "finbert_mlm": [
+        "profit"
+      ]
+    },
+    "loss": {
+      "bert_base": [
+        "loss"
+      ],
+      "finbert_mlm": [
+        "loss"
+      ]
+    },
+    "losses": {
+      "bert_base": [
+        "losses"
+      ],
+      "finbert_mlm": [
+        "losses"
+      ]
+    },
+    "earnings": {
+      "bert_base": [
+        "earnings"
+      ],
+      "finbert_mlm": [
+        "earnings"
+      ]
+    },
+    "guidance": {
+      "bert_base": [
+        "guidance"
+      ],
+      "finbert_mlm": [
+        "guidance"
+      ]
+    },
+    "shareholders": {
+      "bert_base": [
+        "shareholders"
+      ],
+      "finbert_mlm": [
+        "shareholders"
+      ]
+    },
+    "quarterly": {
+      "bert_base": [
+        "quarterly"
+      ],
+      "finbert_mlm": [
+        "quarterly"
+      ]
+    },
+    "year-on-year": {
+      "bert_base": [
+        "year",
+        "-",
+        "on",
+        "-",
+        "year"
+      ],
+      "finbert_mlm": [
+        "year",
+        "-",
+        "on",
+        "-",
+        "year"
+      ]
+    },
+    "bearish": {
+      "bert_base": [
+        "bear",
+        "##ish"
+      ],
+      "finbert_mlm": [
+        "bearish"
+      ]
+    },
+    "bullish": {
+      "bert_base": [
+        "bull",
+        "##ish"
+      ],
+      "finbert_mlm": [
+        "bullish"
+      ]
+    },
+    "downgrade": {
+      "bert_base": [
+        "down",
+        "##grade"
+      ],
+      "finbert_mlm": [
+        "downgrade"
+      ]
+    },
+    "upgrade": {
+      "bert_base": [
+        "upgrade"
+      ],
+      "finbert_mlm": [
+        "upgrade"
+      ]
+    },
+    "outperform": {
+      "bert_base": [
+        "out",
+        "##per",
+        "##form"
+      ],
+      "finbert_mlm": [
+        "outperform"
+      ]
+    },
+    "underperform": {
+      "bert_base": [
+        "under",
+        "##per",
+        "##form"
+      ],
+      "finbert_mlm": [
+        "underperform"
+      ]
+    },
+    "leverage": {
+      "bert_base": [
+        "leverage"
+      ],
+      "finbert_mlm": [
+        "leverage"
+      ]
+    },
+    "volatility": {
+      "bert_base": [
+        "vol",
+        "##ati",
+        "##lity"
+      ],
+      "finbert_mlm": [
+        "volatility"
+      ]
+    },
+    "mln": {
+      "bert_base": [
+        "ml",
+        "##n"
+      ],
+      "finbert_mlm": [
+        "mln"
+      ]
+    },
+    "bn": {
+      "bert_base": [
+        "bn"
+      ],
+      "finbert_mlm": [
+        "bn"
+      ]
+    },
+    "eur": {
+      "bert_base": [
+        "eu",
+        "##r"
+      ],
+      "finbert_mlm": [
+        "eur"
+      ]
+    },
+    "nasdaq": {
+      "bert_base": [
+        "nas",
+        "##da",
+        "##q"
+      ],
+      "finbert_mlm": [
+        "nasdaq"
+      ]
+    }
+  },
+  "delta_domain_by_tokenization": {
+    "sentences_allagree": {
+      "test": {
+        "n": 339,
+        "finbert_fewer": {
+          "n": 137,
+          "bert_accuracy": 0.9829683698296837,
+          "finbert_accuracy": 0.9610705596107056,
+          "delta_domain_accuracy": {
+            "delta": -0.021897810218978075,
+            "ci_low": -0.05596107055961064,
+            "ci_high": 0.007299270072992692,
+            "p_value": 0.165,
+            "B": 10000
+          }
+        },
+        "same": {
+          "n": 118,
+          "bert_accuracy": 0.9774011299435029,
+          "finbert_accuracy": 0.9576271186440678,
+          "delta_domain_accuracy": {
+            "delta": -0.019774011299435124,
+            "ci_low": -0.053672316384180796,
+            "ci_high": 0.008474576271186418,
+            "p_value": 0.1936,
+            "B": 10000
+          }
+        },
+        "finbert_more": {
+          "n": 84,
+          "bert_accuracy": 0.9801587301587302,
+          "finbert_accuracy": 0.9563492063492064,
+          "delta_domain_accuracy": {
+            "delta": -0.023809523809523836,
+            "ci_low": -0.059523809523809645,
+            "ci_high": 2.220446049250313e-16,
+            "p_value": 0.1198,
+            "B": 10000
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "finbert_fewer": {
+          "n": 2961,
+          "bert_accuracy": 0.6817516604750647,
+          "finbert_accuracy": 0.69424743892829,
+          "delta_domain_accuracy": {
+            "delta": 0.012495778453225248,
+            "ci_low": -0.01823708206686925,
+            "ci_high": 0.04176516942474384,
+            "p_value": 0.4376,
+            "B": 10000
+          }
+        },
+        "same": {
+          "n": 3654,
+          "bert_accuracy": 0.702791461412151,
+          "finbert_accuracy": 0.682995803685459,
+          "delta_domain_accuracy": {
+            "delta": -0.019795657726692006,
+            "ci_low": -0.047527823389892254,
+            "ci_high": 0.009578544061302763,
+            "p_value": 0.1838,
+            "B": 10000
+          }
+        },
+        "finbert_more": {
+          "n": 2845,
+          "bert_accuracy": 0.6625659050966609,
+          "finbert_accuracy": 0.6289396602226128,
+          "delta_domain_accuracy": {
+            "delta": -0.033626244874048083,
+            "ci_low": -0.07170474516695957,
+            "ci_high": 0.0035178676039836366,
+            "p_value": 0.0766,
+            "B": 10000
+          }
+        }
+      }
+    },
+    "sentences_75agree": {
+      "test": {
+        "n": 518,
+        "finbert_fewer": {
+          "n": 219,
+          "bert_accuracy": 0.9497716894977168,
+          "finbert_accuracy": 0.9345509893455098,
+          "delta_domain_accuracy": {
+            "delta": -0.015220700152207,
+            "ci_low": -0.04718417047184176,
+            "ci_high": 0.01826484018264829,
+            "p_value": 0.3588,
+            "B": 10000
+          }
+        },
+        "same": {
+          "n": 183,
+          "bert_accuracy": 0.9234972677595629,
+          "finbert_accuracy": 0.9143897996357012,
+          "delta_domain_accuracy": {
+            "delta": -0.00910746812386165,
+            "ci_low": -0.03642987249544638,
+            "ci_high": 0.01821493624772319,
+            "p_value": 0.5578,
+            "B": 10000
+          }
+        },
+        "finbert_more": {
+          "n": 116,
+          "bert_accuracy": 0.9080459770114943,
+          "finbert_accuracy": 0.9022988505747126,
+          "delta_domain_accuracy": {
+            "delta": -0.005747126436781658,
+            "ci_low": -0.0431034482758621,
+            "ci_high": 0.0344827586206895,
+            "p_value": 0.801,
+            "B": 10000
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "finbert_fewer": {
+          "n": 2961,
+          "bert_accuracy": 0.6808510638297872,
+          "finbert_accuracy": 0.6887312844759653,
+          "delta_domain_accuracy": {
+            "delta": 0.007880220646178104,
+            "ci_low": -0.03377237419790613,
+            "ci_high": 0.048969942586963855,
+            "p_value": 0.723,
+            "B": 10000
+          }
+        },
+        "same": {
+          "n": 3654,
+          "bert_accuracy": 0.6869184455391352,
+          "finbert_accuracy": 0.6632913701879218,
+          "delta_domain_accuracy": {
+            "delta": -0.023627075351213334,
+            "ci_low": -0.05893085203430026,
+            "ci_high": 0.01085568326947639,
+            "p_value": 0.1804,
+            "B": 10000
+          }
+        },
+        "finbert_more": {
+          "n": 2845,
+          "bert_accuracy": 0.6550673696543644,
+          "finbert_accuracy": 0.6199179847685999,
+          "delta_domain_accuracy": {
+            "delta": -0.03514938488576447,
+            "ci_low": -0.07662565905096663,
+            "ci_high": 0.008555946104276445,
+            "p_value": 0.1056,
+            "B": 10000
+          }
+        }
+      }
+    },
+    "sentences_50agree": {
+      "test": {
+        "n": 726,
+        "finbert_fewer": {
+          "n": 304,
+          "bert_accuracy": 0.8804824561403509,
+          "finbert_accuracy": 0.8618421052631579,
+          "delta_domain_accuracy": {
+            "delta": -0.018640350877193068,
+            "ci_low": -0.054824561403508665,
+            "ci_high": 0.01754385964912286,
+            "p_value": 0.3156,
+            "B": 10000
+          }
+        },
+        "same": {
+          "n": 262,
+          "bert_accuracy": 0.8982188295165394,
+          "finbert_accuracy": 0.8893129770992366,
+          "delta_domain_accuracy": {
+            "delta": -0.008905852417302795,
+            "ci_low": -0.044529262086513866,
+            "ci_high": 0.03053435114503822,
+            "p_value": 0.6546,
+            "B": 10000
+          }
+        },
+        "finbert_more": {
+          "n": 160,
+          "bert_accuracy": 0.8541666666666666,
+          "finbert_accuracy": 0.8395833333333332,
+          "delta_domain_accuracy": {
+            "delta": -0.014583333333333393,
+            "ci_low": -0.07291666666666663,
+            "ci_high": 0.03963541666666609,
+            "p_value": 0.628,
+            "B": 10000
+          }
+        }
+      },
+      "external": {
+        "n": 9460,
+        "finbert_fewer": {
+          "n": 2961,
+          "bert_accuracy": 0.6822019587977035,
+          "finbert_accuracy": 0.7255431723516829,
+          "delta_domain_accuracy": {
+            "delta": 0.04334121355397935,
+            "ci_low": 0.022402341551277846,
+            "ci_high": 0.06417032534053814,
+            "p_value": 0.0,
+            "B": 10000
+          }
+        },
+        "same": {
+          "n": 3654,
+          "bert_accuracy": 0.6887429301222405,
+          "finbert_accuracy": 0.7040686006203248,
+          "delta_domain_accuracy": {
+            "delta": 0.01532567049808431,
+            "ci_low": -0.006479200875752656,
+            "ci_high": 0.03877257799671598,
+            "p_value": 0.194,
+            "B": 10000
+          }
+        },
+        "finbert_more": {
+          "n": 2845,
+          "bert_accuracy": 0.6521382542472174,
+          "finbert_accuracy": 0.6697129466900996,
+          "delta_domain_accuracy": {
+            "delta": 0.017574692442882234,
+            "ci_low": -0.0058582308142940435,
+            "ci_high": 0.0419449326303456,
+            "p_value": 0.1462,
+            "B": 10000
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,271 @@
+{
+  "status": "completed",
+  "stage": "baselines",
+  "config": "sentences_50agree",
+  "model_key": "tfidf_svm",
+  "model_name": "TF-IDF + Linear SVM",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "model_type": "svm",
+    "C": 1.0,
+    "class_weight": null,
+    "val_macro_f1": 0.7368214459945391
+  },
+  "best_epoch": null,
+  "history": [],
+  "metrics": {
+    "val": {
+      "accuracy": 0.7857142857142857,
+      "macro_f1": 0.7368214459945391,
+      "per_class": {
+        "negative": {
+          "precision": 0.7777777777777778,
+          "recall": 0.6086956521739131,
+          "f1": 0.6829268292682927,
+          "support": 92
+        },
+        "neutral": {
+          "precision": 0.7987679671457906,
+          "recall": 0.9004629629629629,
+          "f1": 0.8465723612622416,
+          "support": 432
+        },
+        "positive": {
+          "precision": 0.7514792899408284,
+          "recall": 0.6225490196078431,
+          "f1": 0.6809651474530831,
+          "support": 204
+        }
+      },
+      "confusion_matrix": [
+        [
+          56,
+          27,
+          9
+        ],
+        [
+          10,
+          389,
+          33
+        ],
+        [
+          6,
+          71,
+          127
+        ]
+      ],
+      "neutral_to_negative_rate": 0.023148148148148147,
+      "ece": 0.14482609796655047
+    },
+    "test": {
+      "accuracy": 0.8044077134986226,
+      "macro_f1": 0.7683923091850323,
+      "per_class": {
+        "negative": {
+          "precision": 0.8529411764705882,
+          "recall": 0.6444444444444445,
+          "f1": 0.7341772151898734,
+          "support": 90
+        },
+        "neutral": {
+          "precision": 0.8272138228941684,
+          "recall": 0.8906976744186047,
+          "f1": 0.8577827547592385,
+          "support": 430
+        },
+        "positive": {
+          "precision": 0.7333333333333333,
+          "recall": 0.6941747572815534,
+          "f1": 0.713216957605985,
+          "support": 206
+        }
+      },
+      "confusion_matrix": [
+        [
+          58,
+          21,
+          11
+        ],
+        [
+          6,
+          383,
+          41
+        ],
+        [
+          4,
+          59,
+          143
+        ]
+      ],
+      "neutral_to_negative_rate": 0.013953488372093023,
+      "ece": 0.13425526515511443
+    },
+    "external": {
+      "accuracy": 0.4997885835095137,
+      "macro_f1": 0.46906069626386265,
+      "per_class": {
+        "negative": {
+          "precision": 0.7314906219151036,
+          "recall": 0.27444444444444444,
+          "f1": 0.39913816321034207,
+          "support": 2700
+        },
+        "neutral": {
+          "precision": 0.4336188436830835,
+          "recall": 0.8316221765913757,
+          "f1": 0.5700211118930331,
+          "support": 3409
+        },
+        "positive": {
+          "precision": 0.6034573074908329,
+          "recall": 0.3437779767233662,
+          "f1": 0.43802281368821294,
+          "support": 3351
+        }
+      },
+      "confusion_matrix": [
+        [
+          741,
+          1651,
+          308
+        ],
+        [
+          125,
+          2835,
+          449
+        ],
+        [
+          147,
+          2052,
+          1152
+        ]
+      ],
+      "neutral_to_negative_rate": 0.03666764447051921,
+      "ece": 0.40112202690784315
+    },
+    "fiqa": {
+      "accuracy": 0.26306306306306304,
+      "macro_f1": 0.25850787874318587,
+      "per_class": {
+        "negative": {
+          "precision": 0.734375,
+          "recall": 0.13662790697674418,
+          "f1": 0.23039215686274508,
+          "support": 344
+        },
+        "neutral": {
+          "precision": 0.08700834326579261,
+          "recall": 0.8690476190476191,
+          "f1": 0.1581798483206934,
+          "support": 84
+        },
+        "positive": {
+          "precision": 0.8309178743961353,
+          "recall": 0.25219941348973607,
+          "f1": 0.38695163104611924,
+          "support": 682
+        }
+      },
+      "confusion_matrix": [
+        [
+          47,
+          271,
+          26
+        ],
+        [
+          2,
+          73,
+          9
+        ],
+        [
+          15,
+          495,
+          172
+        ]
+      ],
+      "neutral_to_negative_rate": 0.023809523809523808,
+      "ece": 0.6388928789007772
+    },
+    "twitter": {
+      "accuracy": 0.638919655789384,
+      "macro_f1": 0.4797197200869281,
+      "per_class": {
+        "negative": {
+          "precision": 0.5210312075983717,
+          "recall": 0.21805792163543442,
+          "f1": 0.3074459567654123,
+          "support": 1761
+        },
+        "neutral": {
+          "precision": 0.713538706377174,
+          "recall": 0.8257037621678506,
+          "f1": 0.7655344838099885,
+          "support": 7602
+        },
+        "positive": {
+          "precision": 0.38039037675896503,
+          "recall": 0.35299073294018535,
+          "f1": 0.36617871968538346,
+          "support": 2374
+        }
+      },
+      "confusion_matrix": [
+        [
+          384,
+          1117,
+          260
+        ],
+        [
+          220,
+          6277,
+          1105
+        ],
+        [
+          133,
+          1403,
+          838
+        ]
+      ],
+      "neutral_to_negative_rate": 0.028939752696658775,
+      "ece": 0.2752525455639677
+    }
+  },
+  "n": {
+    "train": 3392,
+    "val": 728,
+    "test": 726,
+    "external": 9460,
+    "fiqa": 1110,
+    "twitter": 11737
+  },
+  "device": null,
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "d11c912d24b8ea2db5c553bd042d204a96e9ed21d61459b1719d47dde4e195e2",
+  "external_sha256": "27be0e7081bc62cfb8d5c891464bb9fba43c3350950a9fea9cdcc1891d73eff7",
+  "extra_external_sha256": "d3df2ca67fe2825b794a19517f136fa6ebceded9c79a1b141300aa39a1b5cc62",
+  "reproduction_of_step2": {
+    "reference": "results/step2/runs/sentences_50agree/tfidf_svm/seed42",
+    "val": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "test": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    },
+    "external": {
+      "label_agreement": 1.0,
+      "max_abs_prob_diff": 0.0
+    }
+  },
+  "probe": false,
+  "wall_seconds": 1.7180149555206299,
+  "timestamp": "2026-11-04T19:00:09.265710+00:00"
+}
