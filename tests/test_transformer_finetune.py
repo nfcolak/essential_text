@@ -1,17 +1,21 @@
 from __future__ import annotations
 
+import json
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import torch
-from transformers import BertConfig, BertForSequenceClassification, BertTokenizerFast
+from transformers import BertConfig, BertForMaskedLM, BertForSequenceClassification, BertTokenizerFast
 
+from src.transformer import finetune as finetune_module
 from src.transformer.finetune import (
     FinetuneConfig,
     canonical_label_permutation,
     finetune_and_predict,
+    load_model_and_tokenizer,
     predict_proba,
     zero_shot_predict,
 )
@@ -143,6 +147,144 @@ class ZeroShotTests(unittest.TestCase):
             np.testing.assert_allclose(out[:, 1], raw[:, 2], atol=1e-6)  # neutral
             np.testing.assert_allclose(out[:, 2], raw[:, 0], atol=1e-6)  # positive
             np.testing.assert_allclose(out.sum(axis=1), 1.0, atol=1e-5)
+
+
+def _tiny_bert_config() -> BertConfig:
+    return BertConfig(
+        vocab_size=len(VOCAB),
+        hidden_size=32,
+        num_hidden_layers=2,
+        num_attention_heads=4,
+        intermediate_size=64,
+        max_position_embeddings=64,
+    )
+
+
+def _write_vocab(directory: str) -> None:
+    with open(os.path.join(directory, "vocab.txt"), "w", encoding="utf-8") as handle:
+        handle.write("\n".join(VOCAB) + "\n")
+
+
+def _checkpoint_tensors(directory: str) -> dict[str, torch.Tensor]:
+    safetensors_path = os.path.join(directory, "model.safetensors")
+    if os.path.isfile(safetensors_path):
+        from safetensors.torch import load_file
+
+        return load_file(safetensors_path)
+    return torch.load(os.path.join(directory, "pytorch_model.bin"), map_location="cpu", weights_only=True)
+
+
+def _strip_model_type(directory: str) -> None:
+    config_path = os.path.join(directory, "config.json")
+    with open(config_path, encoding="utf-8") as handle:
+        payload = json.load(handle)
+    payload.pop("model_type", None)
+    payload["architectures"] = ["BertForMaskedLM"]
+    with open(config_path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle)
+
+
+class CheckpointLoadTests(unittest.TestCase):
+    """Loaders must keep checkpoint encoder weights and still run a forward pass."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+
+    def _legacy_finbert_dir(self) -> str:
+        directory = os.path.join(self._tmp.name, "finbert-pretrain")
+        os.makedirs(directory)
+        model = BertForMaskedLM(_tiny_bert_config())
+        with torch.no_grad():
+            model.bert.encoder.layer[0].output.dense.weight.fill_(0.37)
+            model.cls.predictions.bias.fill_(4.5)
+        model.save_pretrained(directory)
+        _strip_model_type(directory)
+        # The published MLM checkpoint also carries the BERT pooler. Current BertForMaskedLM
+        # does not save one, so add a known pooler and require the loader to keep it.
+        saved = _checkpoint_tensors(directory)
+        hidden = model.config.hidden_size
+        saved["bert.pooler.dense.weight"] = torch.full((hidden, hidden), 0.61)
+        saved["bert.pooler.dense.bias"] = torch.full((hidden,), -0.2)
+        safetensors_path = os.path.join(directory, "model.safetensors")
+        bin_path = os.path.join(directory, "pytorch_model.bin")
+        if os.path.isfile(safetensors_path):
+            from safetensors.torch import save_file
+
+            save_file(saved, safetensors_path)
+            if os.path.isfile(bin_path):
+                os.remove(bin_path)
+        else:
+            torch.save(saved, bin_path)
+        _write_vocab(directory)
+        return directory
+
+    def _bert_base_dir(self) -> str:
+        directory = os.path.join(self._tmp.name, "bert-base")
+        os.makedirs(directory)
+        config = _tiny_bert_config()
+        config.num_labels = 3
+        model = BertForSequenceClassification(config)
+        with torch.no_grad():
+            model.bert.encoder.layer[0].output.dense.weight.fill_(0.11)
+            model.classifier.weight.fill_(0.22)
+        model.save_pretrained(directory)
+        _write_vocab(directory)
+        return directory
+
+    def _assert_forward(self, model, tokenizer) -> None:
+        encoded = tokenizer(["profit rose"], return_tensors="pt")
+        logits = model(**encoded).logits
+        self.assertEqual(tuple(logits.shape), (1, model.config.num_labels))
+        self.assertTrue(torch.isfinite(logits).all())
+
+    def test_legacy_finbert_loads_encoder_weights_and_a_new_head(self):
+        directory = self._legacy_finbert_dir()
+        saved = _checkpoint_tensors(directory)
+        with patch.object(
+            finetune_module,
+            "_load_legacy_bert_for_classification",
+            wraps=finetune_module._load_legacy_bert_for_classification,
+        ) as legacy_loader:
+            model, tokenizer = load_model_and_tokenizer(directory, num_labels=3)
+        legacy_loader.assert_called_once()
+        self.assertIsInstance(model, BertForSequenceClassification)
+        self.assertEqual(model.config.num_labels, 3)
+        loaded = dict(model.named_parameters())
+        encoder_names = [name for name in saved if name.startswith("bert.encoder.")]
+        self.assertGreater(len(encoder_names), 0)
+        for name in encoder_names:
+            self.assertIn(name, loaded)
+            torch.testing.assert_close(loaded[name], saved[name], atol=0, rtol=0)
+        for name in ("bert.pooler.dense.weight", "bert.pooler.dense.bias",
+                     "bert.embeddings.word_embeddings.weight"):
+            torch.testing.assert_close(loaded[name], saved[name], atol=0, rtol=0)
+        self.assertNotIn("classifier.weight", saved)
+        self.assertNotIn("classifier.bias", saved)
+        self.assertEqual(tuple(loaded["classifier.weight"].shape), (3, model.config.hidden_size))
+        fresh = BertForSequenceClassification(model.config)
+        self.assertFalse(torch.allclose(
+            fresh.bert.encoder.layer[0].output.dense.weight,
+            loaded["bert.encoder.layer.0.output.dense.weight"],
+        ))
+        self.assertFalse(torch.allclose(
+            loaded["classifier.weight"],
+            torch.full_like(loaded["classifier.weight"], 0.37),
+        ))
+        self._assert_forward(model, tokenizer)
+
+    def test_bert_base_checkpoint_keeps_auto_loading(self):
+        directory = self._bert_base_dir()
+        saved = _checkpoint_tensors(directory)
+        with patch.object(
+            finetune_module, "_load_legacy_bert_for_classification"
+        ) as legacy_loader:
+            model, tokenizer = load_model_and_tokenizer(directory, num_labels=3)
+        legacy_loader.assert_not_called()
+        for name, tensor in model.named_parameters():
+            self.assertIn(name, saved)
+            torch.testing.assert_close(tensor, saved[name], atol=0, rtol=0)
+        self._assert_forward(model, tokenizer)
 
 
 if __name__ == "__main__":

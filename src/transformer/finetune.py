@@ -86,12 +86,48 @@ def _build_tokenizer(model_name_or_path: str, revision: Optional[str]):
         return BertTokenizerFast(vocab_file=vocab_file, do_lower_case=True)
 
 
+def _is_legacy_bert_checkpoint(config_dict: dict) -> bool:
+    """True for a BERT checkpoint whose config.json omits model_type.
+
+    yiyanghkust/finbert-pretrain is one of these: architectures is BertForMaskedLM,
+    but Transformers 5 refuses AutoModel without model_type.
+    """
+    if config_dict.get("model_type"):
+        return False
+    architectures = config_dict.get("architectures") or []
+    return any(str(name).startswith("Bert") for name in architectures)
+
+
+def _load_legacy_bert_for_classification(model_name_or_path: str, config_dict: dict,
+                                         num_labels: int, revision: Optional[str]):
+    """Load a legacy BERT checkpoint into the three-class classification model.
+
+    BertConfig.from_dict only records the architecture. BertForSequenceClassification.from_pretrained
+    then copies the checkpoint tensors onto that module. Constructing the class from the config
+    alone would leave the encoder randomly initialized, so this function never does that.
+    The masked-LM head is not part of the classifier; the three-class head stays newly initialized.
+    """
+    from transformers import BertConfig, BertForSequenceClassification
+
+    config = BertConfig.from_dict(config_dict)
+    if not config.model_type:
+        config.model_type = "bert"
+    config.num_labels = num_labels
+    return BertForSequenceClassification.from_pretrained(
+        model_name_or_path, config=config, revision=revision)
+
+
 def load_model_and_tokenizer(model_name_or_path: str, num_labels: int = 3,
                              revision: Optional[str] = None):
-    from transformers import AutoModelForSequenceClassification
+    from transformers import AutoModelForSequenceClassification, PretrainedConfig
 
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_name_or_path, num_labels=num_labels, revision=revision)
+    config_dict, _unused = PretrainedConfig.get_config_dict(model_name_or_path, revision=revision)
+    if _is_legacy_bert_checkpoint(config_dict):
+        model = _load_legacy_bert_for_classification(
+            model_name_or_path, config_dict, num_labels, revision)
+    else:
+        model = AutoModelForSequenceClassification.from_pretrained(
+            model_name_or_path, num_labels=num_labels, revision=revision)
     tokenizer = _build_tokenizer(model_name_or_path, revision)
     return model, tokenizer
 
