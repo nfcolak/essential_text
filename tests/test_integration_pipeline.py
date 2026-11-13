@@ -17,6 +17,8 @@ import argparse
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -264,10 +266,18 @@ class TestTuningNotebookStructure(unittest.TestCase):
 
         self.assertIn("colab.research.google.com/assets/colab-badge.svg", all_cell_text)
         self.assertIn("essential_text.git", code_text)
+        self.assertIn('REPO_DIR = "/content/essential_text"', code_text)
         self.assertIn('BRANCH = "qiyao/hyperparameter-tuning"', code_text)
-        self.assertIn("git clone --branch {BRANCH}", code_text)
-        self.assertIn("git pull origin {BRANCH}", code_text)
+        self.assertIn('os.path.join(REPO_DIR, ".git")', code_text)
+        self.assertIn('["git", "clone", "--branch", BRANCH, REPO_URL, REPO_DIR]', code_text)
+        self.assertIn('["git", "-C", REPO_DIR, "fetch", "origin", BRANCH]', code_text)
+        self.assertIn('["git", "-C", REPO_DIR, "pull", "--ff-only", "origin", BRANCH]', code_text)
+        self.assertIn("os.chdir(REPO_DIR)", code_text)
+        self.assertIn('Expected git branch {BRANCH} in {REPO_DIR}', code_text)
+        self.assertIn('os.path.join(REPO_DIR, "scripts", "run_tuning.py")', code_text)
         self.assertNotIn("origin main", code_text)
+        self.assertNotIn("%cd", code_text)
+        self.assertNotIn("!git", code_text)
         self.assertIn("requirements.txt", code_text)
         self.assertIn("load_real_datasets", code_text)
         self.assertIn("create_stratified_splits", code_text)
@@ -283,6 +293,119 @@ class TestTuningNotebookStructure(unittest.TestCase):
         )
         for override in ("--learning-rate", "--batch-size", "--val-only", "--seeds"):
             self.assertNotIn(override, code_text)
+
+    def _setup_cell_source(self, repo_dir: str, repo_url: str) -> str:
+        with open(self.notebook_path, mode="r", encoding="utf-8") as handle:
+            notebook = json.load(handle)
+        source = "".join(notebook["cells"][1]["source"])
+        self.assertIn('REPO_DIR = "/content/essential_text"', source)
+        source = source.replace('REPO_DIR = "/content/essential_text"', f"REPO_DIR = {repo_dir!r}")
+        source = source.replace(
+            'REPO_URL = "https://github.com/nfcolak/essential_text.git"',
+            f"REPO_URL = {repo_url!r}",
+        )
+        return source
+
+    def _git(self, *args: str, cwd: str | None = None) -> None:
+        completed = subprocess.run(
+            ["git", *args],
+            cwd=cwd,
+            check=False,
+            text=True,
+            capture_output=True,
+        )
+        if completed.returncode != 0:
+            self.fail(completed.stderr.strip() or completed.stdout.strip() or f"git {' '.join(args)} failed")
+
+    def _publish_branch(self, remote: str, branch: str, files: dict[str, str]) -> None:
+        self._git("init", "--bare", "-b", branch, remote)
+        seed = remote + "-seed"
+        os.makedirs(seed, exist_ok=True)
+        self._git("init", "-b", branch, seed)
+        self._git("config", "user.email", "tuning-test@example.com", cwd=seed)
+        self._git("config", "user.name", "Tuning Test", cwd=seed)
+        for relative, text in files.items():
+            path = os.path.join(seed, relative)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as handle:
+                handle.write(text)
+            self._git("add", relative, cwd=seed)
+        self._git("commit", "-m", "seed", cwd=seed)
+        self._git("remote", "add", "origin", remote, cwd=seed)
+        self._git("push", "-u", "origin", branch, cwd=seed)
+
+    def test_setup_cell_stays_on_the_absolute_directory(self) -> None:
+        branch = "qiyao/hyperparameter-tuning"
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT) as tmp:
+            remote = os.path.join(tmp, "remote.git")
+            repo_dir = os.path.join(tmp, "content", "essential_text")
+            self._publish_branch(remote, branch, {"scripts/run_tuning.py": "# tuning\n"})
+            source = self._setup_cell_source(repo_dir, remote)
+            nested = os.path.join(tmp, "decoy", "essential_text")
+            os.makedirs(nested)
+            nested_import = os.path.join(repo_dir, "essential_text")
+            previous_cwd = os.getcwd()
+            previous_path = list(sys.path)
+            sys.path.append(nested_import)
+            try:
+                os.chdir(nested)
+                exec(compile(source, "<tuning-cell-1>", "exec"), {"__name__": "__main__"})
+                self.assertEqual(os.path.realpath(os.getcwd()), os.path.realpath(repo_dir))
+                self.assertEqual(sys.path[0], repo_dir)
+                self.assertNotIn(nested_import, sys.path)
+                editor = os.path.join(tmp, "editor")
+                self._git("clone", "--branch", branch, remote, editor)
+                self._git("config", "user.email", "tuning-test@example.com", cwd=editor)
+                self._git("config", "user.name", "Tuning Test", cwd=editor)
+                with open(os.path.join(editor, "MARKER"), "w", encoding="utf-8") as handle:
+                    handle.write("updated\n")
+                self._git("add", "MARKER", cwd=editor)
+                self._git("commit", "-m", "update", cwd=editor)
+                self._git("push", "origin", branch, cwd=editor)
+                os.chdir(repo_dir)
+                exec(compile(source, "<tuning-cell-1>", "exec"), {"__name__": "__main__"})
+                self.assertEqual(os.path.realpath(os.getcwd()), os.path.realpath(repo_dir))
+                self.assertTrue(os.path.isfile(os.path.join(repo_dir, "scripts", "run_tuning.py")))
+                self.assertTrue(os.path.isfile(os.path.join(repo_dir, "MARKER")))
+                self.assertFalse(os.path.exists(os.path.join(repo_dir, "essential_text")))
+                self.assertFalse(os.path.exists(os.path.join(nested, "essential_text")))
+            finally:
+                os.chdir(previous_cwd)
+                sys.path[:] = previous_path
+
+    def test_setup_cell_reports_a_missing_checkout_or_script(self) -> None:
+        branch = "qiyao/hyperparameter-tuning"
+        previous_cwd = os.getcwd()
+        previous_path = list(sys.path)
+        try:
+            with tempfile.TemporaryDirectory(dir=REPO_ROOT) as tmp:
+                repo_dir = os.path.join(tmp, "content", "essential_text")
+                os.makedirs(repo_dir)
+                source = self._setup_cell_source(repo_dir, os.path.join(tmp, "unused.git"))
+                with self.assertRaises(RuntimeError) as missing_git:
+                    exec(compile(source, "<tuning-cell-1>", "exec"), {"__name__": "__main__"})
+                self.assertIn(".git", str(missing_git.exception))
+                self.assertIn("absolute path", str(missing_git.exception))
+                os.rmdir(repo_dir)
+
+                remote = os.path.join(tmp, "remote.git")
+                self._publish_branch(remote, branch, {"README.md": "no tuning script\n"})
+                source = self._setup_cell_source(repo_dir, remote)
+                with self.assertRaises(RuntimeError) as missing_script:
+                    exec(compile(source, "<tuning-cell-1>", "exec"), {"__name__": "__main__"})
+                self.assertIn("scripts/run_tuning.py", str(missing_script.exception))
+                self.assertIn(branch, str(missing_script.exception))
+
+                wrong_remote = os.path.join(tmp, "wrong.git")
+                wrong_dir = os.path.join(tmp, "content", "wrong_repo")
+                self._publish_branch(wrong_remote, "main", {"scripts/run_tuning.py": "# tuning\n"})
+                wrong_source = self._setup_cell_source(wrong_dir, wrong_remote)
+                with self.assertRaises(RuntimeError) as wrong_branch:
+                    exec(compile(wrong_source, "<tuning-cell-1>", "exec"), {"__name__": "__main__"})
+                self.assertIn(branch, str(wrong_branch.exception))
+        finally:
+            os.chdir(previous_cwd)
+            sys.path[:] = previous_path
 
 
 if __name__ == "__main__":
