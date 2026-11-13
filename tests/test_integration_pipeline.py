@@ -264,6 +264,10 @@ class TestTuningNotebookStructure(unittest.TestCase):
 
         self.assertIn("colab.research.google.com/assets/colab-badge.svg", all_cell_text)
         self.assertIn("essential_text.git", code_text)
+        self.assertIn('BRANCH = "qiyao/hyperparameter-tuning"', code_text)
+        self.assertIn("git clone --branch {BRANCH}", code_text)
+        self.assertIn("git pull origin {BRANCH}", code_text)
+        self.assertNotIn("origin main", code_text)
         self.assertIn("requirements.txt", code_text)
         self.assertIn("load_real_datasets", code_text)
         self.assertIn("create_stratified_splits", code_text)
