@@ -8,6 +8,7 @@ Tests:
 5. Verification of Markdown evaluation report structure and RQ1 sections.
 6. Verification of `notebooks/step1_data_and_baselines_colab.ipynb` NBFormat v4 structure.
 7. Verification of `--mode full` gate requiring `--execute`.
+8. Verification of `notebooks/tuning_hyperparameters_colab.ipynb` structure.
 """
 
 from __future__ import annotations
@@ -233,6 +234,51 @@ class TestNotebookStructure(unittest.TestCase):
         self.assertIn("neutral_to_negative_rate", all_cell_text)
         # 8. Artifact zip export
         self.assertIn("step1_artifacts", all_cell_text)
+
+
+class TestTuningNotebookStructure(unittest.TestCase):
+    """The tuning notebook must call scripts/run_tuning.py and back up completed runs."""
+
+    def setUp(self) -> None:
+        self.notebook_path = REPO_ROOT / "notebooks" / "tuning_hyperparameters_colab.ipynb"
+
+    def test_notebook_file_exists_and_valid_json(self) -> None:
+        self.assertTrue(self.notebook_path.exists(), f"Notebook missing at {self.notebook_path}")
+        with open(self.notebook_path, mode="r", encoding="utf-8") as handle:
+            notebook = json.load(handle)
+        self.assertEqual(notebook.get("nbformat"), 4)
+        self.assertGreaterEqual(len(notebook["cells"]), 10)
+        self.assertEqual(notebook.get("metadata", {}).get("accelerator"), "GPU")
+
+    def test_notebook_follows_setup_and_reuses_tuning_runner(self) -> None:
+        with open(self.notebook_path, mode="r", encoding="utf-8") as handle:
+            notebook = json.load(handle)
+        all_cell_text = "".join(
+            "".join(cell.get("source", [])) for cell in notebook.get("cells", [])
+        )
+        code_text = "".join(
+            "".join(cell.get("source", []))
+            for cell in notebook.get("cells", [])
+            if cell.get("cell_type") == "code"
+        )
+
+        self.assertIn("colab.research.google.com/assets/colab-badge.svg", all_cell_text)
+        self.assertIn("essential_text.git", code_text)
+        self.assertIn("requirements.txt", code_text)
+        self.assertIn("load_real_datasets", code_text)
+        self.assertIn("create_stratified_splits", code_text)
+        self.assertIn("verify_no_leakage", code_text)
+        self.assertIn("SHA256SUMS", code_text)
+        self.assertIn("verify_split_hashes", code_text)
+        self.assertIn("drive.mount", code_text)
+        self.assertIn("MyDrive/essential_text_tuning", code_text)
+        self.assertIn("result.json", code_text)
+        self.assertIn(
+            '[sys.executable, "scripts/run_tuning.py", "--phase", "all", "--execute"]',
+            code_text,
+        )
+        for override in ("--learning-rate", "--batch-size", "--val-only", "--seeds"):
+            self.assertNotIn(override, code_text)
 
 
 if __name__ == "__main__":

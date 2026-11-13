@@ -1,0 +1,434 @@
+#!/usr/bin/env python3
+"""Build the Colab notebook for the hyperparameter tuning study.
+
+The notebook follows the Step 1 Colab setup (clone, requirements, locked splits,
+leakage audit, SHA-256 check) and then calls ``scripts/run_tuning.py``. It does
+not restate the search space as command-line overrides. Completed ``result.json``
+files are copied to Google Drive so a disconnected runtime can resume.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+NOTEBOOK_PATH = Path(__file__).resolve().parent / "tuning_hyperparameters_colab.ipynb"
+
+
+def make_markdown_cell(source: list[str]) -> dict:
+    """Create an NBFormat v4 markdown cell."""
+    return {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [s + "\n" for s in source],
+    }
+
+
+def make_code_cell(source: list[str]) -> dict:
+    """Create an NBFormat v4 code cell."""
+    return {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [s + "\n" for s in source],
+    }
+
+
+def build_tuning_notebook() -> dict:
+    """Construct notebook JSON structure."""
+    cells = []
+
+    cells.append(make_markdown_cell([
+        "# Evaluating Domain Adaptation in Financial Sentiment Analysis",
+        "## Hyperparameter Tuning: bert_base vs finbert_mlm",
+        "",
+        "**Authors:** Qiyao Zheng, Benjamin Donick, Necati Furkan Colak  ",
+        "**Repository:** [https://github.com/nfcolak/essential_text](https://github.com/nfcolak/essential_text)  ",
+        "",
+        "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nfcolak/essential_text/blob/main/notebooks/tuning_hyperparameters_colab.ipynb)",
+        "",
+        "---",
+        "### What this notebook runs",
+        "This notebook is the Colab entry point for the learning-rate and batch-size study.",
+        "Setup matches `notebooks/step1_data_and_baselines_colab.ipynb`: clone the repository, install `requirements.txt`, rebuild the locked Financial PhraseBank and SEntFiN splits, audit leakage, and check every file in `data/splits/SHA256SUMS`.",
+        "",
+        "Training is delegated to `scripts/run_tuning.py`. This notebook does not pass a learning rate, batch size, seed list, or `--val-only`. Those choices stay in the script:",
+        "- `bert_base` (`google-bert/bert-base-uncased`) and `finbert_mlm` (`yiyanghkust/finbert-pretrain`) on the locked `sentences_allagree` split.",
+        "- Selection: learning rates `2e-5` and `3e-5`, batch sizes `16` and `32`, seed `42`, validation Macro-F1 only. PhraseBank test and SEntFiN are not loaded during selection.",
+        "- After both winners are chosen, the final stage retrains seeds `42`, `100`, and `2026` and scores the locked PhraseBank test set and the SEntFiN holdout.",
+        "- Outputs go to `results/tuning/`. The runner refuses to write into `results/step2`.",
+        "",
+        "### Runtime and resume",
+        "Use a GPU runtime (**Runtime → Change runtime type → GPU**) before running the training cell. The full study is 8 selection runs plus 6 final runs.",
+        "",
+        "Completed runs are copied to `MyDrive/essential_text_tuning`. If the session disconnects, start a new GPU runtime and rerun the notebook from the top. The Drive cell restores each completed `result.json` into `results/tuning`, and `scripts/run_tuning.py` skips those directories.",
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 1: Clone or pull the essential_text repository",
+        "import os",
+        "import sys",
+        "",
+        'REPO_URL = "https://github.com/nfcolak/essential_text.git"',
+        'REPO_NAME = "essential_text"',
+        "",
+        "if not os.path.exists(REPO_NAME):",
+        "    !git clone {REPO_URL}",
+        "    %cd {REPO_NAME}",
+        "else:",
+        "    %cd {REPO_NAME}",
+        "    !git pull origin main",
+        "",
+        "if os.getcwd() not in sys.path:",
+        "    sys.path.insert(0, os.getcwd())",
+        "",
+        'print(f"Working directory: {os.getcwd()}")',
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 2: Install project dependencies",
+        "!pip install -q -r requirements.txt",
+        'print("Dependencies installed successfully.")',
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 3: Download Real Datasets & Generate SHA-256 Locked Splits",
+        "import os",
+        "import json",
+        "from src.data.download import load_real_datasets",
+        "from src.data.splits import build_records, create_stratified_splits, verify_no_leakage",
+        "from src.data.dedup import deduplicate_external_holdout",
+        "",
+        'os.makedirs("data/splits", exist_ok=True)',
+        'os.makedirs("data/raw", exist_ok=True)',
+        "",
+        'print("Ingesting Financial PhraseBank and SEntFiN 1.0 datasets...")',
+        'real_data = load_real_datasets(cache_dir="data/raw", execute=True)',
+        "",
+        'configs = ["sentences_allagree", "sentences_75agree", "sentences_50agree"]',
+        "all_pb_texts = []",
+        "manifests = {}",
+        "",
+        "for cfg in configs:",
+        "    cfg_data = real_data.get(\"financial_phrasebank\", {}).get(cfg)",
+        "    if cfg_data:",
+        "        texts = cfg_data[\"texts\"]",
+        "        labels = cfg_data[\"labels\"]",
+        "        all_pb_texts.extend(texts)",
+        "        records = build_records(texts=texts, labels=labels, prefix=cfg, jaccard_threshold=0.80)",
+        "        manifest = create_stratified_splits(records=records, seed=42, ratios=(0.70, 0.15, 0.15), n_folds=5)",
+        "        manifest_path = f'data/splits/{cfg}_manifest.json'",
+        "        with open(manifest_path, \"w\", encoding=\"utf-8\") as f:",
+        "            json.dump(manifest, f, indent=2)",
+        "        manifests[cfg] = manifest",
+        '        print(f"Created locked manifest for {cfg}: {len(records)} records -> {manifest_path}")',
+        "",
+        "# External SEntFiN 1.0 holdout deduplication against all PhraseBank sentences",
+        'raw_sentfin = real_data.get("sentfin", [])',
+        "if isinstance(raw_sentfin, list) and len(raw_sentfin) > 0:",
+        "    filtered_holdout, stats = deduplicate_external_holdout(raw_sentfin, list(set(all_pb_texts)), threshold=0.80)",
+        '    if "sentfin_audit" in real_data:',
+        '        stats["upstream_audit"] = real_data["sentfin_audit"]',
+        '    with open("data/splits/sentfin_dedup.json", "w", encoding="utf-8") as f:',
+        '        json.dump({"stats": stats, "records": filtered_holdout}, f, indent=2)',
+        '    print(f"SEntFiN 1.0 Deduplication: Kept {stats[\'kept\']} / {stats[\'total_input\']} unambiguous unique sentences (removed {stats[\'removed_overlap\']} near-duplicates)")',
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 4: Comprehensive Data Leakage Audit",
+        "import glob",
+        "import json",
+        "import os",
+        "from src.data.splits import verify_no_leakage",
+        "",
+        'print("=" * 70)',
+        'print("DATA LEAKAGE AUDIT VERIFICATION")',
+        'print("=" * 70)',
+        "",
+        'manifest_files = sorted(glob.glob("data/splits/*_manifest.json"))',
+        "for mf in manifest_files:",
+        '    with open(mf, "r", encoding="utf-8") as f:',
+        "        m = json.load(f)",
+        "    audit = verify_no_leakage(m, jaccard_threshold=0.80)",
+        '    prefix = m.get("dataset_prefix", os.path.basename(mf))',
+        "    failed = (",
+        "        audit['id_overlap_count'] != 0",
+        "        or audit['hash_overlap_count'] != 0",
+        "        or audit['cluster_overlap_count'] != 0",
+        "        or audit['max_cross_split_jaccard'] >= 0.80",
+        "    )",
+        '    status = "FAILED" if failed else "PASSED"',
+        '    print(f"Manifest: {prefix}")',
+        '    print(f"  [+] ID Overlap: {audit[\'id_overlap_count\']} ({status})")',
+        '    print(f"  [+] SHA-256 Overlap: {audit[\'hash_overlap_count\']} ({status})")',
+        '    print(f"  [+] Cluster Overlap: {audit[\'cluster_overlap_count\']} ({status})")',
+        '    print(f"  [+] Max Cross-Split Jaccard: {audit[\'max_cross_split_jaccard\']:.4f} < 0.8000 ({status})")',
+        '    print(f"  [+] Partitions: Train={audit[\'split_sizes\'][\'train\']}, Val={audit[\'split_sizes\'][\'val\']}, Test={audit[\'split_sizes\'][\'test\']}")',
+        "    print()",
+        "    if failed:",
+        '        raise RuntimeError(f"Leakage audit failed for {prefix}")',
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 5: Verify regenerated splits against data/splits/SHA256SUMS",
+        "# scripts/run_tuning.py calls the same check inside scripts/run_step2.py before any training.",
+        "import os",
+        "from scripts.run_step2 import verify_split_hashes",
+        "",
+        'SPLITS_DIR = "data/splits"',
+        'SUMS_PATH = os.path.join(SPLITS_DIR, "SHA256SUMS")',
+        "if not os.path.isfile(SUMS_PATH):",
+        '    raise RuntimeError(f"Missing lock file: {SUMS_PATH}")',
+        "",
+        "names = []",
+        'with open(SUMS_PATH, encoding="utf-8") as handle:',
+        "    for line in handle:",
+        "        line = line.strip()",
+        "        if not line:",
+        "            continue",
+        "        names.append(os.path.basename(line.split(None, 1)[1].strip().lstrip('*')))",
+        "",
+        "paths = [os.path.join(SPLITS_DIR, name) for name in names]",
+        "missing = [path for path in paths if not os.path.isfile(path)]",
+        "if missing:",
+        '    raise RuntimeError("Missing locked split file(s): " + ", ".join(missing))',
+        "",
+        "bad = verify_split_hashes(paths, SPLITS_DIR)",
+        "if bad:",
+        '    raise RuntimeError("SHA-256 mismatch against SHA256SUMS: " + ", ".join(bad))',
+        "for name in names:",
+        '    print(f"  [OK] {name}")',
+        'print("Locked splits match data/splits/SHA256SUMS.")',
+    ]))
+
+    cells.append(make_markdown_cell([
+        "### Google Drive checkpoint",
+        "Mount Drive before training. The next cell restores any completed runs from `MyDrive/essential_text_tuning` into `results/tuning`. The training cell copies each newly completed `result.json` and `predictions.npz` back to that folder while `scripts/run_tuning.py` is running, and copies the CSV tables when they are written.",
+        "",
+        "A run directory is resumed only when its `result.json` has `status` `completed`. Partial `.tmp` directories are not backed up and are trained again.",
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 6: Mount Google Drive, restore completed runs, and define the backup helpers",
+        "import json",
+        "import shutil",
+        "from pathlib import Path",
+        "",
+        "DRIVE_BACKUP = None",
+        "try:",
+        "    from google.colab import drive",
+        '    drive.mount("/content/drive")',
+        '    DRIVE_BACKUP = Path("/content/drive/MyDrive/essential_text_tuning")',
+        "    DRIVE_BACKUP.mkdir(parents=True, exist_ok=True)",
+        '    print(f"Drive backup directory: {DRIVE_BACKUP}")',
+        "except ImportError:",
+        '    print("Not running in Colab. Completed runs stay in results/tuning on this machine.")',
+        "",
+        'LOCAL_TUNING = Path("results/tuning")',
+        "",
+        "def _is_completed_result(path: Path) -> bool:",
+        "    try:",
+        '        payload = json.loads(path.read_text(encoding="utf-8"))',
+        "    except (OSError, json.JSONDecodeError):",
+        "        return False",
+        '    return payload.get("status") == "completed"',
+        "",
+        "def _should_copy(path: Path, root: Path) -> bool:",
+        "    parts = path.relative_to(root).parts",
+        '    if any(part.endswith(".tmp") for part in parts):',
+        "        return False",
+        '    if path.name == "result.json":',
+        "        return _is_completed_result(path)",
+        '    if path.name == "predictions.npz":',
+        '        return _is_completed_result(path.with_name("result.json"))',
+        '    if path.name in {"tuning_results.csv", "final_results.csv", "selection.json"}:',
+        "        return True",
+        '    if path.name == "journal.jsonl":',
+        "        return True",
+        "    return False",
+        "",
+        "def _needs_copy(src: Path, dest: Path) -> bool:",
+        "    if not dest.exists():",
+        "        return True",
+        "    src_stat, dest_stat = src.stat(), dest.stat()",
+        "    return src_stat.st_size != dest_stat.st_size or src_stat.st_mtime > dest_stat.st_mtime + 1",
+        "",
+        "def _copy_tree(src_root: Path, dest_root: Path, *, keep_completed: bool) -> int:",
+        "    if src_root is None or not src_root.exists():",
+        "        return 0",
+        "    copied = 0",
+        '    for src in src_root.rglob("*"):',
+        "        if not src.is_file() or not _should_copy(src, src_root):",
+        "            continue",
+        "        dest = dest_root / src.relative_to(src_root)",
+        "        if keep_completed and dest.name == \"result.json\" and _is_completed_result(dest):",
+        "            continue",
+        "        if keep_completed and dest.name == \"predictions.npz\" and _is_completed_result(dest.with_name(\"result.json\")):",
+        "            continue",
+        "        if not _needs_copy(src, dest):",
+        "            continue",
+        "        dest.parent.mkdir(parents=True, exist_ok=True)",
+        "        shutil.copy2(src, dest)",
+        "        copied += 1",
+        "    return copied",
+        "",
+        "def count_completed(root: Path) -> int:",
+        "    if not root.exists():",
+        "        return 0",
+        '    return sum(1 for path in root.rglob("result.json") if _is_completed_result(path))',
+        "",
+        "def restore_tuning_results() -> int:",
+        '    """Copy completed Drive backups into results/tuning without replacing a completed local run."""',
+        "    if DRIVE_BACKUP is None:",
+        '        print("No Drive backup to restore.")',
+        "        return 0",
+        "    copied = _copy_tree(DRIVE_BACKUP, LOCAL_TUNING, keep_completed=True)",
+        '    print(f"Restored {copied} file(s) from Drive into {LOCAL_TUNING}.")',
+        '    print(f"Completed runs now on local disk: {count_completed(LOCAL_TUNING)}")',
+        "    return copied",
+        "",
+        "def backup_tuning_results() -> int:",
+        '    """Copy completed local runs and written tables to Drive."""',
+        "    if DRIVE_BACKUP is None or not LOCAL_TUNING.exists():",
+        "        return 0",
+        "    return _copy_tree(LOCAL_TUNING, DRIVE_BACKUP, keep_completed=False)",
+        "",
+        "restore_tuning_results()",
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 7: Cache the two pinned checkpoints used by the tuning study",
+        "from huggingface_hub import snapshot_download",
+        "from scripts.run_step2 import FINETUNE_KEYS, MODEL_REVISIONS",
+        "",
+        'for key in ("bert_base", "finbert_mlm"):',
+        "    name = FINETUNE_KEYS[key]",
+        "    revision = MODEL_REVISIONS[name]",
+        '    print(f"Caching {name} @ {revision}")',
+        "    snapshot_download(repo_id=name, revision=revision)",
+        'print("Pinned checkpoints are in the Hugging Face cache.")',
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 8: Print the tuning plan. This does not train and does not write results/tuning.",
+        "# Until results/tuning contains every selection run, the plan says the final",
+        "# directories are not listed yet. That line is expected before training.",
+        "import subprocess",
+        "import sys",
+        "",
+        "plan = subprocess.run(",
+        '    [sys.executable, "scripts/run_tuning.py", "--phase", "all"],',
+        "    check=False,",
+        ")",
+        "if plan.returncode != 0:",
+        "    raise SystemExit(plan.returncode)",
+    ]))
+
+    cells.append(make_markdown_cell([
+        "### Training",
+        "The next cell runs `scripts/run_tuning.py --phase all --execute`. Leave this runtime connected. Every 20 seconds the cell copies newly completed runs to Drive. When the cell finishes it copies the tables as well.",
+        "",
+        "After a disconnect, rerun from Cell 1. Cell 6 restores the Drive copies, and this cell continues from the first run that does not yet have a completed `result.json`.",
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 9: Run the tuning study and back up each completed run to Drive",
+        "import subprocess",
+        "import sys",
+        "import threading",
+        "import torch",
+        "",
+        "if not torch.cuda.is_available():",
+        '    raise RuntimeError(',
+        '        "This study needs a GPU runtime. Use Runtime → Change runtime type → GPU, then rerun from Cell 1."',
+        "    )",
+        'print(f"GPU: {torch.cuda.get_device_name(0)}")',
+        "",
+        "restore_tuning_results()",
+        "stop = threading.Event()",
+        "",
+        "def _watch() -> None:",
+        "    while not stop.is_set():",
+        "        copied = backup_tuning_results()",
+        "        if copied:",
+        '            print(f"Drive backup copied {copied} file(s).", flush=True)',
+        "        stop.wait(20)",
+        "",
+        'thread = threading.Thread(target=_watch, name="drive-backup", daemon=True)',
+        "thread.start()",
+        'print("Drive backup watcher started.")',
+        'print("Launching scripts/run_tuning.py --phase all --execute")',
+        "completed = subprocess.run(",
+        '    [sys.executable, "scripts/run_tuning.py", "--phase", "all", "--execute"],',
+        "    check=False,",
+        ")",
+        "stop.set()",
+        "thread.join(timeout=5)",
+        "copied = backup_tuning_results()",
+        'print(f"Final Drive backup copied {copied} file(s).")',
+        'print(f"Completed runs on local disk: {count_completed(LOCAL_TUNING)}")',
+        "if completed.returncode != 0:",
+        "    raise SystemExit(completed.returncode)",
+        'print("Tuning study finished. Tables are in results/tuning and on Google Drive.")',
+    ]))
+
+    cells.append(make_code_cell([
+        "# Cell 10: Show the selection and final tables, then refresh the Drive copy",
+        "import csv",
+        "from pathlib import Path",
+        "",
+        "def show_csv(path: Path) -> None:",
+        "    if not path.is_file():",
+        '        print(f"Not written yet: {path}")',
+        "        return",
+        '    with path.open(newline="", encoding="utf-8") as handle:',
+        "        rows = list(csv.DictReader(handle))",
+        '    print(f"{path} ({len(rows)} rows)")',
+        "    if not rows:",
+        "        return",
+        '    columns = list(rows[0].keys())',
+        '    print(" | ".join(columns))',
+        "    for row in rows:",
+        '        print(" | ".join(row[column] for column in columns))',
+        "    print()",
+        "",
+        'show_csv(Path("results/tuning/tuning_results.csv"))',
+        'show_csv(Path("results/tuning/final_results.csv"))',
+        'selection = Path("results/tuning/selection.json")',
+        "if selection.is_file():",
+        '    print(f"Selection record: {selection}")',
+        "copied = backup_tuning_results()",
+        'print(f"Drive backup refreshed ({copied} file(s)).")',
+    ]))
+
+    return {
+        "cells": cells,
+        "metadata": {
+            "accelerator": "GPU",
+            "colab": {
+                "provenance": [],
+                "toc_visible": True,
+            },
+            "language_info": {
+                "name": "python",
+            },
+        },
+        "nbformat": 4,
+        "nbformat_minor": 4,
+    }
+
+
+def main() -> int:
+    """Generate and write the tuning Colab notebook."""
+    notebook = build_tuning_notebook()
+    NOTEBOOK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(NOTEBOOK_PATH, mode="w", encoding="utf-8") as handle:
+        json.dump(notebook, handle, indent=1)
+        handle.write("\n")
+    print(f"Generated Colab notebook with {len(notebook['cells'])} cells at {NOTEBOOK_PATH}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
