@@ -13,6 +13,7 @@ from transformers import BertConfig, BertForMaskedLM, BertForSequenceClassificat
 from src.transformer import finetune as finetune_module
 from src.transformer.finetune import (
     FinetuneConfig,
+    _build_tokenizer,
     canonical_label_permutation,
     finetune_and_predict,
     load_model_and_tokenizer,
@@ -234,6 +235,8 @@ class CheckpointLoadTests(unittest.TestCase):
 
     def _assert_forward(self, model, tokenizer) -> None:
         encoded = tokenizer(["profit rose"], return_tensors="pt")
+        self.assertNotIn(tokenizer.unk_token_id, encoded["input_ids"][0].tolist())
+        self.assertEqual(int(encoded["attention_mask"].sum()), int(encoded["attention_mask"].numel()))
         logits = model(**encoded).logits
         self.assertEqual(tuple(logits.shape), (1, model.config.num_labels))
         self.assertTrue(torch.isfinite(logits).all())
@@ -285,6 +288,132 @@ class CheckpointLoadTests(unittest.TestCase):
             self.assertIn(name, saved)
             torch.testing.assert_close(tensor, saved[name], atol=0, rtol=0)
         self._assert_forward(model, tokenizer)
+
+
+class TokenizerCompatibilityTests(unittest.TestCase):
+    """A legacy vocab.txt must stay aligned with the checkpoint embedding matrix."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.vocab_path = os.path.join(self._tmp.name, "vocab.txt")
+        self.tokens = ["[PAD]", "[UNK]", "[CLS]", "[SEP]", "[MASK]", "profit", "ebitda"]
+        with open(self.vocab_path, "w", encoding="utf-8") as handle:
+            handle.write("\n".join(self.tokens) + "\n")
+
+    def test_transformers5_vocab_argument_loads_the_wordpiece_file(self):
+        import transformers
+
+        class VocabArgumentTokenizer:
+            def __init__(self, vocab=None, do_lower_case=True, **kwargs):
+                if vocab is None:
+                    self._tokens = ["[PAD]", "[UNK]", "[CLS]", "[SEP]", "[MASK]"]
+                else:
+                    with open(vocab, encoding="utf-8") as handle:
+                        self._tokens = [line.strip() for line in handle if line.strip()]
+                self.unk_token_id = self._tokens.index("[UNK]")
+
+            def __len__(self):
+                return len(self._tokens)
+
+            def encode(self, text, add_special_tokens=False):
+                ids = []
+                for word in text.split():
+                    ids.append(self._tokens.index(word) if word in self._tokens else self.unk_token_id)
+                return ids
+
+        def fail_auto(*args, **kwargs):
+            raise ValueError("no tokenizer backend")
+
+        with patch.object(transformers, "AutoTokenizer") as auto, patch.object(
+            transformers, "BertTokenizerFast", VocabArgumentTokenizer
+        ):
+            auto.from_pretrained.side_effect = fail_auto
+            tokenizer = _build_tokenizer(
+                self._tmp.name, None, expected_vocab_size=len(self.tokens)
+            )
+        self.assertEqual(len(tokenizer), len(self.tokens))
+        self.assertNotEqual(tokenizer.encode("ebitda profit"), [tokenizer.unk_token_id, tokenizer.unk_token_id])
+        self.assertEqual(tokenizer.encode("ebitda profit"), [6, 5])
+
+    def test_rejects_a_five_token_tokenizer_when_the_checkpoint_is_larger(self):
+        import transformers
+
+        class TinyTokenizer:
+            def __len__(self):
+                return 5
+
+        def return_tiny(*args, **kwargs):
+            return TinyTokenizer()
+
+        with patch.object(transformers, "AutoTokenizer") as auto, patch(
+            "src.transformer.finetune._bert_tokenizer_from_vocab_file", return_value=TinyTokenizer()
+        ):
+            auto.from_pretrained.side_effect = return_tiny
+            with self.assertRaises(RuntimeError) as caught:
+                _build_tokenizer(self._tmp.name, None, expected_vocab_size=len(self.tokens))
+        self.assertIn(str(len(self.tokens)), str(caught.exception))
+        self.assertIn("does not match", str(caught.exception))
+
+
+class FinbertTokenizerProbeTests(unittest.TestCase):
+    def _tokenizer(self, size, mapping, unk=1):
+        class _Tokenizer:
+            unk_token_id = unk
+
+            def __len__(self):
+                return size
+
+            def encode(self, text, add_special_tokens=False):
+                return list(mapping.get(text, [unk]))
+
+        return _Tokenizer()
+
+    def test_vocab_size_must_be_30873(self):
+        from src.transformer.finetune import validate_finbert_tokenizer
+
+        tokenizer = self._tokenizer(5, {"profit": [1], "ebitda": [1], "depreciation": [1]})
+        with self.assertRaises(RuntimeError) as caught:
+            validate_finbert_tokenizer(tokenizer)
+        self.assertIn("30873", str(caught.exception))
+
+    def test_all_three_financial_terms_must_not_be_unk(self):
+        from src.transformer.finetune import validate_finbert_tokenizer
+
+        tokenizer = self._tokenizer(30873, {}, unk=100)
+        with self.assertRaises(RuntimeError) as caught:
+            validate_finbert_tokenizer(tokenizer)
+        message = str(caught.exception)
+        self.assertIn("profit", message)
+        self.assertIn("[UNK]", message)
+
+    def test_a_matching_vocabulary_with_real_terms_is_accepted(self):
+        from src.transformer.finetune import (
+            tokenizer_check_payload_is_valid,
+            validate_finbert_tokenizer,
+        )
+
+        tokenizer = self._tokenizer(
+            30873,
+            {"profit": [358], "ebitda": [515], "depreciation": [785]},
+            unk=100,
+        )
+        payload = validate_finbert_tokenizer(tokenizer)
+        self.assertEqual(payload["vocab_size"], 30873)
+        self.assertTrue(tokenizer_check_payload_is_valid(payload))
+        self.assertEqual(payload["terms"]["ebitda"], [515])
+
+    def test_one_unknown_probe_term_does_not_reject_the_tokenizer(self):
+        from src.transformer.finetune import validate_finbert_tokenizer
+
+        tokenizer = self._tokenizer(
+            30873,
+            {"profit": [358], "depreciation": [785]},
+            unk=100,
+        )
+        payload = validate_finbert_tokenizer(tokenizer)
+        self.assertTrue(payload["valid"])
+        self.assertEqual(payload["terms"]["ebitda"], [100])
 
 
 if __name__ == "__main__":

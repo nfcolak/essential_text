@@ -372,8 +372,8 @@ def _execute_run(
     finetune_fn: Callable[..., dict[str, Any]],
     zero_shot_fn: Callable[..., Any],
     baseline_factory: Callable[..., Any],
-) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
-    """Run one matrix entry; return (result dict, predictions.npz arrays)."""
+) -> tuple[dict[str, Any], dict[str, np.ndarray], dict[str, Any] | None]:
+    """Run one matrix entry; return (result dict, predictions, optional FinBERT tokenizer receipt)."""
     started = time.time()
     ids: dict[str, list[str]] = {}
     ys: dict[str, list[int]] = {}
@@ -382,6 +382,7 @@ def _execute_run(
     best_epoch: int | None = None
     history: list[Any] = []
     device: str | None = None
+    tokenizer_check: dict[str, Any] | None = None
     manifest_sha: str | None = None
     external_sha: str | None = None
     n_train: int | None = None
@@ -434,6 +435,19 @@ def _execute_run(
                 probs["external"] = _check_prob(model.predict_proba(ext_texts), n_ext, "external")
         else:
             model_name = FINETUNE_KEYS[run.model_key]
+            if run.model_key == "finbert_mlm":
+                from src.transformer.finetune import (
+                    finetune_and_predict,
+                    injected_finbert_tokenizer_check,
+                    prepare_finbert_tokenizer_check,
+                )
+
+                if finetune_fn is finetune_and_predict:
+                    tokenizer_check = prepare_finbert_tokenizer_check(
+                        model_name, MODEL_REVISIONS.get(model_name)
+                    )
+                else:
+                    tokenizer_check = injected_finbert_tokenizer_check()
             config = _make_config(run.seed, args.max_epochs, run.learning_rate, run.batch_size)
             eval_sets: dict[str, list[str]] = {}
             if run.stage == "finetune" and run.evaluate_holdout:
@@ -487,10 +501,11 @@ def _execute_run(
         "wall_seconds": time.time() - started,
         "timestamp": _now(),
     }
-    return result, arrays
+    return result, arrays, tokenizer_check
 
 
-def _write_run(run_dir: str, result: dict[str, Any], arrays: dict[str, np.ndarray]) -> None:
+def _write_run(run_dir: str, result: dict[str, Any], arrays: dict[str, np.ndarray],
+               tokenizer_check: dict[str, Any] | None = None) -> None:
     tmp_dir = run_dir + ".tmp"
     if os.path.isdir(tmp_dir):
         shutil.rmtree(tmp_dir)
@@ -498,6 +513,11 @@ def _write_run(run_dir: str, result: dict[str, Any], arrays: dict[str, np.ndarra
     try:
         with open(os.path.join(tmp_dir, "result.json"), "w", encoding="utf-8") as handle:
             json.dump(result, handle, indent=2, default=_jsonable)
+        if tokenizer_check is not None:
+            from src.transformer.finetune import TOKENIZER_CHECK_NAME
+
+            with open(os.path.join(tmp_dir, TOKENIZER_CHECK_NAME), "w", encoding="utf-8") as handle:
+                json.dump(tokenizer_check, handle, indent=2)
         np.savez_compressed(os.path.join(tmp_dir, "predictions.npz"), **arrays)
         if os.path.isdir(run_dir):
             shutil.rmtree(run_dir)
@@ -669,9 +689,11 @@ def main(
         _journal(args.out_dir, "start", run_dir, None, None)
         started = time.time()
         try:
-            result, arrays = _execute_run(run, data, args, finetune_fn, zero_shot_fn, baseline_factory)
+            result, arrays, tokenizer_check = _execute_run(
+                run, data, args, finetune_fn, zero_shot_fn, baseline_factory
+            )
             os.makedirs(os.path.dirname(run_dir), exist_ok=True)
-            _write_run(run_dir, result, arrays)
+            _write_run(run_dir, result, arrays, tokenizer_check)
             _journal(args.out_dir, "end", run_dir, time.time() - started, None)
             print(f"done {run_dir} ({time.time() - started:.1f}s)")
         except Exception as exc:  # per-run isolation: log and continue

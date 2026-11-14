@@ -287,6 +287,13 @@ class TestTuningNotebookStructure(unittest.TestCase):
         self.assertIn("drive.mount", code_text)
         self.assertIn("MyDrive/essential_text_tuning", code_text)
         self.assertIn("result.json", code_text)
+        self.assertIn("--archive-invalid-finbert", code_text)
+        self.assertIn("tokenizer_check.json", code_text)
+        self.assertIn("recover_invalid_finbert()\nrestore_tuning_results()", code_text)
+        self.assertIn(
+            "archive_invalid_finbert_tree(DRIVE_BACKUP)\n    archive_invalid_finbert_tree(LOCAL_TUNING)",
+            code_text,
+        )
         self.assertIn(
             '[sys.executable, "scripts/run_tuning.py", "--phase", "all", "--execute"]',
             code_text,

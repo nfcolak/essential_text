@@ -27,6 +27,14 @@ Outputs (never under ``results/step2``)::
 
 Plan only unless ``--execute`` is passed. ``--write-tables`` rebuilds the CSVs
 from completed ``result.json`` files and does not train.
+
+A completed FinBERT run is reusable only when its directory also contains
+``tokenizer_check.json`` for the 30,873-token vocabulary. Runs written by the
+broken five-token tokenizer have no such receipt. ``--execute`` and
+``--archive-invalid-finbert`` move those directories, plus the combined tables,
+``selection.json`` and both journals, under
+``archive/invalid_finbert_tokenizer/<timestamp>/`` before anything is relaunched.
+Completed ``bert_base`` runs stay where they are.
 """
 
 from __future__ import annotations
@@ -36,7 +44,9 @@ import csv
 import json
 import math
 import os
+import shutil
 import sys
+import time
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
@@ -63,6 +73,8 @@ FINAL_DIRNAME = "final"
 TUNING_CSV = "tuning_results.csv"
 FINAL_CSV = "final_results.csv"
 SELECTION_JSON = "selection.json"
+ARCHIVE_DIRNAME = "archive"
+INVALID_FINBERT_REASON = "invalid_finbert_tokenizer"
 
 TUNING_FIELDS = (
     "model_key", "learning_rate", "batch_size", "seed",
@@ -199,6 +211,32 @@ def _assert_validation_only(result: Mapping[str, Any], path: str) -> None:
             )
 
 
+def finbert_receipt_is_valid(run_dir: str) -> bool:
+    """True when this FinBERT directory records a tokenizer that can be reused."""
+    from src.transformer.finetune import TOKENIZER_CHECK_NAME, tokenizer_check_payload_is_valid
+
+    path = os.path.join(run_dir, TOKENIZER_CHECK_NAME)
+    if not os.path.isfile(path):
+        return False
+    try:
+        with open(path, encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return False
+    return tokenizer_check_payload_is_valid(payload)
+
+
+def _reject_invalid_finbert(run_dir: str, model_key: str) -> None:
+    if model_key != "finbert_mlm" or not run_step2._is_completed(run_dir):
+        return
+    if finbert_receipt_is_valid(run_dir):
+        return
+    raise ValueError(
+        f"{run_dir} is a completed FinBERT run without a valid tokenizer check. "
+        "It cannot be reused. Run with --archive-invalid-finbert before rebuilding tables."
+    )
+
+
 def collect_selection_rows(runs_dir: str, out_dir: str) -> list[dict[str, Any]]:
     """Load the seed-42 grid. Rows contain validation scores only."""
     rows: list[dict[str, Any]] = []
@@ -206,6 +244,7 @@ def collect_selection_rows(runs_dir: str, out_dir: str) -> list[dict[str, Any]]:
     for model_key, learning_rate, batch_size in iter_grid():
         run_dir = run_directory(runs_dir, model_key, learning_rate, batch_size, SELECTION_SEED)
         path = os.path.join(run_dir, "result.json")
+        _reject_invalid_finbert(run_dir, model_key)
         if not run_step2._is_completed(run_dir):
             missing.append(run_dir)
             continue
@@ -257,6 +296,7 @@ def collect_final_rows(runs_dir: str, out_dir: str, chosen: Mapping[str, Mapping
         for seed in FINAL_SEEDS:
             run_dir = run_directory(runs_dir, model_key, spec["learning_rate"], spec["batch_size"], seed)
             path = os.path.join(run_dir, "result.json")
+            _reject_invalid_finbert(run_dir, model_key)
             if not run_step2._is_completed(run_dir):
                 missing.append(run_dir)
                 continue
@@ -427,6 +467,102 @@ def _print_missing(exc: IncompleteRuns) -> None:
         print(f"error: missing completed run: {path}", file=sys.stderr)
 
 
+def iter_finbert_run_dirs(out_dir: str) -> list[str]:
+    """Tag directories under selection/ and final/ for finbert_mlm. Archive copies are not included."""
+    runs: list[str] = []
+    for phase in (SELECTION_DIRNAME, FINAL_DIRNAME):
+        phase_root = os.path.join(out_dir, phase)
+        if not os.path.isdir(phase_root):
+            continue
+        for dirpath, dirnames, _filenames in os.walk(phase_root):
+            if os.path.basename(dirpath) != "finbert_mlm":
+                continue
+            dirnames.clear()
+            for name in sorted(os.listdir(dirpath)):
+                child = os.path.join(dirpath, name)
+                if os.path.isdir(child) and not name.endswith(".tmp"):
+                    runs.append(child)
+    return runs
+
+
+def _completed_finbert_is_invalid(run_dir: str) -> bool:
+    return run_step2._is_completed(run_dir) and not finbert_receipt_is_valid(run_dir)
+
+
+def _archive_destination(out_dir: str) -> str:
+    stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+    root = os.path.join(out_dir, ARCHIVE_DIRNAME, INVALID_FINBERT_REASON, stamp)
+    suffix = 2
+    while os.path.exists(root):
+        root = os.path.join(out_dir, ARCHIVE_DIRNAME, INVALID_FINBERT_REASON, f"{stamp}-{suffix}")
+        suffix += 1
+    return root
+
+
+def _move_preserved(src: str, archive_dir: str, out_dir: str) -> str:
+    dest = os.path.join(archive_dir, os.path.relpath(src, out_dir))
+    if os.path.exists(dest):
+        raise RuntimeError(f"archive destination already exists: {dest}")
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    shutil.move(src, dest)
+    return dest
+
+
+def archive_invalid_finbert(out_dir: str) -> dict[str, Any]:
+    """Move broken FinBERT runs and the tables built from them. Never deletes.
+
+    Completed bert_base directories are left in place. A FinBERT directory that
+    already has a valid tokenizer receipt is also left in place, so a second
+    call does not archive the corrected runs or the BERT results.
+    """
+    summary: dict[str, Any] = {"archive_dir": None, "runs": [], "records": []}
+    if not os.path.isdir(out_dir):
+        return summary
+    invalid = [path for path in iter_finbert_run_dirs(out_dir) if _completed_finbert_is_invalid(path)]
+    if not invalid:
+        return summary
+    archive_dir = _archive_destination(out_dir)
+    for run_dir in invalid:
+        summary["runs"].append(_move_preserved(run_dir, archive_dir, out_dir))
+    stale = (
+        TUNING_CSV,
+        FINAL_CSV,
+        SELECTION_JSON,
+        os.path.join(SELECTION_DIRNAME, "journal.jsonl"),
+        os.path.join(FINAL_DIRNAME, "journal.jsonl"),
+    )
+    for relative in stale:
+        src = os.path.join(out_dir, relative)
+        if os.path.isfile(src):
+            summary["records"].append(_move_preserved(src, archive_dir, out_dir))
+    summary["archive_dir"] = archive_dir
+    return summary
+
+
+def _print_archive(summary: Mapping[str, Any]) -> None:
+    runs = summary.get("runs") or []
+    if not runs:
+        print("archive: no invalid FinBERT runs.")
+        return
+    print(
+        f"archive: moved {len(runs)} invalid FinBERT run(s) to {summary['archive_dir']}. "
+        "Completed BERT runs were left in place."
+    )
+
+
+def _preflight_finbert_tokenizer() -> int:
+    from src.transformer.finetune import prepare_finbert_tokenizer_check
+
+    name = run_step2.FINETUNE_KEYS["finbert_mlm"]
+    try:
+        receipt = prepare_finbert_tokenizer_check(name, run_step2.MODEL_REVISIONS.get(name))
+    except Exception as exc:
+        print(f"error: FinBERT tokenizer check failed before training: {exc}", file=sys.stderr)
+        return 2
+    print(f"FinBERT tokenizer check passed (vocab size {receipt['vocab_size']}).")
+    return 0
+
+
 def _is_step2_output(out_dir: str) -> bool:
     target = os.path.realpath(out_dir)
     step2 = os.path.realpath(os.path.join(REPO_ROOT, "results", "step2"))
@@ -463,6 +599,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
                         help="Train pending runs. Without it, the plan is printed and nothing is written.")
     parser.add_argument("--write-tables", action="store_true", default=False,
                         help="Rebuild the CSVs from completed result.json files without training.")
+    parser.add_argument(
+        "--archive-invalid-finbert", action="store_true", default=False,
+        help="Move FinBERT runs that lack a valid tokenizer receipt into archive/, then stop unless --execute is also set.",
+    )
     parser.add_argument("--splits-dir", default=DEFAULT_SPLITS_DIR)
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
     return parser.parse_args(argv)
@@ -483,8 +623,29 @@ def main(argv: Sequence[str] | None = None, runner: Runner | None = None) -> int
     final_dir = os.path.join(out_dir, FINAL_DIRNAME)
     train = bool(args.execute)
     write = bool(args.execute or args.write_tables)
+    archive_requested = bool(args.archive_invalid_finbert)
     do_select = args.phase in ("select", "all")
     do_final = args.phase in ("final", "all")
+
+    if archive_requested or train:
+        summary = archive_invalid_finbert(out_dir)
+        _print_archive(summary)
+        if train:
+            leftover = [path for path in iter_finbert_run_dirs(out_dir) if _completed_finbert_is_invalid(path)]
+            if leftover:
+                print(
+                    "error: invalid FinBERT runs are still in the tuning directory and would be resumed:",
+                    file=sys.stderr,
+                )
+                for path in leftover:
+                    print(f"  {path}", file=sys.stderr)
+                return 2
+    if archive_requested and not train and not write:
+        return 0
+    if train and runner is run_step2.main:
+        code = _preflight_finbert_tokenizer()
+        if code != 0:
+            return code
 
     print(
         "tuning: sentences_allagree; models bert_base, finbert_mlm; "

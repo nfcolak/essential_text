@@ -182,6 +182,11 @@ def write_result(runs_dir, model, learning_rate, batch_size, seed, val_f1, test_
     }
     with open(os.path.join(run_dir, "result.json"), "w", encoding="utf-8") as handle:
         json.dump(payload, handle)
+    if model == "finbert_mlm":
+        from src.transformer.finetune import TOKENIZER_CHECK_NAME, injected_finbert_tokenizer_check
+
+        with open(os.path.join(run_dir, TOKENIZER_CHECK_NAME), "w", encoding="utf-8") as handle:
+            json.dump(injected_finbert_tokenizer_check(), handle)
     return run_dir
 
 
@@ -749,6 +754,150 @@ class PipelineTests(unittest.TestCase):
         )
         self.assertEqual(missing, 2)
         self.assertIn("sentfin_dedup.json", missing_err)
+
+
+class FinbertTokenizerRecoveryTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.out = os.path.join(self.tmp.name, "essential_text_tuning")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _write_run(self, phase, model, tag, *, receipt=None, status="completed"):
+        run_dir = os.path.join(self.out, phase, "sentences_allagree", model, tag)
+        os.makedirs(run_dir)
+        payload = {
+            "status": status,
+            "model_key": model,
+            "seed": 42,
+            "config": "sentences_allagree",
+            "hyperparams": {"learning_rate": 2e-5, "batch_size": 32},
+        }
+        with open(os.path.join(run_dir, "result.json"), "w", encoding="utf-8") as handle:
+            json.dump(payload, handle)
+        if receipt is not None:
+            from src.transformer.finetune import TOKENIZER_CHECK_NAME
+
+            with open(os.path.join(run_dir, TOKENIZER_CHECK_NAME), "w", encoding="utf-8") as handle:
+                json.dump(receipt, handle)
+        return run_dir
+
+    def _write_stale_records(self):
+        with open(os.path.join(self.out, "selection.json"), "w", encoding="utf-8") as handle:
+            json.dump({"chosen": "broken-finbert"}, handle)
+        for name in ("tuning_results.csv", "final_results.csv"):
+            with open(os.path.join(self.out, name), "w", encoding="utf-8") as handle:
+                handle.write("stale\n")
+        for phase in ("selection", "final"):
+            os.makedirs(os.path.join(self.out, phase), exist_ok=True)
+            with open(os.path.join(self.out, phase, "journal.jsonl"), "w", encoding="utf-8") as handle:
+                handle.write('{"event":"end","run_dir":"finbert_mlm"}\n')
+
+    def test_archive_keeps_bert_and_a_valid_finbert_receipt(self):
+        from src.transformer.finetune import injected_finbert_tokenizer_check
+
+        bert = self._write_run("selection", "bert_base", "lr3e-05_bs32_seed42")
+        bert_final = self._write_run("final", "bert_base", "lr3e-05_bs32_seed42")
+        broken = self._write_run("selection", "finbert_mlm", "lr2e-05_bs32_seed42")
+        broken_final = self._write_run("final", "finbert_mlm", "lr2e-05_bs32_seed42")
+        valid = self._write_run(
+            "selection", "finbert_mlm", "lr3e-05_bs16_seed42",
+            receipt=injected_finbert_tokenizer_check(),
+        )
+        all_unk = {
+            "vocab_size": 30873,
+            "valid": True,
+            "unk_token_id": 1,
+            "terms": {"profit": [1], "ebitda": [1], "depreciation": [1]},
+        }
+        unmarked = self._write_run("final", "finbert_mlm", "lr2e-05_bs16_seed100", receipt=all_unk)
+        pending = self._write_run(
+            "selection", "finbert_mlm", "lr3e-05_bs32_seed42", status="failed",
+        )
+        with open(os.path.join(bert, "result.json"), "rb") as handle:
+            bert_bytes = handle.read()
+        self._write_stale_records()
+
+        def runner(_argv):
+            raise AssertionError("archiving must not train")
+
+        code, stdout, err = run_tuning_main(
+            ["--archive-invalid-finbert", "--out-dir", self.out], runner=runner,
+        )
+        self.assertEqual(code, 0, err)
+        self.assertIn("archive: moved 3 invalid FinBERT", stdout)
+        self.assertFalse(os.path.exists(broken))
+        self.assertFalse(os.path.exists(broken_final))
+        self.assertFalse(os.path.exists(unmarked))
+        self.assertFalse(run_step2._is_completed(broken))
+        self.assertTrue(os.path.isdir(bert))
+        self.assertTrue(os.path.isdir(bert_final))
+        with open(os.path.join(bert, "result.json"), "rb") as handle:
+            self.assertEqual(handle.read(), bert_bytes)
+        self.assertTrue(run_tuning.finbert_receipt_is_valid(valid))
+        self.assertTrue(os.path.isdir(pending))
+        self.assertFalse(os.path.exists(os.path.join(self.out, "selection.json")))
+        self.assertFalse(os.path.exists(os.path.join(self.out, "tuning_results.csv")))
+        self.assertFalse(os.path.exists(os.path.join(self.out, "final_results.csv")))
+        self.assertFalse(os.path.exists(os.path.join(self.out, "selection", "journal.jsonl")))
+        self.assertFalse(os.path.exists(os.path.join(self.out, "final", "journal.jsonl")))
+        archive_root = os.path.join(self.out, "archive", "invalid_finbert_tokenizer")
+        stamped = os.listdir(archive_root)
+        self.assertEqual(len(stamped), 1)
+        archived = os.path.join(archive_root, stamped[0])
+        self.assertTrue(os.path.isfile(os.path.join(
+            archived, "selection", "sentences_allagree", "finbert_mlm", "lr2e-05_bs32_seed42", "result.json",
+        )))
+        self.assertTrue(os.path.isfile(os.path.join(archived, "selection.json")))
+        self.assertTrue(os.path.isfile(os.path.join(archived, "selection", "journal.jsonl")))
+        with open(os.path.join(self.out, "selection.json"), "w", encoding="utf-8") as handle:
+            json.dump({"chosen": "after-recovery"}, handle)
+        again, again_out, again_err = run_tuning_main(
+            ["--archive-invalid-finbert", "--out-dir", self.out], runner=runner,
+        )
+        self.assertEqual(again, 0, again_err)
+        self.assertIn("no invalid FinBERT", again_out)
+        self.assertTrue(os.path.isfile(os.path.join(self.out, "selection.json")))
+        self.assertEqual(os.listdir(archive_root), stamped)
+        self.assertTrue(os.path.isdir(bert))
+        self.assertTrue(os.path.isdir(valid))
+
+    def test_tables_are_not_rebuilt_from_a_broken_finbert_run(self):
+        out = os.path.join(self.tmp.name, "tables")
+        runs_dir = write_fake_grid(out)
+        broken = run_tuning.run_directory(runs_dir, "finbert_mlm", 2e-5, 32, 42)
+        os.remove(os.path.join(broken, "tokenizer_check.json"))
+        with open(os.path.join(out, "tuning_results.csv"), "w", encoding="utf-8") as handle:
+            handle.write("keep-me\n")
+        code, _stdout, err = run_tuning_main(
+            ["--out-dir", out, "--write-tables", "--phase", "select"],
+        )
+        self.assertEqual(code, 2, err)
+        self.assertIn("tokenizer", err)
+        with open(os.path.join(out, "tuning_results.csv"), encoding="utf-8") as handle:
+            self.assertEqual(handle.read(), "keep-me\n")
+
+    def test_execute_archives_broken_finbert_before_resume(self):
+        broken = self._write_run("selection", "finbert_mlm", "lr2e-05_bs32_seed42")
+        bert = self._write_run("selection", "bert_base", "seed42")
+        seen = []
+
+        def runner(_argv):
+            seen.append(os.path.exists(broken))
+            seen.append(run_step2._is_completed(bert))
+            return 0
+
+        code, stdout, err = run_tuning_main(
+            ["--execute", "--phase", "select", "--out-dir", self.out, "--splits-dir", self.tmp.name],
+            runner=runner,
+        )
+        self.assertEqual(seen[0], False, err)
+        self.assertEqual(seen[1::2], [True, True, True, True])
+        self.assertIn("archive: moved 1 invalid FinBERT", stdout)
+        self.assertEqual(code, 2)
+        self.assertFalse(run_step2._is_completed(broken))
+        self.assertTrue(run_step2._is_completed(bert))
 
 
 if __name__ == "__main__":
