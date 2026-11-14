@@ -5,6 +5,7 @@ Probability arrays always use the canonical column order [negative, neutral, pos
 from __future__ import annotations
 
 import copy
+import inspect
 import math
 import os
 import random
@@ -28,6 +29,9 @@ MODEL_REVISIONS = {
 }
 
 CANONICAL_LABELS = ("negative", "neutral", "positive")
+FINBERT_VOCAB_SIZE = 30873
+FINBERT_PROBE_TERMS = ("profit", "ebitda", "depreciation")
+TOKENIZER_CHECK_NAME = "tokenizer_check.json"
 
 
 @dataclass
@@ -70,29 +74,195 @@ def set_seed(seed: int) -> None:
         mps.manual_seed(seed)
 
 
-def _build_tokenizer(model_name_or_path: str, revision: Optional[str]):
-    from transformers import AutoTokenizer, BertTokenizerFast
+def _vocab_size_matches(tokenizer, expected_vocab_size: Optional[int]) -> bool:
+    if expected_vocab_size is None:
+        return True
+    return len(tokenizer) == expected_vocab_size
+
+
+def _bert_tokenizer_from_vocab_file(vocab_file: str):
+    """Load the uncased BERT WordPiece file with either tokenizer argument name.
+
+    Transformers 4 accepts ``vocab_file``. Transformers 5 renamed it to ``vocab`` and
+    ignores ``vocab_file``, which otherwise builds a five-token tokenizer.
+    """
+    from transformers import BertTokenizerFast
+
+    parameters = inspect.signature(BertTokenizerFast.__init__).parameters
+    kwargs = {"do_lower_case": True}
+    if "vocab_file" in parameters:
+        kwargs["vocab_file"] = vocab_file
+    elif "vocab" in parameters:
+        kwargs["vocab"] = vocab_file
+    else:
+        raise RuntimeError(
+            f"BertTokenizerFast cannot load a vocab file. Tried to read {vocab_file}."
+        )
+    return BertTokenizerFast(**kwargs)
+
+
+def _resolve_vocab_file(model_name_or_path: str, revision: Optional[str]) -> str:
+    if os.path.isdir(model_name_or_path):
+        return os.path.join(model_name_or_path, "vocab.txt")
+    from huggingface_hub import hf_hub_download
+
+    return hf_hub_download(model_name_or_path, "vocab.txt", revision=revision)
+
+
+def _build_tokenizer(model_name_or_path: str, revision: Optional[str],
+                     expected_vocab_size: Optional[int] = None):
+    from transformers import AutoTokenizer
 
     try:
-        return AutoTokenizer.from_pretrained(model_name_or_path, revision=revision)
+        tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, revision=revision)
     except Exception:
-        # Repos with only vocab.txt (e.g. yiyanghkust/finbert-pretrain): the vocab is uncased.
-        if os.path.isdir(model_name_or_path):
-            vocab_file = os.path.join(model_name_or_path, "vocab.txt")
-        else:
-            from huggingface_hub import hf_hub_download
+        tokenizer = None
+    if tokenizer is not None and _vocab_size_matches(tokenizer, expected_vocab_size):
+        return tokenizer
+    vocab_file = _resolve_vocab_file(model_name_or_path, revision)
+    if not os.path.isfile(vocab_file):
+        raise RuntimeError(
+            f"No usable tokenizer for {model_name_or_path}: automatic loading "
+            f"produced vocab size {None if tokenizer is None else len(tokenizer)}, "
+            f"expected {expected_vocab_size}, and {vocab_file} is missing."
+        )
+    tokenizer = _bert_tokenizer_from_vocab_file(vocab_file)
+    if not _vocab_size_matches(tokenizer, expected_vocab_size):
+        raise RuntimeError(
+            f"Tokenizer for {model_name_or_path} has vocab size {len(tokenizer)}, "
+            f"but the checkpoint expects {expected_vocab_size}. "
+            "Refusing to train with a tokenizer that does not match the embedding matrix."
+        )
+    return tokenizer
 
-            vocab_file = hf_hub_download(model_name_or_path, "vocab.txt", revision=revision)
-        return BertTokenizerFast(vocab_file=vocab_file, do_lower_case=True)
+
+def _requires_finbert_probe(model_name_or_path: str, vocab_size: int) -> bool:
+    """The hub id, or any checkpoint whose embedding matrix is the FinBERT vocabulary."""
+    name = str(model_name_or_path).replace("\\", "/").rstrip("/")
+    if name == "yiyanghkust/finbert-pretrain" or name.endswith("/yiyanghkust/finbert-pretrain"):
+        return True
+    return int(vocab_size) == FINBERT_VOCAB_SIZE
+
+
+def _term_ids(tokenizer, term: str) -> list[int]:
+    return [int(token_id) for token_id in tokenizer.encode(term, add_special_tokens=False)]
+
+
+def _term_is_unk(tokenizer, token_ids: list[int]) -> bool:
+    if not token_ids:
+        return True
+    unk = getattr(tokenizer, "unk_token_id", None)
+    if unk is None:
+        return False
+    return all(int(token_id) == int(unk) for token_id in token_ids)
+
+
+def validate_finbert_tokenizer(tokenizer) -> dict:
+    """Refuse a FinBERT tokenizer whose vocab is not 30,873 or whose probe terms are all [UNK]."""
+    size = len(tokenizer)
+    if size != FINBERT_VOCAB_SIZE:
+        raise RuntimeError(
+            f"FinBERT tokenizer vocabulary size is {size}, expected {FINBERT_VOCAB_SIZE}."
+        )
+    terms = {term: _term_ids(tokenizer, term) for term in FINBERT_PROBE_TERMS}
+    if all(_term_is_unk(tokenizer, terms[term]) for term in FINBERT_PROBE_TERMS):
+        raise RuntimeError(
+            "FinBERT tokenizer maps profit, ebitda, and depreciation to [UNK]. "
+            "Refusing to train with the broken vocabulary."
+        )
+    unk = getattr(tokenizer, "unk_token_id", None)
+    return {
+        "vocab_size": size,
+        "unk_token_id": None if unk is None else int(unk),
+        "terms": terms,
+        "valid": True,
+    }
+
+
+def tokenizer_check_payload_is_valid(payload: object) -> bool:
+    """True when a saved receipt records the real vocabulary and not an all-[UNK] probe."""
+    if not isinstance(payload, dict) or payload.get("valid") is not True:
+        return False
+    if payload.get("vocab_size") != FINBERT_VOCAB_SIZE:
+        return False
+    terms = payload.get("terms")
+    if not isinstance(terms, dict):
+        return False
+    unk = payload.get("unk_token_id")
+    broken = 0
+    for term in FINBERT_PROBE_TERMS:
+        token_ids = terms.get(term)
+        if not isinstance(token_ids, list) or not token_ids:
+            broken += 1
+            continue
+        if unk is not None and all(int(token_id) == int(unk) for token_id in token_ids):
+            broken += 1
+    return broken < len(FINBERT_PROBE_TERMS)
+
+
+def prepare_finbert_tokenizer_check(model_name_or_path: str, revision: Optional[str] = None) -> dict:
+    """Load the FinBERT tokenizer and return a receipt. Raises before any training step."""
+    tokenizer = _build_tokenizer(
+        model_name_or_path, revision, expected_vocab_size=FINBERT_VOCAB_SIZE)
+    return validate_finbert_tokenizer(tokenizer)
+
+
+def injected_finbert_tokenizer_check() -> dict:
+    """Receipt for a test double that never loads yiyanghkust/finbert-pretrain."""
+    return {
+        "vocab_size": FINBERT_VOCAB_SIZE,
+        "unk_token_id": 1,
+        "terms": {"profit": [10], "ebitda": [11], "depreciation": [12]},
+        "valid": True,
+    }
+
+
+def _is_legacy_bert_checkpoint(config_dict: dict) -> bool:
+    """True for a BERT checkpoint whose config.json omits model_type.
+
+    yiyanghkust/finbert-pretrain is one of these: architectures is BertForMaskedLM,
+    but Transformers 5 refuses AutoModel without model_type.
+    """
+    if config_dict.get("model_type"):
+        return False
+    architectures = config_dict.get("architectures") or []
+    return any(str(name).startswith("Bert") for name in architectures)
+
+
+def _load_legacy_bert_for_classification(model_name_or_path: str, config_dict: dict,
+                                         num_labels: int, revision: Optional[str]):
+    """Load a legacy BERT checkpoint into the three-class classification model.
+
+    BertConfig.from_dict only records the architecture. BertForSequenceClassification.from_pretrained
+    then copies the checkpoint tensors onto that module. Constructing the class from the config
+    alone would leave the encoder randomly initialized, so this function never does that.
+    The masked-LM head is not part of the classifier; the three-class head stays newly initialized.
+    """
+    from transformers import BertConfig, BertForSequenceClassification
+
+    config = BertConfig.from_dict(config_dict)
+    if not config.model_type:
+        config.model_type = "bert"
+    config.num_labels = num_labels
+    return BertForSequenceClassification.from_pretrained(
+        model_name_or_path, config=config, revision=revision)
 
 
 def load_model_and_tokenizer(model_name_or_path: str, num_labels: int = 3,
                              revision: Optional[str] = None):
-    from transformers import AutoModelForSequenceClassification
+    from transformers import AutoModelForSequenceClassification, PretrainedConfig
 
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_name_or_path, num_labels=num_labels, revision=revision)
-    tokenizer = _build_tokenizer(model_name_or_path, revision)
+    config_dict, _unused = PretrainedConfig.get_config_dict(model_name_or_path, revision=revision)
+    if _is_legacy_bert_checkpoint(config_dict):
+        model = _load_legacy_bert_for_classification(
+            model_name_or_path, config_dict, num_labels, revision)
+    else:
+        model = AutoModelForSequenceClassification.from_pretrained(
+            model_name_or_path, num_labels=num_labels, revision=revision)
+    tokenizer = _build_tokenizer(
+        model_name_or_path, revision, expected_vocab_size=model.config.vocab_size)
+    if _requires_finbert_probe(model_name_or_path, model.config.vocab_size):
+        validate_finbert_tokenizer(tokenizer)
     return model, tokenizer
 
 
@@ -100,7 +270,8 @@ def _load_zero_shot(model_name_or_path: str, revision: Optional[str]):
     from transformers import AutoModelForSequenceClassification
 
     model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path, revision=revision)
-    tokenizer = _build_tokenizer(model_name_or_path, revision)
+    tokenizer = _build_tokenizer(
+        model_name_or_path, revision, expected_vocab_size=model.config.vocab_size)
     return model, tokenizer
 
 
