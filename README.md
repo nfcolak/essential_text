@@ -10,14 +10,16 @@
 This repository contains the reproducible evaluation pipeline, leakage-free data splits, dataset provenance audit, and experiment code for our study on **domain adaptation in 3-class financial sentiment classification** (*positive*, *neutral*, *negative*).
 
 ### Research Questions
+
 1. **RQ1 (Domain Polarity Mismatch):** To what extent do general-purpose sentiment methods misclassify financial language, particularly by falsely assigning *negative* polarity to *neutral* descriptive accounting statements (e.g., *cost*, *liability*, *debt*, *depreciation*)?
 2. **RQ2 (Controlled Architecture vs. Domain Adaptation):** Under a strictly leakage-free evaluation protocol, how much classification improvement stems from domain-adaptive pretraining (`yiyanghkust/finbert-pretrain`) versus general-domain `bert-base-uncased` and traditional machine-learning baselines?
 3. **RQ3 (Linguistic Phenomenon Attribution):** Which linguistic phenomena—financial terminology, negation, hedging, numerical comparisons, or context-dependent expressions—drive model divergence?
 
 ### Results at a Glance
 
-Macro-F1; models trained on `sentences_allagree`, fine-tuned models averaged over 3 seeds. Details, intervals and
-tests are in the Step 2 and Step 3 sections below.
+Macro-F1; models trained on `sentences_allagree`, fine-tuned models averaged over 3 seeds. Details, intervals and tests are in the Step 2 and Step 3 sections below.
+
+The following table reports the original Step 2 results under a shared fine-tuning configuration. Independently tuned transformer results are presented in **Step 4**.
 
 | Model | PhraseBank test (N = 339) | SEntFiN 1.0 (N = 9,460) |
 |---|---:|---:|
@@ -28,20 +30,25 @@ tests are in the Step 2 and Step 3 sections below.
 | Loughran–McDonald (official dictionary) | 0.498 | 0.466 |
 | `ProsusAI/finbert` (off-the-shelf, zero-shot; SEntFiN only) | – | **0.727** |
 
-- **The pretrained encoder drives the gain:** BERT beats TF-IDF by about +0.10 in-domain and +0.20 to +0.24 on
-  SEntFiN (all intervals exclude zero).
-- **Financial pretraining adds nothing measurable** under one shared recipe: FinBERT-MLM is 0.01–0.03 below BERT
-  in-domain; the only positive cell is SEntFiN after 50agree training (+0.03).
-- **RQ1:** the general-purpose VADER lexicon recovers 14–34 points fewer gold-neutral sentences than
-  Loughran–McDonald; the fine-tuned encoders show no such gap.
+- **The pretrained encoder drives the gain:** BERT beats TF-IDF by about +0.10 in-domain and +0.20 to +0.24 on SEntFiN (all intervals exclude zero).
+- **Financial pretraining adds nothing measurable** under one shared recipe: FinBERT-MLM is 0.01–0.03 below BERT in-domain; the only positive cell is SEntFiN after 50agree training (+0.03).
+- **RQ1:** the general-purpose VADER lexicon recovers 14–34 points fewer gold-neutral sentences than Loughran–McDonald; the fine-tuned encoders show no such gap.
 - **Domain shift remains large:** the best controlled model reaches about 0.69 Macro-F1 on SEntFiN.
-- **Main open question:** FinBERT-MLM was not tuned separately, so its lag may reflect the shared recipe.
+- **Main open question from Step 2:** FinBERT-MLM was not tuned separately, so its lag may reflect the shared recipe.
+
+**Step 4 follow-up findings:**
+
+- **Independent hyperparameter tuning:** BERT-base and FinBERT-MLM were independently tuned over learning rates {2e-5, 3e-5} and batch sizes {16, 32}. Both models selected a learning rate of 3e-5 and batch size 32 using validation Macro-F1.
+- **Updated RQ2 results:** After tuning, BERT-base retained higher PhraseBank test Macro-F1 (0.976 vs. 0.958), while both models achieved nearly identical SEntFiN performance (0.690 vs. 0.691).
+- **Reduced performance gap:** The observed PhraseBank performance gap narrowed from approximately 0.030 under the original fixed recipe to 0.019 after independent tuning, but did not disappear.
+- **Interpretation:** The shared fine-tuning configuration may have contributed to the original performance difference, although comparisons across the original and tuned experiments are descriptive because their software environments differ.
 
 ---
 
 ## Step 1 Experimental Results (Leakage-Free Splits & Tier 1/2 Baselines)
 
 Full machine-readable artifacts are available in [`results/step1/`](results/step1/):
+
 - **Detailed Report:** [`results/step1/STEP1_REPORT.md`](results/step1/STEP1_REPORT.md)
 - **Summary Metrics & Calibration:** [`results/step1/summary_metrics.json`](results/step1/summary_metrics.json)
 - **Statistical Significance Tests:** [`results/step1/statistical_comparisons.json`](results/step1/statistical_comparisons.json)
@@ -74,7 +81,7 @@ All datasets are downloaded from pinned upstream commits with SHA-256 verificati
 | Model | Mean Accuracy ($\pm$ Std) | Mean Macro-F1 ($\pm$ Std) | Mean Neu→Neg Rate ($\pm$ Std) |
 |---|---:|---:|---:|
 | **VADER-style (custom)** | $0.8000 \pm 0.0242$ | **$0.7165 \pm 0.0371$** | $0.0082 \pm 0.0025$ |
-| **LM-style (custom)** | $0.7319 \pm 0.0187$ | **$0.6181 \pm 0.0267$** | $0.0215 \pm 0.0104$ |
+| **LM-style (custom)** | $0.7319 \pm 0.0187$ | **$0.6181 \pm 0.0267$** | $0.0215 \pm 0.0106$ |
 | **TF-IDF + Logistic Regression** | $0.8593 \pm 0.0240$ | **$0.8003 \pm 0.0419$** | $0.0123 \pm 0.0106$ |
 | **TF-IDF + Linear SVM** | **$0.8732 \pm 0.0131$** | **$0.8181 \pm 0.0276$** | **$0.0041 \pm 0.0039$** |
 
@@ -103,9 +110,11 @@ All datasets are downloaded from pinned upstream commits with SHA-256 verificati
 ### 6. Visualizations
 
 #### Confusion Matrices Across Baselines
+
 ![Confusion Matrices](results/step1/rq1_confusion_matrices.png)
 
 #### RQ1 Neutral-to-Negative Misclassification Comparison
+
 ![RQ1 Neutral to Negative Comparison](results/step1/rq1_neutral_to_negative_comparison.png)
 
 ---
@@ -131,6 +140,56 @@ Step 1. TF-IDF models tune C ∈ {0.01, 0.1, 1, 10} and the class weight on vali
 run). Hugging Face revisions are pinned in `src/transformer/finetune.py`; split files are checked against
 `data/splits/SHA256SUMS` before every run. Runs: 93 (24 baseline, 18 fine-tune, 50 CV, 1 zero-shot); the 28
 transformer runs on Apple MPS, the 65 lexicon and TF-IDF runs on CPU (Python 3.9.6, torch 2.8.0, transformers 4.57.6, scikit-learn 1.6.1; exact versions in `requirements-lock.txt`).
+
+### Transformer Setup: Independent Hyperparameter Tuning
+
+To further investigate RQ2, we extended the controlled transformer experiments with an independent hyperparameter tuning study for BERT-base and FinBERT-MLM. The original Step 2 experiments used an identical fine-tuning configuration for both models, ensuring comparability but leaving open the possibility that the observed performance gap was partially attributable to hyperparameter sensitivity.
+
+**Model Selection.** We retained the two pretrained checkpoints used in Step 2:
+
+- **BERT-base:** `google-bert/bert-base-uncased`, pretrained on general-domain text.
+- **FinBERT-MLM:** `yiyanghkust/finbert-pretrain`, a financial-domain BERT checkpoint trained with masked language modeling.
+
+Unlike the off-the-shelf `ProsusAI/finbert` model, FinBERT-MLM had not undergone supervised financial sentiment classification training. This allows us to examine financial-domain pretraining without introducing additional sentiment-label supervision.
+
+Both models were fine-tuned for three-class sentiment classification using the existing training pipeline. The pretrained encoder weights were preserved, while the task-specific classification heads were newly initialized. For FinBERT-MLM, tokenizer compatibility was explicitly verified against the pretrained vocabulary of 30,873 tokens to ensure correct tokenization across Transformers versions.
+
+**Dataset and Training Protocol.** The tuning study reused the locked Financial PhraseBank `sentences_allagree` split established in Step 1, consisting of 1,585 training, 340 validation, and 339 test sentences. The external SEntFiN 1.0 dataset contained 9,460 unambiguous, deduplicated financial headlines and was reserved exclusively for final evaluation.
+
+The original preprocessing and training procedures were preserved.
+
+| Parameter | Configuration |
+|---|---|
+| Models | BERT-base, FinBERT-MLM |
+| Training dataset | Financial PhraseBank (`sentences_allagree`) |
+| Maximum sequence length | 128 |
+| Optimizer | AdamW |
+| Weight decay | 0.01 |
+| Warmup ratio | 0.10 |
+| Gradient clipping | 1.0 |
+| Maximum epochs | 5 |
+| Early stopping patience | 2 |
+| Hyperparameter selection metric | Validation Macro-F1 |
+| Hyperparameter selection seed | 42 |
+| Final evaluation seeds | 42, 100, 2026 |
+| Final evaluation datasets | PhraseBank test, SEntFiN 1.0 |
+
+**Hyperparameter Search.** To examine whether model-specific fine-tuning settings could explain the original performance difference, learning rate and batch size were selected independently for each model.
+
+The search space consisted of:
+
+- Learning rates: {2e-5, 3e-5}
+- Batch sizes: {16, 32}
+
+This resulted in four configurations per model and eight configurations overall.
+
+**Stage 1 — Validation-Only Hyperparameter Selection.** Each configuration was trained using seed 42. For each model, the optimal configuration was selected exclusively according to validation Macro-F1. The locked PhraseBank test set and external SEntFiN holdout were not accessed during hyperparameter selection.
+
+**Stage 2 — Three-Seed Final Evaluation.** After selecting the optimal configuration independently for each model, the models were retrained using seeds 42, 100, and 2026. Final performance was evaluated on the locked PhraseBank test set and external SEntFiN holdout. Results were aggregated using the mean and sample standard deviation of Macro-F1 across the three seeds.
+
+The tuning study was executed on an NVIDIA Tesla T4 GPU in Google Colab using Python 3.13, PyTorch 2.14.1+cu130, and Transformers 5.22.1. The original Step 2 experiments were performed in a different software environment; consequently, comparisons between the original and independently tuned results are interpreted descriptively.
+
+All tuning outputs were stored separately from the original Step 2 experiments to preserve the fixed-recipe results.
 
 The three agreement levels are nested (a 100%-agreement sentence is also in 75agree and 50agree), so columns are
 compared within a config; across configs the comparison is descriptive.
@@ -230,8 +289,11 @@ comparison. McNemar tests are reported per seed (no single "primary" seed), with
 family; the BERT vs FinBERT-MLM difference on allagree test is significant in one of three seed families.
 
 ![Macro-F1 by config](results/step2/step2_macro_f1_by_config.png)
+
 ![Attribution](results/step2/step2_attribution.png)
+
 ![Confusion matrices, allagree test](results/step2/step2_confusion_matrices_allagree.png)
+
 ![External generalization](results/step2/step2_external_generalization.png)
 
 ---
@@ -303,7 +365,9 @@ general-purpose lexicons, small for the fine-tuned encoders. Inside the PhraseBa
 only 6–15 gold-neutral sentences, too few for a conclusion.
 
 ![Phenomenon error heatmap](results/step3/step3_phenomenon_error_heatmap.png)
+
 ![RQ1 accounting terms](results/step3/step3_rq1_accounting_terms.png)
+
 ![Attribution by phenomenon](results/step3/step3_attribution_by_phenomenon.png)
 
 ### Caveats
@@ -369,18 +433,211 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
   provided instead); the manifest file name in the audit (`splits/fpb_splits_sha256.json`) is replaced by
   `data/splits/SHA256SUMS` and `data/splits/assignments/`.
 
+**Step 4 follow-up.** The original fixed-recipe Step 2 experiment remains unchanged. Independent learning-rate and batch-size selection was subsequently performed in Step 4 to address the hyperparameter sensitivity question identified above.
+
+---
+
+## Step 4 Results: Independent Hyperparameter Tuning (RQ2)
+
+To address the remaining question from Step 2, we conducted an independent hyperparameter tuning study for BERT-base and FinBERT-MLM. The objective was to determine whether FinBERT-MLM's lower performance under the original shared fine-tuning configuration could be explained by differences in optimal learning rate and batch size.
+
+The study used the same locked `sentences_allagree` dataset split as Step 2. Hyperparameters were selected exclusively using validation Macro-F1 with seed 42. Final evaluation was performed using three independent training seeds (42, 100, and 2026).
+
+The experiment consisted of eight hyperparameter selection runs and six final evaluation runs.
+
+Results and visualizations are available in [`results/step4/`](results/step4/). The reproducible execution notebook is [`notebooks/tuning_hyperparameters_colab.ipynb`](notebooks/tuning_hyperparameters_colab.ipynb).
+
+### 4.1 Hyperparameter Selection Results
+
+The validation Macro-F1 scores for all eight configurations are shown below.
+
+| Model | Learning Rate | Batch Size | Validation Macro-F1 | Selected |
+|---|---|---|---:|:---:|
+| BERT-base | 2e-5 | 16 | 0.9602 | |
+| BERT-base | 2e-5 | 32 | 0.9551 | |
+| BERT-base | 3e-5 | 16 | 0.9563 | |
+| **BERT-base** | **3e-5** | **32** | **0.9631** | ✓ |
+| FinBERT-MLM | 2e-5 | 16 | 0.9483 | |
+| FinBERT-MLM | 2e-5 | 32 | 0.9487 | |
+| FinBERT-MLM | 3e-5 | 16 | 0.9476 | |
+| **FinBERT-MLM** | **3e-5** | **32** | **0.9554** | ✓ |
+
+Both models selected the same optimal configuration: a learning rate of 3e-5 and a batch size of 32.
+
+For BERT-base, validation Macro-F1 increased from 0.9602 under the original configuration (2e-5, batch size 16) to 0.9631 under the selected configuration.
+
+For FinBERT-MLM, validation Macro-F1 increased from 0.9483 to 0.9554.
+
+Although the selected hyperparameters were identical for both models, the independent search allowed us to evaluate whether the original shared training configuration was optimal within the investigated search space.
+
+The results do not establish that both models have identical globally optimal hyperparameters, since only four configurations were evaluated per model.
+
+![Validation Macro-F1 by learning rate and batch size](results/step4/hyperparameter_heatmaps.png)
+
+*Figure 1. Validation Macro-F1 across the four hyperparameter configurations for BERT-base and FinBERT-MLM. Both panels share the same color scale. Outlined cells indicate the selected configurations.*
+
+### 4.2 Final Three-Seed Evaluation
+
+After hyperparameter selection, both models were independently retrained using seeds 42, 100, and 2026.
+
+The selected learning rate and batch size were fixed across the three final runs for each model.
+
+#### Financial PhraseBank Test Performance
+
+| Model | Seed 42 | Seed 100 | Seed 2026 | Mean Macro-F1 ± SD |
+|---|---:|---:|---:|---:|
+| **BERT-base** | 0.9746 | 0.9790 | 0.9755 | **0.9764 ± 0.0023** |
+| FinBERT-MLM | 0.9539 | 0.9597 | 0.9597 | 0.9578 ± 0.0034 |
+
+BERT-base maintained the highest performance on the Financial PhraseBank test set, achieving a mean Macro-F1 of 0.9764 compared with 0.9578 for FinBERT-MLM.
+
+The absolute performance difference was approximately 0.0186 Macro-F1.
+
+The same performance ordering was observed across all three seeds, indicating a consistent descriptive advantage for BERT-base under the selected configurations.
+
+#### External SEntFiN Generalization
+
+| Model | Seed 42 | Seed 100 | Seed 2026 | Mean Macro-F1 ± SD |
+|---|---:|---:|---:|---:|
+| BERT-base | 0.6780 | 0.7013 | 0.6903 | 0.6899 ± 0.0117 |
+| **FinBERT-MLM** | 0.6846 | 0.6939 | 0.6959 | **0.6915 ± 0.0060** |
+
+On the external SEntFiN holdout, the two models achieved nearly identical mean Macro-F1 scores.
+
+FinBERT-MLM obtained a marginally higher average score (0.6915 versus 0.6899), corresponding to a difference of approximately 0.0016 Macro-F1.
+
+FinBERT-MLM also exhibited lower sample standard deviation across the three seeds. However, these differences were small, and the three-seed evaluation alone does not establish a statistically significant generalization advantage.
+
+Both models experienced a substantial performance reduction on SEntFiN compared with PhraseBank, indicating that cross-dataset generalization remains challenging.
+
+![Final Macro-F1 after independent hyperparameter selection](results/step4/final_model_comparison.png)
+
+*Figure 2. Mean Macro-F1 on Financial PhraseBank and external SEntFiN after independent hyperparameter selection. Error bars represent sample standard deviation across three training seeds.*
+
+### 4.3 Fixed-Recipe vs. Independently Tuned Performance
+
+The independently tuned models were compared with the original Step 2 results, where both models used a shared learning rate of 2e-5 and batch size 16.
+
+All values represent mean Macro-F1 across three training seeds.
+
+| Dataset | Model | Fixed Recipe | Independently Tuned | Difference |
+|---|---|---:|---:|---:|
+| PhraseBank | BERT-base | 0.974 | 0.976 | +0.002 |
+| PhraseBank | FinBERT-MLM | 0.944 | 0.958 | +0.014 |
+| SEntFiN | BERT-base | 0.685 | 0.690 | +0.005 |
+| SEntFiN | FinBERT-MLM | 0.669 | 0.691 | +0.022 |
+
+Values are rounded to three decimal places. Differences are descriptive comparisons between the original Step 2 results and the new tuning study.
+
+On PhraseBank, the performance gap between BERT-base and FinBERT-MLM decreased from approximately 0.030 under the original fixed recipe to 0.019 after independent tuning.
+
+This corresponds to a reduction of approximately 38% in the observed performance gap.
+
+The improvement was larger for FinBERT-MLM than for BERT-base. Nevertheless, FinBERT-MLM did not surpass BERT-base on the in-domain test set.
+
+On SEntFiN, the original fixed-recipe experiment favored BERT-base by approximately 0.016 Macro-F1. After tuning, both models achieved essentially equivalent performance, with FinBERT-MLM obtaining a marginally higher average.
+
+These results suggest that the original shared configuration was not optimal within the investigated search space. However, because the original Step 2 experiments and the tuning study used different software environments, the observed differences cannot be attributed exclusively to hyperparameter tuning.
+
+![Fixed-recipe versus independently tuned performance](results/step4/original_vs_tuned.png)
+
+*Figure 3. Comparison of the original fixed fine-tuning configuration and independently selected configurations. Scores are averaged across three training seeds, with error bars showing sample standard deviation.*
+
+### 4.4 RQ2 Discussion: Does Domain-Adaptive Pretraining Improve Financial Sentiment Classification?
+
+The independent hyperparameter tuning study provides additional evidence for RQ2 by examining whether FinBERT-MLM's lower performance in the original controlled comparison was attributable to the use of shared fine-tuning hyperparameters.
+
+**Effect of Independent Hyperparameter Selection.** Both BERT-base and FinBERT-MLM selected the same learning rate (3e-5) and batch size (32) based on validation Macro-F1. While this suggests that the two models favored similar training configurations within the investigated search space, it does not imply that their hyperparameter sensitivities are identical.
+
+Compared with the original fixed-recipe results, FinBERT-MLM exhibited a larger improvement in PhraseBank test Macro-F1 than BERT-base. Consequently, the performance gap between the two models narrowed from approximately 0.030 to 0.019.
+
+This finding indicates that the original performance difference was not fully explained by the shared fine-tuning recipe. Even after independently selecting hyperparameters, general-domain BERT-base retained higher in-domain classification performance.
+
+**Domain-Adaptive Pretraining versus General-Domain Pretraining.** The results suggest that additional financial-domain masked language model pretraining does not necessarily produce superior financial sentiment classification performance.
+
+Despite FinBERT-MLM's exposure to financial language during pretraining, BERT-base consistently achieved higher PhraseBank Macro-F1 across all three final evaluation seeds.
+
+This observation is compatible with the original Step 2 finding that the substantial improvement over traditional NLP baselines primarily came from using pretrained contextual representations rather than from financial-domain pretraining alone.
+
+However, the present comparison evaluates specific pretrained checkpoints rather than isolating the causal effect of domain adaptation. Differences in pretraining corpora, objectives, and training histories may also contribute to the observed performance gap.
+
+**Cross-Dataset Generalization.** The external SEntFiN evaluation provides a complementary perspective.
+
+Whereas BERT-base outperformed FinBERT-MLM on PhraseBank, the two models achieved nearly identical Macro-F1 scores on SEntFiN after tuning.
+
+FinBERT-MLM obtained a slightly higher mean score and lower variability across the three seeds, but the magnitude of this difference was too small to support a strong claim of superior cross-dataset generalization.
+
+More importantly, the substantial reduction in Macro-F1 for both models between PhraseBank and SEntFiN indicates that domain shift remains a major challenge.
+
+Financial-domain pretraining alone does not eliminate differences in vocabulary, sentence structure, and sentiment-label conventions between financial reports and news headlines.
+
+**Limitations.** Several limitations should be considered when interpreting the results.
+
+First, the hyperparameter search was deliberately small, covering only two learning rates and two batch sizes. Other learning rates, batch sizes, training durations, or scheduling strategies might produce different results.
+
+Second, hyperparameter selection was performed using a single seed (42), although the selected configurations were subsequently evaluated using three seeds.
+
+Third, the three-seed comparisons provide descriptive evidence but do not constitute a formal paired significance test.
+
+Finally, the tuning study used a newer PyTorch and Transformers environment than the original Step 2 experiments. Although pretrained model weights and tokenizer compatibility were explicitly verified, differences in software environments may contribute to the observed changes between fixed-recipe and tuned performance.
+
+**Conclusion for RQ2.** Overall, independent hyperparameter selection was associated with improved FinBERT-MLM performance relative to the original fixed-recipe results and reduced its observed performance gap with BERT-base.
+
+Nevertheless, BERT-base remained the stronger model on the Financial PhraseBank test set, while both models achieved comparable performance on the external SEntFiN holdout.
+
+These findings suggest that the original shared hyperparameter configuration may have contributed to the performance difference, but it is unlikely to fully explain FinBERT-MLM's lower in-domain classification performance.
+
+The results do not provide consistent evidence that financial-domain pretraining yields a substantial advantage over general-domain BERT for the evaluated three-class sentiment classification task.
+
+### 4.5 Seed-Level Robustness
+
+The final evaluation used three random seeds to examine the variability of the selected configurations.
+
+![Per-seed Macro-F1 comparison](results/step4/per_seed_performance.png)
+
+*Figure 4. Individual Macro-F1 scores for seeds 42, 100, and 2026 on the Financial PhraseBank test set and external SEntFiN holdout. The differences across seeds are descriptive and do not constitute a statistical significance test.*
+
+BERT-base consistently outperformed FinBERT-MLM on PhraseBank across all three seeds. On SEntFiN, the relative ordering varied across seeds, consistent with the small difference in mean performance.
+
+The limited number of seeds prevents strong conclusions regarding statistical significance or generalization stability.
+
+### 4.6 Reproducibility
+
+The tuning study uses the same locked Financial PhraseBank splits as the original experiments. Dataset integrity and tokenizer compatibility are verified before model training.
+
+The implementation is available in:
+
+- [`scripts/run_tuning.py`](scripts/run_tuning.py) — hyperparameter selection and final evaluation.
+- [`notebooks/tuning_hyperparameters_colab.ipynb`](notebooks/tuning_hyperparameters_colab.ipynb) — reproducible Google Colab execution.
+- [`src/analysis/tuning_figures.py`](src/analysis/tuning_figures.py) — visualization and summary generation.
+
+The execution pipeline generates three main summary artifacts:
+
+- `tuning_results.csv` — validation results for the eight search configurations.
+- `final_results.csv` — final evaluation results for six runs.
+- `selection.json` — validation-based hyperparameter selection record.
+
+The experiment writes its working results to `results/tuning/` and supports Google Drive backup and recovery during Colab execution.
+
+The four publication-ready figures and a dedicated Step 4 summary are available in [`results/step4/`](results/step4/).
+
+All final evaluations use the locked PhraseBank test set and SEntFiN holdout, neither of which participates in hyperparameter selection.
+
 ---
 
 ## Quick Start
 
 ### 1. Step 1 (data, splits, baselines)
+
 ```bash
 python3 colab/run_step1_colab.py --mode full --execute --fpb-config all --out-dir results/step1 --splits-dir data/splits --bootstrap-samples 10000
 ```
+
 `--fpb-config all` writes the locked manifests of all three agreement levels to `data/splits/` (git-ignored,
 regenerated deterministically; Step 2 runs record their SHA-256).
 
 ### 2. Step 2 (fine-tuning matrix, resumable; prints the plan without `--execute`)
+
 ```bash
 # official Loughran-McDonald dictionary (git-ignored; SHA-256 checked by src/baselines/lexicon_official.py)
 curl -L -o data/raw/LM_MasterDictionary_1993-2025.csv "https://drive.usercontent.google.com/download?id=1iq2RUf8qGFEAk1g8wQntP3habOnR3fXF&export=download&confirm=t"
@@ -390,13 +647,30 @@ python3 scripts/summarize_step2.py --runs-dir results/step2/runs --out-dir resul
 ```
 
 ### 3. Step 3 (diagnostic set and phenomenon analysis)
+
 ```bash
 python3 scripts/build_diagnostic_set.py --execute          # 300-sentence subset, key and rule tags
 python3 scripts/build_diagnostic_set.py --execute --rule-tags-only   # recompute rule tags only
 python3 scripts/run_step3_analysis.py                      # needs data/diagnostic/annotations_{a,b}.csv
 ```
 
-### 4. Unit tests (offline, synthetic fixtures, tiny local models)
+### 4. Step 4 (independent hyperparameter tuning)
+
+The tuning study independently selects hyperparameters for BERT-base and FinBERT-MLM using validation Macro-F1.
+
+```bash
+python3 scripts/run_tuning.py
+python3 scripts/run_tuning.py --phase all --execute
+```
+
+The first command displays the experiment plan without launching training. The second command executes validation-based hyperparameter selection followed by three-seed final evaluation.
+
+For GPU execution with Google Drive result backups, use the [Step 4 Colab Notebook](notebooks/tuning_hyperparameters_colab.ipynb).
+
+The experimental summaries and figures are available in [`results/step4/`](results/step4/).
+
+### 5. Unit tests (offline, synthetic fixtures, tiny local models)
+
 ```bash
 HF_HUB_OFFLINE=1 python3 -m unittest discover -s tests -v
 ```
@@ -410,22 +684,29 @@ essential_text/
 ├── AGENTS.md                  # Shared project rules and leakage-free methodology constraints
 ├── README.md                  # Project overview, results, and usage instructions
 ├── requirements.txt           # Python dependencies (imports only)
-├── requirements-lock.txt      # Exact versions of the run environment
+├── requirements-lock.txt      # Exact versions of the original Step 2 environment
 ├── annotation/
 │   └── GUIDELINES.md          # Five-phenomenon annotation guideline
 ├── data/
 │   ├── dataset_audit_verdict.json  # Pinned SHA-256 dataset provenance and row-level audit
 │   ├── splits/SHA256SUMS      # SHA-256 of the locked split files (the files themselves are regenerated)
-│   ├── splits/assignments/    # Text-free split / CV-fold / SEntFiN-holdout assignments (committed deliverable)
+│   ├── splits/assignments/    # Text-free split / CV-fold / SEntFiN-holdout assignments
 │   └── diagnostic/            # 300-sentence diagnostic set: items, key, rule tags, LLM annotations A/B, README
 ├── proposal/                  # Revised proposal (LaTeX/PDF), rubric audit, verification script
 ├── results/
 │   ├── step1/                 # Step 1 outputs from Google Colab
-│   ├── step2/                 # Step 2 report, statistics, attribution, figures, runs/ with per-run predictions
-│   └── step3/                 # Step 3 report, agreement, phenomenon analysis, figures
+│   ├── step2/                 # Step 2 report, statistics, attribution, figures, runs/
+│   ├── step3/                 # Step 3 report, agreement, phenomenon analysis, figures
+│   └── step4/                 # Independent hyperparameter tuning results and visualizations
+│       ├── README.md
+│       ├── hyperparameter_heatmaps.png
+│       ├── final_model_comparison.png
+│       ├── original_vs_tuned.png
+│       └── per_seed_performance.png
 ├── scripts/
 │   ├── run_step2.py           # Resumable Step 2 run matrix (baselines, fine-tune, CV, zero-shot)
 │   ├── summarize_step2.py     # Multi-seed statistics, McNemar + Holm, bootstrap, attribution, figures
+│   ├── run_tuning.py          # Independent hyperparameter tuning and three-seed evaluation
 │   ├── build_diagnostic_set.py
 │   ├── run_step3_analysis.py  # Cohen's kappa, per-phenomenon errors and attribution, RQ1 analysis
 │   └── export_split_assignments.py  # Text-free split / CV-fold assignments with a --check mode
@@ -434,13 +715,15 @@ essential_text/
 │   ├── baselines/             # Tier 1 official + custom lexicons, Tier 2 TF-IDF + LR/SVM, registry
 │   ├── transformer/           # Tier 3 fine-tuning and zero-shot scoring (PyTorch + Hugging Face)
 │   ├── evaluation/            # Metrics, ECE, McNemar, paired bootstrap, multi-seed statistics
-│   └── analysis/              # Phenomenon tagger and per-phenomenon attribution
+│   └── analysis/              # Phenomenon attribution and tuning_figures.py
 ├── colab/
 │   └── run_step1_colab.py     # End-to-end Step 1 pipeline runner (smoke & full mode)
 ├── notebooks/
 │   ├── build_step1_notebook.py
-│   └── step1_data_and_baselines_colab.ipynb
-└── tests/                     # Offline unittest suite (189 tests)
+│   ├── step1_data_and_baselines_colab.ipynb
+│   ├── build_tuning_notebook.py
+│   └── tuning_hyperparameters_colab.ipynb
+└── tests/                     # Offline unittest suite
 ```
 
 ### Code Structure: Three Independent Parts
@@ -453,6 +736,8 @@ its owner; the parts talk to each other only through the hand-off files listed b
 | **A. Data & Evaluation** | Dataset download, dedup, locked splits; metrics, McNemar, bootstrap, multi-seed statistics, attribution, reports and figures | `src/data/`, `src/evaluation/`, `src/analysis/attribution.py`, `scripts/export_split_assignments.py`, `scripts/summarize_step2.py`, `scripts/run_step3_analysis.py` | `data/splits/`, `results/step2/*.json` and figures, `results/step3/` |
 | **B. Baselines & Phenomena** | Tier 1 lexicons, Tier 2 TF-IDF + LR/SVM; five-phenomenon tagger and the 300-sentence diagnostic set | `src/baselines/`, `src/analysis/phenomena.py`, `scripts/build_diagnostic_set.py`, `annotation/`, Step 1 runners (`colab/`, `notebooks/`) | `results/step1/`, baseline runs in `results/step2/runs/`, `data/diagnostic/` |
 | **C. Transformers** | Tier 3 fine-tuning (`bert-base-uncased`, FinBERT-MLM), 5-fold CV, zero-shot SEntFiN scoring; the run matrix | `src/transformer/`, `scripts/run_step2.py` | transformer runs in `results/step2/runs/` |
+
+**Step 4 extension.** Independent hyperparameter selection extends Part C (Transformers) without introducing a new independent pipeline component. It reuses the locked data splits from Part A and the transformer fine-tuning implementation from Part C, producing separate tuning results and visualizations.
 
 Hand-off files (read-only for the other parts):
 
