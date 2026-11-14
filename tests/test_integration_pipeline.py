@@ -298,6 +298,15 @@ class TestTuningNotebookStructure(unittest.TestCase):
             '[sys.executable, "scripts/run_tuning.py", "--phase", "all", "--execute"]',
             code_text,
         )
+        self.assertIn("Results Visualization and Analysis", all_cell_text)
+        self.assertIn("generate_from_available_results", code_text)
+        self.assertIn("results/tuning/figures", code_text)
+        markdown_text = "".join(
+            "".join(cell.get("source", []))
+            for cell in notebook.get("cells", [])
+            if cell.get("cell_type") == "markdown"
+        )
+        self.assertNotIn("broken", markdown_text.lower())
         for override in ("--learning-rate", "--batch-size", "--val-only", "--seeds"):
             self.assertNotIn(override, code_text)
 
