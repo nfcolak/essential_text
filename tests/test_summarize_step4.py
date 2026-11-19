@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -132,6 +133,77 @@ class TempTreeCase(unittest.TestCase):
         self.tmp = tempfile.mkdtemp(prefix="step4_stats_")
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.tree = Tree(self.tmp, identical=self.identical)
+
+
+class FiveSeedTests(TempTreeCase):
+    extra_seeds = (7, 123)
+
+    def setUp(self):
+        super().setUp()
+        self.extra_dir = os.path.join(self.tmp, "fixed_extra")
+        rng = np.random.default_rng(123)
+        for recipe in s4.RECIPES:
+            for model in s4.MODELS:
+                for seed in self.extra_seeds:
+                    path = self.tree.run_dir(recipe, model, seed)
+                    if recipe == "fixed":
+                        path = self.fixed_extra_path(model, seed)
+                    preds = {split: _predictions(y, ACCURACY[recipe, model], rng)
+                             for split, y in self.tree.labels.items()}
+                    _write_run(path, model, seed, TUNED[model] if recipe == "tuned" else FIXED,
+                               preds, self.tree.ids, self.tree.labels)
+
+    def fixed_extra_path(self, model, seed):
+        return os.path.join(self.extra_dir, s4.CONFIG, model, f"seed{seed}")
+
+    def test_default_outputs_match_pre_upgrade_goldens(self):
+        code, _, err = self.tree.main()
+        self.assertEqual(code, 0, err)
+        # Captured before adding the flags, with only the temporary root normalized.
+        golden_sha256 = {
+            s4.JSON_NAME: "0cef8e5f8f7e79dbc762e873c74389e51b5741dedd319199caeb6f21c7f38218",
+            s4.REPORT_NAME: "b3844902bb3d405005a4007ab9b183329fc8e565c3c2a285af9dc27811826e32",
+        }
+        for name, digest in golden_sha256.items():
+            with self.subTest(name=name), open(os.path.join(self.tree.out, name), "rb") as handle:
+                contents = handle.read().replace(s4._rel(self.tmp).encode(), b"<synthetic-root>")
+                self.assertEqual(hashlib.sha256(contents).hexdigest(), digest)
+
+    def test_five_seed_report_uses_fallback_and_suffixed_paths(self):
+        primary = self.tree.run_dir("fixed", "bert_base", 7)
+        shutil.copytree(self.fixed_extra_path("bert_base", 7), primary)
+        argv = ("--seeds", "42,100,2026,7,123", "--fixed-extra-dir", self.extra_dir,
+                "--suffix", "_5seeds")
+        code, _, err = self.tree.main(*argv)
+        self.assertEqual(code, 0, err)
+        with open(os.path.join(self.tree.out, "step4_statistics_5seeds.json"), encoding="utf-8") as handle:
+            stats = json.load(handle)
+        seeds = [42, 100, 2026, 7, 123]
+        self.assertEqual(stats["protocol"]["seeds"], seeds)
+        self.assertIn("over the 5 seeds", stats["protocol"]["mcnemar"])
+        fixed_dirs = stats["run_dirs"]["fixed"]
+        self.assertEqual(fixed_dirs["bert_base"]["7"], s4._rel(primary))
+        self.assertEqual(fixed_dirs["finbert_mlm"]["123"], s4._rel(self.fixed_extra_path("finbert_mlm", 123)))
+        for recipe in s4.RECIPES:
+            for model in s4.MODELS:
+                for split in s4.SPLITS:
+                    score = stats["scores"][model][recipe][split]
+                    self.assertEqual(set(score["macro_f1_by_seed"]), set(map(str, seeds)))
+                    self.assertEqual(score["macro_f1"]["n"], 5)
+        for split in s4.SPLITS:
+            self.assertEqual(set(stats["gap_change"][split]["per_seed_delta"]), set(map(str, seeds)))
+            for comparison in stats["comparisons"][split].values():
+                self.assertEqual(comparison["n_seeds"], 5)
+                self.assertEqual(set(comparison["p_holm_by_seed"]), set(map(str, seeds)))
+        with open(os.path.join(self.tree.out, "STEP4_REPORT_5seeds.md"), encoding="utf-8") as handle:
+            report = handle.read()
+        self.assertIn("Pre-specified seeds in this analysis were 42, 100, 2026.", report)
+        self.assertIn("Seeds added later were 7, 123.", report)
+        self.assertIn("All 20 runs", report)
+        self.assertIn("Macro-F1 seed 123", report)
+        self.assertFalse(os.path.exists(os.path.join(self.tree.out, s4.JSON_NAME)))
+        self.assertFalse(os.path.exists(os.path.join(self.tree.out, s4.REPORT_NAME)))
+        self.assertEqual(self.tree.main(*argv, "--check")[0], 0)
 
 
 class SummaryTests(TempTreeCase):

@@ -45,13 +45,28 @@ The following table reports the original Step 2 results under a shared fine-tuni
 
 - **Same recipe chosen for both:** validation Macro-F1 selects learning rate 3e-5 and batch size 32 for BERT-base and
   FinBERT-MLM (for BERT by a noise-level margin of 0.002).
-- **The in-domain gap shrinks but stays:** PhraseBank test, BERT − FinBERT goes from +0.030 [+0.006, +0.057] (fixed
-  recipe) to +0.017 [−0.005, +0.043] (tuned); BERT is ahead in every seed.
-- **SEntFiN flips to a tie:** tuned FinBERT-MLM is +0.017 ahead, interval [−0.004, +0.044]; no generalisation
-  advantage is demonstrated.
-- **Interpretation:** part of FinBERT-MLM's Step 2 lag came from the shared recipe; financial pretraining still shows
-  no demonstrated advantage (see [Step 4](#step-4-results-independent-hyperparameter-tuning-rq2)).
+- **With five seeds the in-domain BERT lead is not demonstrated.** PhraseBank test, BERT − FinBERT:
+  - fixed recipe: +0.023 [−0.002, +0.050];
+  - tuned recipe: +0.012 [−0.010, +0.034].
+  - With the three pre-specified seeds the fixed-recipe gap was +0.030 [+0.006, +0.057].
+- **On SEntFiN the tuned FinBERT-MLM is ahead:** +0.023 [+0.002, +0.048] with five seeds, against +0.017 [−0.004, +0.044]
+  with three. This is the only BERT-vs-FinBERT interval that excludes zero, and it just does.
+- **Interpretation:** part of FinBERT-MLM's Step 2 lag came from the shared recipe. Financial pretraining gives at most
+  a small out-of-domain advantage after tuning, and no in-domain one (see
+  [Step 4](#step-4-results-independent-hyperparameter-tuning-rq2)).
 
+**Upgrade round (post hoc):**
+
+- **A zero-shot local LLM generalises far better than any PhraseBank-trained model.** `qwen2.5:7b` (temperature 0)
+  versus BERT-base trained on PhraseBank:
+  - in-domain it is 0.04 below (0.934 on PhraseBank test);
+  - out of domain it is far ahead: SEntFiN +0.14 (0.825), FiQA +0.22 (0.603), Twitter +0.11 (0.743), all intervals far
+    from zero. It also beats off-the-shelf ProsusAI/finbert on SEntFiN (0.727).
+  - The LLM may have seen these public datasets during pretraining
+    ([Extensions §5](#5-zero-shot-llm-baseline-scriptsrun_llm_zeroshotpy)).
+- **The whole 50agree test split (726 sentences) is now phenomenon-annotated,** with the same blind LLM annotators.
+  Negation grows from about 10 to 25 sentences and financial terminology to 38; the domain effect stays
+  indistinguishable from zero in every phenomenon ([Step 3](#full-50agree-test-split-726-sentences)).
 ---
 
 ## Step 1 Experimental Results (Leakage-Free Splits & Tier 1/2 Baselines)
@@ -347,7 +362,36 @@ same two models. The v1 files are kept as `annotations_{a,b}_v1.csv`.
 Human-LLM agreement is high (κ 0.82 to 0.95) but below the agreement between the two LLMs. Most disagreements
 are in hedging and numerical comparison (10 sentences each against the consensus). The human prevalence of
 context-dependent sentences (15%) matches the widened v2 definition. Which guideline version was used is not
-recorded.
+recorded. A second human pass can be added without code changes: instructions in
+[`annotation/HUMAN_ANNOTATOR_2.md`](annotation/HUMAN_ANNOTATOR_2.md), template
+`data/diagnostic/annotations_human2_template.csv`. `analyze_human_annotation.py` then also reports human-human κ.
+
+#### Full 50agree test split (726 sentences)
+
+The 300-item set has too few negation and financial-terminology sentences for any conclusion. The other 426
+sentences of the 50agree test split were therefore annotated as well (`data/diagnostic/extension/`, blind file
+`items.csv`, seeded order). The annotators were the same two blind LLMs (Claude Sonnet 5.5 and Gemini 3.8 Flash) under
+guideline v2. Agreement A-B on the extension: κ 0.88 to 1.00. `scripts/analyze_diagnostic_extension.py` analyses
+the whole split with the Step 3 method
+([`results/step3/full_split/REPORT.md`](results/step3/full_split/REPORT.md)).
+
+The union is not a selected subset, so prevalences are natural.
+
+| Phenomenon | n (neg / neu / pos) | Error BERT | Error FinBERT-MLM | Error TF-IDF SVM | Error zero-shot LLM | Δarch [95% CI] | Δdomain [95% CI] |
+|---|---|---:|---:|---:|---:|---|---|
+| financial terminology | 38 (10 / 11 / 17) | 0.175 | 0.175 | 0.211 | 0.132 | +0.035 [−0.123, +0.193] | +0.000 [−0.123, +0.132] |
+| negation | 25 (5 / 18 / 2) | 0.147 | 0.213 | 0.280 | 0.360 | +0.133 [−0.040, +0.320] | −0.067 [−0.227, +0.080] |
+| hedging | 117 (15 / 71 / 31) | 0.120 | 0.137 | 0.248 | 0.154 | +0.128 [+0.040, +0.214] | −0.017 [−0.077, +0.048] |
+| numerical comparison | 139 (54 / 7 / 78) | 0.043 | 0.096 | 0.151 | 0.094 | +0.108 [+0.043, +0.175] | −0.053 [−0.103, −0.007] |
+| context-dependent | 114 (43 / 2 / 69) | 0.038 | 0.035 | 0.088 | 0.053 | +0.050 [+0.000, +0.102] | +0.003 [−0.038, +0.044] |
+
+Errors are on the tagged sentences, three-seed means for the fine-tuned models (50agree training); Δ = accuracy
+differences (Δarch = BERT − TF-IDF SVM, Δdomain = FinBERT-MLM − BERT), seed + sentence bootstrap.
+
+- **Architecture effect:** survives Holm correction (10 tests) only for numerical comparison (Holm p = 0.016).
+- **Domain effect:** indistinguishable from zero everywhere after Holm. Its raw interval for numerical comparison
+  favours BERT (Holm p = 0.18).
+- **Negation:** with 25 sentences it still allows only ±0.15-0.20 intervals.
 
 | Phenomenon | κ A–B | κ A–rules | κ B–rules | consensus n |
 |---|---:|---:|---:|---:|
@@ -431,7 +475,7 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 
 - **Annotation.** The proposal planned double annotation by two team members; it was done by two blind LLM
   annotators (above), and one team member tagged all 300 sentences as a human check (κ against the LLM tags
-  0.82 to 0.95, above); a second human annotator was not added.
+  0.82 to 0.95, above); a second human pass is prepared (instructions and template) but not yet done.
 - **Tier 1 lexicons.** Step 1 used custom finance-adjusted word lists under the names VADER and Loughran–McDonald;
   the official lexicons (plain, and with the proposal's validation-tuned thresholds and LM negation handling) were
   added in Step 2 and are now the headline Tier 1 rows.
@@ -588,13 +632,39 @@ In plain words:
 *Figure 3. Fixed recipe (Step 2 runs) and independently tuned recipe; three-seed means with sample sd. Both from
 the same environment.*
 
+#### Five seeds (post hoc)
+
+Two more seeds (7 and 123) were added to all four run sets after the three-seed results were known, to shrink the
+seed term ([`results/step4/STEP4_REPORT_5seeds.md`](results/step4/STEP4_REPORT_5seeds.md)). The three-seed report above
+stays the pre-specified analysis.
+
+| Split | Comparison | Δ Macro-F1 (5 seeds) | 95% interval | Δ (3 seeds) |
+|---|---|---:|---|---:|
+| PhraseBank test | fixed BERT − fixed FinBERT | +0.0232 | [−0.0017, +0.0495] | +0.0295 |
+| PhraseBank test | tuned BERT − tuned FinBERT | +0.0115 | [−0.0101, +0.0335] | +0.0166 |
+| PhraseBank test | tuned − fixed, FinBERT | +0.0084 | [−0.0114, +0.0310] | +0.0096 |
+| SEntFiN | fixed BERT − fixed FinBERT | +0.0023 | [−0.0218, +0.0293] | +0.0159 |
+| SEntFiN | tuned BERT − tuned FinBERT | −0.0234 | [−0.0479, −0.0015] | −0.0171 |
+| SEntFiN | tuned − fixed, FinBERT | +0.0156 | [−0.0081, +0.0423] | +0.0258 |
+| PhraseBank test | gap change (tuned − fixed) | −0.0118 | [−0.0395, +0.0132] | −0.0129 |
+| SEntFiN | gap change (tuned − fixed) | −0.0257 | [−0.0598, +0.0051] | −0.0330 |
+
+What the two extra seeds change:
+
+- **PhraseBank, fixed recipe:** BERT's in-domain lead was significant with three seeds. With five it is +0.023 and its
+  interval reaches zero: seed 7 is FinBERT's best run so far (0.971).
+- **SEntFiN, tuned recipe:** tuned FinBERT-MLM is ahead by 0.023, and the interval now just excludes zero.
+- **Gap change:** both gap changes keep intervals that contain zero.
+
 ### 4.4 RQ2 discussion
 
 - **Effect of the shared recipe.** The Step 2 recipe was close to optimal for BERT and slightly unfavourable for
   FinBERT-MLM. Tuning narrows FinBERT's in-domain lag but does not close it: BERT-base remains ahead on PhraseBank
-  in every seed (seed-level deltas +0.007, +0.022, +0.021).
-- **Generalisation.** On SEntFiN the tuned FinBERT-MLM is slightly ahead, but with three seeds and seed-to-seed
-  spreads of up to 0.05 on this set, the evidence does not support a generalisation advantage.
+  in every one of the three pre-specified seeds (seed-level deltas +0.007, +0.022, +0.021), but with five seeds the
+  in-domain lead is no longer distinguishable from zero (+0.012 tuned, +0.023 fixed).
+- **Generalisation.** On SEntFiN the tuned FinBERT-MLM is ahead. With three seeds the interval contained zero; with
+  five it just excludes it (+0.023 [+0.002, +0.048]). This is post hoc and marginal, so it is a small out-of-domain
+  advantage at most.
 - **Answer to RQ2 after Step 4.** Within this small grid, financial-domain pretraining gives no demonstrated
   advantage over general-domain BERT for three-class sentence sentiment. Part of FinBERT-MLM's Step 2 lag was
   recipe-related.
@@ -726,7 +796,10 @@ financial text and then fine-tuned with the unchanged Step 2 recipe (3 levels ×
 - Pretraining: one pass, 5,128 steps, batch 32 × 256 tokens, lr 5e-5, 15% masking, Kaggle T4 (fp16, 44 min); MLM
   loss 2.33 (first 50 steps) → 1.38 (last steps). Vocabulary, token ids and the pooler (not trained) are unchanged
   (checked). This is about 1% of FinBERT-MLM's 4.9B pretraining tokens. Logs: `results/extensions/dapt_train_log.json`,
-  `results/extensions/dapt_corpus_stats.json` (the checkpoint itself is not committed).
+  `results/extensions/dapt_corpus_stats.json`. The checkpoint is on the Hugging Face Hub:
+  [`necatifcolak/essential-text-bert-dapt`](https://huggingface.co/necatifcolak/essential-text-bert-dapt)
+  (`model.safetensors` SHA-256 `300399b9…6b`, the value recorded in every `bert_dapt` run), so
+  `run_extra_external.py --dapt-model` can use it without the Kaggle pretraining step.
 
 This splits `Δdomain` into `Δcorpus = bert_dapt − BERT` (financial text, vocabulary fixed) and
 `Δrest = FinBERT-MLM − bert_dapt` (FinBERT's own vocabulary plus its much larger corpus). Macro-F1 deltas
@@ -743,6 +816,43 @@ Continued pretraining on 42M tokens of 10-K text moves BERT by at most about 0.0
 sign across sets or training levels. Where FinBERT-MLM does beat BERT (Twitter, and SEntFiN after 50agree training),
 the gain sits in `Δrest`, i.e. in FinBERT's own vocabulary and its 100× larger financial corpus, not in a modest
 amount of financial text alone. The two parts of `Δrest` cannot be separated here.
+
+### 5. Zero-shot LLM baseline (`scripts/run_llm_zeroshot.py`)
+
+**Setup.**
+
+- Model: a local open-weight LLM, `qwen2.5:7b` via Ollama (digest `845dbda0…697e`), temperature 0, seed 42, JSON
+  output restricted to the three labels.
+- Prompt: one fixed instruction, no examples, no training. It is recorded in every `result.json`.
+- Reproducibility: raw answers are cached in `results/llm_zeroshot/<set>/raw.jsonl`; there were 0 invalid answers in
+  23,372 sentences.
+- Comparison: `scripts/summarize_llm_zeroshot.py` compares against the fixed-recipe fine-tuned models trained on
+  PhraseBank with seed + sentence bootstrap and per-seed McNemar
+  ([`results/llm_zeroshot/REPORT.md`](results/llm_zeroshot/REPORT.md)).
+
+| Test set | n | Zero-shot LLM | Δ vs BERT-base [95% CI] | Δ vs FinBERT-MLM [95% CI] |
+|---|---:|---:|---|---|
+| PhraseBank allagree test | 339 | 0.934 | −0.040 [−0.076, −0.004] | −0.010 [−0.050, +0.030] |
+| PhraseBank 50agree test | 726 | 0.819 | −0.053 [−0.088, −0.018] | −0.027 [−0.063, +0.010] |
+| SEntFiN | 9,460 | 0.825 | +0.140 [+0.117, +0.159] | +0.156 [+0.128, +0.183] |
+| FiQA | 1,110 | 0.603 | +0.222 [+0.192, +0.253] | +0.255 [+0.193, +0.312] |
+| Twitter Financial News | 11,737 | 0.743 | +0.109 [+0.092, +0.127] | +0.080 [+0.061, +0.099] |
+
+Macro-F1. The reference models were trained on allagree, except on the 50agree test set (50agree training). On FiQA
+and Twitter the references are the models trained on allagree.
+
+**Findings.**
+
+- **In domain** the fine-tuned encoders keep a small lead.
+- **Out of domain** the zero-shot LLM wins by 0.08 to 0.26 Macro-F1. That is far more than anything domain
+  pretraining achieved (Δdomain at most about ±0.05), and more than off-the-shelf ProsusAI/finbert on SEntFiN (0.727).
+  The PhraseBank-trained models learn PhraseBank's own label convention, which does not carry over to headlines or
+  tweets.
+- **Caveats:**
+  - Qwen2.5 may have seen PhraseBank, SEntFiN, FiQA or the Twitter set during pretraining; there is no way to rule
+    this out for public datasets.
+  - FiQA neutral F1 is low for every model (0.26 here), because its labels come from thresholded continuous scores.
+  - This is one model and one prompt, not a tuned LLM baseline.
 
 ---
 
@@ -774,6 +884,8 @@ python3 scripts/build_diagnostic_set.py --execute          # 300-sentence subset
 python3 scripts/build_diagnostic_set.py --execute --rule-tags-only   # recompute rule tags only
 python3 scripts/run_step3_analysis.py                      # needs data/diagnostic/annotations_{a,b}.csv
 python3 scripts/analyze_human_annotation.py                # human vs LLM agreement (--check: recompute only)
+python3 scripts/build_diagnostic_extension.py --execute    # the other 426 test sentences -> data/diagnostic/extension/
+python3 scripts/analyze_diagnostic_extension.py            # full 726-sentence split (needs extension/annotations_{a,b}.csv)
 ```
 
 ### 4. Step 4 (independent hyperparameter tuning)
@@ -789,6 +901,7 @@ The first command displays the experiment plan without launching training. The s
 
 ```bash
 python3 scripts/summarize_step4.py          # paired statistics -> results/step4/STEP4_REPORT.md (--check: recompute only)
+python3 scripts/summarize_step4.py --seeds 42,100,2026,7,123 --suffix _5seeds   # five-seed report (post hoc)
 ```
 
 For GPU execution with Google Drive result backups, use the [Step 4 Colab Notebook](notebooks/tuning_hyperparameters_colab.ipynb).
@@ -804,6 +917,8 @@ python3 scripts/build_dapt_corpus.py --execute              # 10-K corpus for th
 python3 scripts/dapt_mlm.py --corpus data/raw/dapt/corpus.txt --out-dir models/dapt   # continued MLM (run on a CUDA GPU)
 python3 scripts/run_extra_external.py --dapt-model models/dapt/model   # plan; add --execute --only N per run
 python3 scripts/analyze_extra_external.py                   # tables, attribution, reproduction check
+python3 scripts/run_llm_zeroshot.py --execute               # zero-shot LLM (local Ollama, qwen2.5:7b), resumable
+python3 scripts/summarize_llm_zeroshot.py                   # zero-shot vs fine-tuned comparison
 ```
 
 ### 6. Unit tests (offline, synthetic fixtures, tiny local models)
@@ -828,12 +943,13 @@ essential_text/
 │   ├── splits/SHA256SUMS      # SHA-256 of the locked split files (the files themselves are regenerated)
 │   ├── splits/SHA256SUMS.extra  # SHA-256 of extra_external.json (extensions only)
 │   ├── splits/assignments/    # Text-free split / CV-fold / SEntFiN-holdout assignments
-│   └── diagnostic/            # 300-sentence diagnostic set: items, key, rule tags, LLM annotations A/B, human pass, README
+│   └── diagnostic/            # 300-sentence diagnostic set (items, key, rule tags, LLM annotations A/B, human pass);
+│                              # extension/ = the other 426 test sentences with their LLM annotations
 ├── proposal/                  # Revised proposal (LaTeX/PDF), rubric audit, verification script
 ├── results/
 │   ├── step1/                 # Step 1 outputs from Google Colab
 │   ├── step2/                 # Step 2 report, statistics, attribution, figures, runs/ with per-run predictions
-│   ├── step3/                 # Step 3 report, agreement, phenomenon analysis, figures
+│   ├── step3/                 # Step 3 report, agreement, phenomenon analysis, figures; full_split/ (726 sentences)
 │   ├── tuning/                # Step 4 runs (selection/, final/ with per-run predictions), CSVs, selection.json
 │   ├── step4/                 # Step 4 statistics (STEP4_REPORT.md, step4_statistics.json), summary, figures
 │   │   ├── README.md
@@ -844,6 +960,7 @@ essential_text/
 │   │   ├── final_model_comparison.png
 │   │   ├── original_vs_tuned.png
 │   │   └── per_seed_performance.png
+│   ├── llm_zeroshot/          # Zero-shot LLM runs (raw answers, predictions), summary.json, REPORT.md
 │   └── extensions/            # Post-hoc robustness checks: tokenizer comparison, SEntFiN entity subsets
 ├── scripts/
 │   ├── run_step2.py           # Resumable Step 2 run matrix (baselines, fine-tune, CV, zero-shot)
@@ -854,6 +971,10 @@ essential_text/
 │   ├── build_diagnostic_set.py
 │   ├── run_step3_analysis.py  # Cohen's kappa, per-phenomenon errors and attribution, RQ1 analysis
 │   ├── analyze_human_annotation.py  # Human vs LLM annotation agreement (Cohen's kappa)
+│   ├── build_diagnostic_extension.py    # Blind item file for the other 426 50agree test sentences
+│   ├── analyze_diagnostic_extension.py  # Phenomenon analysis on the full 726-sentence test split
+│   ├── run_llm_zeroshot.py          # Extension: zero-shot LLM baseline (local Ollama)
+│   ├── summarize_llm_zeroshot.py    # Extension: zero-shot vs fine-tuned statistics
 │   ├── export_split_assignments.py  # Text-free split / CV-fold assignments with a --check mode
 │   ├── analyze_tokenizers.py  # Extension: BERT vs FinBERT-MLM vocabulary and tokenization
 │   ├── analyze_sentfin_entities.py  # Extension: SEntFiN single- vs multi-entity headlines
@@ -875,7 +996,7 @@ essential_text/
 │   ├── step1_data_and_baselines_colab.ipynb
 │   ├── build_tuning_notebook.py
 │   └── tuning_hyperparameters_colab.ipynb
-└── tests/                     # Offline unittest suite (284 tests)
+└── tests/                     # Offline unittest suite (298 tests)
 ```
 
 ### Code Structure: Three Independent Parts

@@ -70,3 +70,11 @@ measures how well the LLM tags match a human reading.
 - Citation: Malo, P., Sinha, A., Korhonen, P., Wallenius, J., and Takala, P. (2014). "Good debt or bad debt: Detecting
   semantic orientations in economic texts." *Journal of the Association for Information Science and Technology*, 65(4).
 - The SEntFiN 1.0 data used for the external test is not redistributed here; only its ids and predictions are stored in the results.
+
+## Extension: the rest of the 50agree test split
+
+`extension/` holds the other 426 sentences of the 50agree test split (`items.csv`: `ext_id,text`, seeded order;
+`key.json`: record ids and gold labels; `rule_tags.csv`), annotated blind by the same two LLM annotators with
+guideline v2 (`extension/annotations_a.csv`, `extension/annotations_b.csv`; header `diag_id` holds the `e###` ids).
+Together with the 300 items this covers the whole 726-sentence test split; see `scripts/analyze_diagnostic_extension.py`
+and `results/step3/full_split/`.

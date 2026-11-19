@@ -10,3 +10,11 @@
 {"event": "end", "run_dir": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed100", "wall_seconds": 87.17090201377869, "timestamp": "2026-11-19T13:19:19.007592+00:00", "error": null}
 {"event": "start", "run_dir": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed2026", "wall_seconds": null, "timestamp": "2026-11-19T13:19:21.613847+00:00", "error": null}
 {"event": "end", "run_dir": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed2026", "wall_seconds": 3507.283171892166, "timestamp": "2026-11-19T14:17:48.897114+00:00", "error": null}
+{"event": "start", "run_dir": "results/tuning/final/sentences_allagree/bert_base/lr3e-05_bs32_seed7", "wall_seconds": null, "timestamp": "2026-11-19T14:35:23.712546+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/final/sentences_allagree/bert_base/lr3e-05_bs32_seed7", "wall_seconds": 87.84993314743042, "timestamp": "2026-11-19T14:36:51.562696+00:00", "error": null}
+{"event": "start", "run_dir": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed7", "wall_seconds": null, "timestamp": "2026-11-19T14:38:38.171840+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed7", "wall_seconds": 88.25177788734436, "timestamp": "2026-11-19T14:40:06.423824+00:00", "error": null}
+{"event": "start", "run_dir": "results/tuning/final/sentences_allagree/bert_base/lr3e-05_bs32_seed123", "wall_seconds": null, "timestamp": "2026-11-19T14:42:05.519908+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/final/sentences_allagree/bert_base/lr3e-05_bs32_seed123", "wall_seconds": 246.11237478256226, "timestamp": "2026-11-19T14:46:11.632384+00:00", "error": null}
+{"event": "start", "run_dir": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed123", "wall_seconds": null, "timestamp": "2026-11-19T14:47:23.170623+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed123", "wall_seconds": 91.42404985427856, "timestamp": "2026-11-19T14:48:54.594933+00:00", "error": null}

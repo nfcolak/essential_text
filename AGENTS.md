@@ -14,4 +14,5 @@ Course project repository for **Evaluating Domain Adaptation in Financial Sentim
    - **Data accessible**: Publicly available datasets named with exact sizes and immediate access paths.
    - **NLP+code**: Explicit Python/PyTorch/HuggingFace/scikit-learn implementation components.
    - **Method fits**: Direct mapping between methods and RQ1, RQ2, RQ3.
-4. **Shared Agent Instruction File**: Keep instructions in `AGENTS.md` only (never create `CLAUDE.md` or `GEMINI.md`).
+4. **Extensions beyond the rubric baselines**: the zero-shot LLM baseline (`scripts/run_llm_zeroshot.py`, local open-weight model) and the five-seed Step 4 analysis are post-hoc extensions. Report them separately from the three rubric baseline levels and the pre-specified three-seed analysis, and always state the pretraining-contamination caveat for the LLM.
+5. **Shared Agent Instruction File**: Keep instructions in `AGENTS.md` only (never create `CLAUDE.md` or `GEMINI.md`).

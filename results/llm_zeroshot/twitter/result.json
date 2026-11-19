@@ -1,0 +1,78 @@
+{
+  "dataset": "twitter",
+  "model": "qwen2.5:7b",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_predict": 16
+  },
+  "prompt": {
+    "system": "Classify the financial sentiment expressed by the sentence for the company or market as negative, neutral, or positive. Return a JSON object with the single field label.",
+    "user": "Sentence:\n{sentence}"
+  },
+  "format": {
+    "type": "object",
+    "properties": {
+      "label": {
+        "type": "string",
+        "enum": [
+          "negative",
+          "neutral",
+          "positive"
+        ]
+      }
+    },
+    "required": [
+      "label"
+    ],
+    "additionalProperties": false
+  },
+  "n": 11737,
+  "n_invalid": 0,
+  "metrics": {
+    "accuracy": 0.7674022322569651,
+    "macro_f1": 0.7431691327618832,
+    "per_class": {
+      "negative": {
+        "precision": 0.601119104716227,
+        "recall": 0.8540601930721181,
+        "f1": 0.7056063804832278,
+        "support": 1761
+      },
+      "neutral": {
+        "precision": 0.8988509467551383,
+        "recall": 0.7305972112601947,
+        "f1": 0.806037297728757,
+        "support": 7602
+      },
+      "positive": {
+        "precision": 0.6377617801047121,
+        "recall": 0.8209772535804549,
+        "f1": 0.7178637200736648,
+        "support": 2374
+      }
+    },
+    "confusion_matrix": [
+      [
+        1504,
+        246,
+        11
+      ],
+      [
+        952,
+        5554,
+        1096
+      ],
+      [
+        46,
+        379,
+        1949
+      ]
+    ],
+    "neutral_to_negative_rate": 0.1252302025782689,
+    "ece": 0.23259776774303487
+  },
+  "timestamp": "2026-11-19T17:04:25.179638+00:00",
+  "dataset_size": 11737
+}

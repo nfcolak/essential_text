@@ -1,0 +1,16 @@
+{
+  "vocab_size": 30873,
+  "unk_token_id": 2,
+  "terms": {
+    "profit": [
+      358
+    ],
+    "ebitda": [
+      515
+    ],
+    "depreciation": [
+      785
+    ]
+  },
+  "valid": true
+}

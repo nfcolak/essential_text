@@ -1,10 +1,13 @@
-"""Agreement between the human annotation pass and the two LLM annotators (diagnostic set).
+"""Agreement between the human and LLM annotators on the diagnostic set.
 
 Reads `annotations_a.csv`, `annotations_b.csv` (LLM annotators), `annotations_qiyao.csv` (human
 annotator c), `rule_tags.csv` and `annotators.json` from the diagnostic directory and writes
 `results/step3/human_annotation_agreement.json`: per phenomenon Cohen's kappa and raw agreement of
 the human tags against annotator A, annotator B, the A-B consensus (Step 3 mode `both`) and the rule
 tagger. The Step 3 analysis itself is not changed by this script; it still uses the A-B consensus.
+If a second human file is available, also compare the second human with the first human and the
+LLM tags, and compare the two humans' consensus with the A-B consensus. Each consensus requires
+both annotators to mark the phenomenon present.
 
     python3 scripts/analyze_human_annotation.py            # write the JSON and print a table
     python3 scripts/analyze_human_annotation.py --check    # recompute, compare, write nothing
@@ -29,9 +32,13 @@ if REPO_ROOT not in sys.path:
 from src.analysis.attribution import PHENOMENA, consensus_tags, read_annotations  # noqa: E402
 
 HUMAN_FILE = "annotations_qiyao.csv"
+HUMAN2_FILE = "annotations_human2.csv"
 PAIRS = ("h_a", "h_b", "h_consensus", "h_rule")
+HUMAN2_PAIRS = ("h1_h2", "h2_a", "h2_b", "h2_consensus", "human_consensus_vs_llm_consensus")
 NOTE = ("Annotators a and b are LLM agents; c is a human team member. The Step 3 analysis still uses "
         "the A-B consensus; this file only measures how well the LLM tags match a human pass.")
+HUMAN2_NOTE = ("Annotators a and b are LLM agents. The two human annotation passes are c and d. "
+               "Both consensus tags require agreement on presence. Step 3 uses the A-B consensus.")
 TOLERANCE = 1e-12
 
 
@@ -58,13 +65,15 @@ def _mean(values: list[float | None]) -> float | None:
     return sum(kept) / len(kept) if kept else None
 
 
-def compute(a: dict, b: dict, h: dict, rule: dict) -> dict[str, Any]:
+def compute(a: dict, b: dict, h: dict, rule: dict, h2: dict | None = None) -> dict[str, Any]:
     """Agreement of the human tags `h` with annotators `a`, `b`, their consensus and the rule tags.
 
-    Every argument maps `diag_id -> {phenomenon: 0/1}`. The four id sets must be identical and
-    non-empty, otherwise ValueError. Consensus is 1 only when a and b are both 1 (Step 3 `both`).
+    Each supplied argument maps `diag_id -> {phenomenon: 0/1}`. All id sets must be identical and
+    non-empty, otherwise ValueError. Consensus is 1 only when both annotators mark 1 (Step 3 `both`).
     """
     sources = {"a": a, "b": b, "h": h, "rule": rule}
+    if h2 is not None:
+        sources["h2"] = h2
     reference = set(h)
     if not reference:
         raise ValueError("No items: the human annotation is empty.")
@@ -77,6 +86,7 @@ def compute(a: dict, b: dict, h: dict, rule: dict) -> dict[str, Any]:
                 f"only in {name} {only_here}, only in h {only_human}.")
     ids = sorted(reference)
     consensus = consensus_tags(a, b, "both")
+    human_consensus = consensus_tags(h, h2, "both") if h2 is not None else {}
     columns = {"a": a, "b": b, "consensus": consensus, "rule": rule}
     agreement: dict[str, Any] = {}
     for name in PHENOMENA:
@@ -90,23 +100,40 @@ def compute(a: dict, b: dict, h: dict, rule: dict) -> dict[str, Any]:
         row["kappa_ab"] = _kappa(cols["a"], cols["b"])
         row["disagreements_h_consensus"] = [
             i for i, x, y in zip(ids, col_h, cols["consensus"]) if x != y]
+        if h2 is not None:
+            col_h2 = [int(h2[i][name]) for i in ids]
+            col_human_consensus = [human_consensus[i][name] for i in ids]
+            row["kappa_h1_h2"] = _kappa(col_h, col_h2)
+            for key in ("a", "b", "consensus"):
+                row[f"kappa_h2_{key}"] = _kappa(col_h2, cols[key])
+            row["human_consensus_ids"] = [i for i, tag in zip(ids, col_human_consensus) if tag]
+            row["prevalence_human_consensus"] = _prevalence(col_human_consensus)
+            row["kappa_human_consensus_vs_llm_consensus"] = _kappa(col_human_consensus, cols["consensus"])
         agreement[name] = row
-    mean_kappa = {pair: _mean([agreement[p][f"kappa_{pair}"] for p in PHENOMENA]) for pair in PAIRS}
-    mean_kappa["ab"] = _mean([agreement[p]["kappa_ab"] for p in PHENOMENA])
+    pairs = PAIRS + ("ab",)
+    if h2 is not None:
+        pairs += HUMAN2_PAIRS
+    mean_kappa = {pair: _mean([agreement[p][f"kappa_{pair}"] for p in PHENOMENA]) for pair in pairs}
     return {"n_items": len(ids), "agreement": agreement, "mean_kappa": mean_kappa}
 
 
-def build_payload(diagnostic_dir: str) -> dict[str, Any]:
+def build_payload(diagnostic_dir: str, human2_path: str | None = None) -> dict[str, Any]:
     """Read the diagnostic directory and return the full JSON payload."""
     def ann(name: str) -> dict:
         return read_annotations(os.path.join(diagnostic_dir, name))
 
     with open(os.path.join(diagnostic_dir, "annotators.json"), encoding="utf-8") as handle:
         annotators = json.load(handle)
+    if human2_path is None:
+        candidate = os.path.join(diagnostic_dir, HUMAN2_FILE)
+        if os.path.exists(candidate):
+            human2_path = candidate
+    human2 = read_annotations(human2_path) if human2_path is not None else None
     result = compute(ann("annotations_a.csv"), ann("annotations_b.csv"), ann(HUMAN_FILE),
-                     ann("rule_tags.csv"))
+                     ann("rule_tags.csv"), human2)
     return {"annotators": annotators, "n_items": result["n_items"],
-            "agreement": result["agreement"], "mean_kappa": result["mean_kappa"], "note": NOTE}
+            "agreement": result["agreement"], "mean_kappa": result["mean_kappa"],
+            "note": NOTE if human2 is None else HUMAN2_NOTE}
 
 
 def _equal(x: Any, y: Any, path: str = "") -> str | None:
@@ -153,12 +180,26 @@ def _table(payload: dict[str, Any]) -> str:
     lines.append(
         f"{'mean kappa':<22} {_fmt(m['h_a']):>6} {_fmt(m['h_b']):>6} {_fmt(m['h_consensus']):>6} "
         f"{_fmt(m['h_rule']):>8} {_fmt(m['ab']):>6}")
+    if "h1_h2" in m:
+        labels = ("k h1-h2", "k h2-a", "k h2-b", "k h2-AB", "k human consensus-AB")
+        widths = [max(8, len(label)) for label in labels]
+
+        def second_table_row(name: str, values: list[str]) -> str:
+            return f"{name:<22}" + "".join(f" {value:>{width}}" for value, width in zip(values, widths))
+
+        head = second_table_row("phenomenon", list(labels))
+        lines.extend(["", head, "-" * len(head)])
+        for name in PHENOMENA:
+            row = payload["agreement"][name]
+            lines.append(second_table_row(name, [_fmt(row[f"kappa_{pair}"]) for pair in HUMAN2_PAIRS]))
+        lines.append(second_table_row("mean kappa", [_fmt(m[pair]) for pair in HUMAN2_PAIRS]))
     return "\n".join(lines)
 
 
 def _parse(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--diagnostic-dir", default=os.path.join(REPO_ROOT, "data", "diagnostic"))
+    parser.add_argument("--human2", help=f"second human annotation CSV (default: {HUMAN2_FILE} if present)")
     parser.add_argument("--out", default=os.path.join(
         REPO_ROOT, "results", "step3", "human_annotation_agreement.json"))
     parser.add_argument("--check", action="store_true",
@@ -169,7 +210,7 @@ def _parse(argv: list[str] | None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = _parse(argv)
     try:
-        payload = build_payload(args.diagnostic_dir)
+        payload = build_payload(args.diagnostic_dir, args.human2)
     except (OSError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1 if args.check else 2

@@ -1,0 +1,79 @@
+{
+  "dataset": "phrasebank_50agree_test",
+  "model": "qwen2.5:7b",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_predict": 16
+  },
+  "prompt": {
+    "system": "Classify the financial sentiment expressed by the sentence for the company or market as negative, neutral, or positive. Return a JSON object with the single field label.",
+    "user": "Sentence:\n{sentence}"
+  },
+  "format": {
+    "type": "object",
+    "properties": {
+      "label": {
+        "type": "string",
+        "enum": [
+          "negative",
+          "neutral",
+          "positive"
+        ]
+      }
+    },
+    "required": [
+      "label"
+    ],
+    "additionalProperties": false
+  },
+  "n": 726,
+  "n_invalid": 0,
+  "metrics": {
+    "accuracy": 0.8209366391184573,
+    "macro_f1": 0.8194178628389155,
+    "per_class": {
+      "negative": {
+        "precision": 0.872093023255814,
+        "recall": 0.8333333333333334,
+        "f1": 0.8522727272727273,
+        "support": 90
+      },
+      "neutral": {
+        "precision": 0.8719211822660099,
+        "recall": 0.8232558139534883,
+        "f1": 0.84688995215311,
+        "support": 430
+      },
+      "positive": {
+        "precision": 0.7136752136752137,
+        "recall": 0.8106796116504854,
+        "f1": 0.759090909090909,
+        "support": 206
+      }
+    },
+    "confusion_matrix": [
+      [
+        75,
+        14,
+        1
+      ],
+      [
+        10,
+        354,
+        66
+      ],
+      [
+        1,
+        38,
+        167
+      ]
+    ],
+    "neutral_to_negative_rate": 0.023255813953488372,
+    "ece": 0.17906336088154273
+  },
+  "timestamp": "2026-11-19T14:53:06.137822+00:00",
+  "dataset_size": 726,
+  "contamination_note": "the LLM may have seen Financial PhraseBank during pretraining"
+}

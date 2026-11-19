@@ -1,0 +1,8 @@
+{"event": "start", "run_dir": "results/tuning/fixed_extra/sentences_allagree/bert_base/seed7", "wall_seconds": null, "timestamp": "2026-11-19T14:33:39.015274+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/fixed_extra/sentences_allagree/bert_base/seed7", "wall_seconds": 102.47920107841492, "timestamp": "2026-11-19T14:35:21.494565+00:00", "error": null}
+{"event": "start", "run_dir": "results/tuning/fixed_extra/sentences_allagree/finbert_mlm/seed7", "wall_seconds": null, "timestamp": "2026-11-19T14:36:54.013462+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/fixed_extra/sentences_allagree/finbert_mlm/seed7", "wall_seconds": 101.91042876243591, "timestamp": "2026-11-19T14:38:35.924126+00:00", "error": null}
+{"event": "start", "run_dir": "results/tuning/fixed_extra/sentences_allagree/bert_base/seed123", "wall_seconds": null, "timestamp": "2026-11-19T14:40:08.793672+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/fixed_extra/sentences_allagree/bert_base/seed123", "wall_seconds": 113.4719648361206, "timestamp": "2026-11-19T14:42:02.265859+00:00", "error": null}
+{"event": "start", "run_dir": "results/tuning/fixed_extra/sentences_allagree/finbert_mlm/seed123", "wall_seconds": null, "timestamp": "2026-11-19T14:46:14.865844+00:00", "error": null}
+{"event": "end", "run_dir": "results/tuning/fixed_extra/sentences_allagree/finbert_mlm/seed123", "wall_seconds": 66.58873915672302, "timestamp": "2026-11-19T14:47:21.454798+00:00", "error": null}

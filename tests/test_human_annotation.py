@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import csv
 import io
 import json
 import os
@@ -140,6 +141,23 @@ class ComputeTest(unittest.TestCase):
         self.assertAlmostEqual(row["kappa_h_a"], (0.75 - 0.53125) / (1 - 0.53125))
         self.assertEqual(row["disagreements_h_consensus"], ["d2", "d3"])
 
+    def test_second_human_agreement_and_consensus(self) -> None:
+        h1 = _varied()
+        h2 = _varied()
+        h2["d1"]["negation"] = 1
+        h2["d2"]["negation"] = 0
+        result = aha.compute(h1, h2, h1, h1, h2)
+        row = result["agreement"]["negation"]
+        self.assertAlmostEqual(row["kappa_h1_h2"], 1 / 3)
+        self.assertAlmostEqual(row["kappa_h2_a"], 1 / 3)
+        self.assertAlmostEqual(row["kappa_h2_b"], 1.0)
+        self.assertAlmostEqual(row["kappa_h2_consensus"], 2 / 3)
+        self.assertAlmostEqual(row["kappa_human_consensus_vs_llm_consensus"], 1.0)
+        self.assertEqual(row["human_consensus_ids"], ["d3", "d6"])
+        self.assertAlmostEqual(row["prevalence_human_consensus"], 2 / 6)
+        self.assertAlmostEqual(result["mean_kappa"]["h1_h2"], (4 + 1 / 3) / 5)
+        self.assertEqual(set(result["mean_kappa"]), set(aha.PAIRS + aha.HUMAN2_PAIRS) | {"ab"})
+
 
 class FileTest(unittest.TestCase):
     def test_crlf_without_trailing_newline_is_parsed(self) -> None:
@@ -219,6 +237,45 @@ class FileTest(unittest.TestCase):
             self.assertIn("do not match", stderr)
             self.assertFalse(os.path.exists(out))
 
+    def test_second_human_default_and_explicit_override(self) -> None:
+        tags = _varied()
+        alternate = _varied()
+        alternate["d2"]["negation"] = 0
+        with tempfile.TemporaryDirectory() as folder:
+            _write_dir(folder, tags, tags, tags, tags)
+            metadata = os.path.join(folder, "annotators.json")
+            with open(metadata, "w", encoding="utf-8") as handle:
+                json.dump({"a": "model a", "b": "model b", "c": "human", "d": "second human"}, handle)
+            _write_csv(os.path.join(folder, aha.HUMAN2_FILE), tags)
+            override = os.path.join(folder, "override.csv")
+            _write_csv(override, alternate)
+            out = os.path.join(folder, "agreement.json")
+            argv = ["--diagnostic-dir", folder, "--out", out]
+            code, stdout, stderr = _run(argv)
+            self.assertEqual(code, 0, stderr)
+            self.assertIn("k h1-h2", stdout)
+            self.assertEqual(_run(argv + ["--check"])[0], 0)
+            with open(out, encoding="utf-8") as handle:
+                payload = json.load(handle)
+            self.assertEqual(payload["annotators"]["d"], "second human")
+            self.assertAlmostEqual(payload["mean_kappa"]["h1_h2"], 1.0)
+            self.assertEqual(_run(argv + ["--human2", override])[0], 0)
+            with open(out, encoding="utf-8") as handle:
+                self.assertLess(json.load(handle)["mean_kappa"]["h1_h2"], 1.0)
+
+    def test_second_human_with_incomplete_ids_is_refused(self) -> None:
+        tags = _varied()
+        short = {key: value for key, value in tags.items() if key != "d6"}
+        with tempfile.TemporaryDirectory() as folder:
+            _write_dir(folder, tags, tags, tags, tags)
+            path = os.path.join(folder, aha.HUMAN2_FILE)
+            _write_csv(path, short)
+            out = os.path.join(folder, "agreement.json")
+            code, _, stderr = _run(["--diagnostic-dir", folder, "--out", out])
+            self.assertEqual(code, 2)
+            self.assertIn("diag_ids of 'h2' do not match", stderr)
+            self.assertFalse(os.path.exists(out))
+
 
 class CommittedFileTest(unittest.TestCase):
     @unittest.skipUnless(os.path.isfile(COMMITTED_JSON), "human_annotation_agreement.json not present")
@@ -230,6 +287,17 @@ class CommittedFileTest(unittest.TestCase):
         self.assertEqual(payload["n_items"], 300)
         self.assertIn("c", payload["annotators"])
         self.assertEqual(set(payload["agreement"]), set(PHENOMENA))
+
+    def test_second_human_template_has_all_ids_and_blank_cells(self) -> None:
+        folder = os.path.join(REPO_ROOT, "data", "diagnostic")
+        with open(os.path.join(folder, "diagnostic_items.csv"), encoding="utf-8", newline="") as handle:
+            ids = [row["diag_id"] for row in csv.DictReader(handle)]
+        path = os.path.join(folder, "annotations_human2_template.csv")
+        with open(path, encoding="utf-8", newline="") as handle:
+            reader = csv.reader(handle)
+            self.assertEqual(next(reader), HEADER.split(",") + ["note"])
+            self.assertEqual(len(ids), 300)
+            self.assertEqual(list(reader), [[diag_id, "", "", "", "", "", ""] for diag_id in ids])
 
 
 if __name__ == "__main__":

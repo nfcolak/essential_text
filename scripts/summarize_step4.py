@@ -2,9 +2,9 @@
 """Paired statistics for Step 4: tuned recipe against the fixed Step 2 recipe.
 
 Reads the selected recipe of ``bert_base`` and ``finbert_mlm`` from ``<tuning>/selection.json``, the
-three final runs of that recipe under ``<tuning>/final/sentences_allagree/<model>/`` and the three
-fixed-recipe runs under ``<step2-runs>/sentences_allagree/<model>/seed{42,100,2026}``. Only stored
-predictions are read; nothing is trained and no model is loaded.
+final runs under ``<tuning>/final/sentences_allagree/<model>/`` and the fixed-recipe runs under
+``<step2-runs>/sentences_allagree/<model>/seed<N>``. Fixed runs can also come from ``--fixed-extra-dir``.
+Only stored predictions are read. The default seeds are 42, 100, and 2026.
 
 For the PhraseBank test split and the external SEntFiN split it reports
 
@@ -17,7 +17,8 @@ For the PhraseBank test split and the external SEntFiN split it reports
 * the gap change ``(tuned BERT - tuned FinBERT) - (fixed BERT - fixed FinBERT)`` with an interval
   from one bootstrap: sentences shared, seeds of the four run sets resampled independently.
 
-Writes ``step4_statistics.json`` and ``STEP4_REPORT.md`` into ``--out-dir``. ``--check`` recomputes
+Writes ``step4_statistics.json`` and ``STEP4_REPORT.md`` into ``--out-dir`` (with an optional
+``--suffix`` before each extension). ``--check`` recomputes
 and compares with the existing JSON without writing. Exit codes: 0 ok, 1 ``--check`` mismatch,
 2 refused (a run is missing, or ids / labels differ between runs).
 """
@@ -53,6 +54,7 @@ CHECK_TOLERANCE = 1e-12
 
 DEFAULT_TUNING_DIR = "results/tuning"
 DEFAULT_STEP2_RUNS = "results/step2/runs"
+DEFAULT_FIXED_EXTRA_DIR = "results/tuning/fixed_extra"
 DEFAULT_OUT_DIR = "results/step4"
 JSON_NAME = "step4_statistics.json"
 REPORT_NAME = "STEP4_REPORT.md"
@@ -148,8 +150,9 @@ def _recorded_recipe(result: Mapping[str, Any], path: str) -> tuple[float, int]:
         raise Refuse(f"{path} records no learning_rate/batch_size in hyperparams.") from exc
 
 
-def load_inputs(tuning_dir: str, step2_runs: str) -> dict[str, Any]:
-    """Load the 12 runs (2 recipes x 2 models x 3 seeds) and verify they are comparable."""
+def load_inputs(tuning_dir: str, step2_runs: str, seeds: Sequence[int] = SEEDS,
+                fixed_extra_dir: str = DEFAULT_FIXED_EXTRA_DIR) -> dict[str, Any]:
+    """Load each requested seed for both models and recipes and verify comparability."""
     selection = read_selection(tuning_dir)
     runs: dict[str, dict[str, dict[int, dict[str, Any]]]] = {recipe: {} for recipe in RECIPES}
     recipes: dict[str, dict[str, dict[str, Any]]] = {recipe: {} for recipe in RECIPES}
@@ -157,11 +160,15 @@ def load_inputs(tuning_dir: str, step2_runs: str) -> dict[str, Any]:
     for model in MODELS:
         spec = selection[model]
         runs["tuned"][model], runs["fixed"][model] = {}, {}
-        for seed in SEEDS:
+        for seed in seeds:
             tuned_dir = os.path.join(
                 tuning_dir, "final", CONFIG, model, finetune_tag(seed, spec["learning_rate"], spec["batch_size"])
             )
-            fixed_dir = os.path.join(step2_runs, CONFIG, model, f"seed{seed}")
+            fixed_path = os.path.join(CONFIG, model, f"seed{seed}")
+            fixed_dir = os.path.join(step2_runs, fixed_path)
+            extra_dir = os.path.join(fixed_extra_dir, fixed_path)
+            if not os.path.isfile(os.path.join(fixed_dir, "result.json")) and os.path.isdir(extra_dir):
+                fixed_dir = extra_dir
             for recipe, run_dir in (("tuned", tuned_dir), ("fixed", fixed_dir)):
                 try:
                     runs[recipe][model][seed] = _load_run(run_dir, model, seed)
@@ -174,7 +181,7 @@ def load_inputs(tuning_dir: str, step2_runs: str) -> dict[str, Any]:
         spec = selection[model]
         want = (format_learning_rate(spec["learning_rate"]), spec["batch_size"])
         fixed_seen: set[tuple[str, int]] = set()
-        for seed in SEEDS:
+        for seed in seeds:
             run = runs["tuned"][model][seed]
             lr, bs = _recorded_recipe(run["result"], run["run_dir"])
             if (format_learning_rate(lr), bs) != want:
@@ -193,11 +200,11 @@ def load_inputs(tuning_dir: str, step2_runs: str) -> dict[str, Any]:
 
     reference: dict[str, dict[str, np.ndarray]] = {}
     for split in SPLITS:
-        first = runs["fixed"][MODELS[0]][SEEDS[0]]
+        first = runs["fixed"][MODELS[0]][seeds[0]]
         ref_ids, ref_y = first["splits"][split]["ids"], first["splits"][split]["y"]
         for recipe in RECIPES:
             for model in MODELS:
-                for seed in SEEDS:
+                for seed in seeds:
                     run = runs[recipe][model][seed]
                     part = run["splits"][split]
                     if part["ids"].shape != ref_ids.shape or not np.array_equal(part["ids"], ref_ids):
@@ -212,7 +219,7 @@ def load_inputs(tuning_dir: str, step2_runs: str) -> dict[str, Any]:
         if ref_y.min() < 0 or ref_y.max() > 2:
             raise Refuse(f"{split} labels are outside 0..2 in {first['run_dir']}.")
         reference[split] = {"ids": ref_ids, "y": ref_y}
-    return {"runs": runs, "recipes": recipes, "reference": reference}
+    return {"runs": runs, "recipes": recipes, "reference": reference, "seeds": tuple(seeds)}
 
 
 # --------------------------------------------------------------------------- statistics
@@ -303,14 +310,14 @@ def _contains_zero(low: float, high: float) -> bool:
     return bool(low <= 0.0 <= high)
 
 
-def _environment(runs: Mapping[str, Any]) -> dict[str, Any]:
-    """Device and library versions recorded by the runs, per recipe, and whether all 12 agree."""
+def _environment(runs: Mapping[str, Any], seeds: Sequence[int]) -> dict[str, Any]:
+    """Device and library versions recorded by the runs, per recipe, and whether all runs agree."""
     out: dict[str, Any] = {}
     every: list[str] = []
     for recipe in RECIPES:
         seen: list[dict[str, Any]] = []
         for model in MODELS:
-            for seed in SEEDS:
+            for seed in seeds:
                 result = runs[recipe][model][seed]["result"]
                 entry = {"device": result.get("device"), "versions": result.get("versions") or {}}
                 every.append(json.dumps(entry, sort_keys=True))
@@ -323,9 +330,10 @@ def _environment(runs: Mapping[str, Any]) -> dict[str, Any]:
 
 def build_statistics(inputs: Mapping[str, Any], B: int, seed: int) -> dict[str, Any]:
     runs, reference = inputs["runs"], inputs["reference"]
+    seeds = inputs.get("seeds", SEEDS)
 
     def preds(recipe: str, model: str, split: str) -> list[np.ndarray]:
-        return [runs[recipe][model][s]["splits"][split]["pred"] for s in SEEDS]
+        return [runs[recipe][model][s]["splits"][split]["pred"] for s in seeds]
 
     scores: dict[str, Any] = {}
     stored_gap = 0.0
@@ -336,7 +344,7 @@ def build_statistics(inputs: Mapping[str, Any], B: int, seed: int) -> dict[str, 
             for split in SPLITS:
                 y = reference[split]["y"]
                 f1_by_seed, acc_by_seed = {}, {}
-                for s, pred in zip(SEEDS, preds(recipe, model, split)):
+                for s, pred in zip(seeds, preds(recipe, model, split)):
                     f1_by_seed[str(s)] = macro_f1(y, pred)
                     acc_by_seed[str(s)] = accuracy(y, pred)
                     stored = ((runs[recipe][model][s]["result"].get("metrics") or {}).get(split) or {}).get("macro_f1")
@@ -357,14 +365,14 @@ def build_statistics(inputs: Mapping[str, Any], B: int, seed: int) -> dict[str, 
             preds_a, preds_b = preds(recipe_a, model_a, split), preds(recipe_b, model_b, split)
             boot = seed_sentence_bootstrap(y, preds_a, preds_b, metric="macro_f1", B=B, seed=seed)
             per_seed = {}
-            for s, pa, pb in zip(SEEDS, preds_a, preds_b):
+            for s, pa, pb in zip(seeds, preds_a, preds_b):
                 res = mcnemar_test(y, pa, pb)
                 per_seed[str(s)] = {k: res[k] for k in ("n10", "n01", "chi2", "p_value")}
             comparisons[split][name] = {
                 "a": {"recipe": recipe_a, "model": model_a},
                 "b": {"recipe": recipe_b, "model": model_b},
                 "delta_macro_f1": boot["delta"],
-                "per_seed_delta": {str(s): d for s, d in zip(SEEDS, boot["per_seed_delta"])},
+                "per_seed_delta": {str(s): d for s, d in zip(seeds, boot["per_seed_delta"])},
                 "ci_low": boot["ci_low"],
                 "ci_high": boot["ci_high"],
                 "p_bootstrap": boot["p_value"],
@@ -383,7 +391,7 @@ def build_statistics(inputs: Mapping[str, Any], B: int, seed: int) -> dict[str, 
             "definition": "(tuned bert_base - tuned finbert_mlm) - (fixed bert_base - fixed finbert_mlm)",
             "delta_macro_f1": tuned["delta_macro_f1"] - fixed["delta_macro_f1"],
             "per_seed_delta": {
-                str(s): tuned["per_seed_delta"][str(s)] - fixed["per_seed_delta"][str(s)] for s in SEEDS
+                str(s): tuned["per_seed_delta"][str(s)] - fixed["per_seed_delta"][str(s)] for s in seeds
             },
             "ci_low": low,
             "ci_high": high,
@@ -397,23 +405,23 @@ def build_statistics(inputs: Mapping[str, Any], B: int, seed: int) -> dict[str, 
         s: holm_bonferroni(
             {f"{split}/{name}": comparisons[split][name]["mcnemar_by_seed"][str(s)]["p_value"] for split, name in keys}
         )
-        for s in SEEDS
+        for s in seeds
     }
     for split, name in keys:
         entry = comparisons[split][name]
-        raw = [entry["mcnemar_by_seed"][str(s)]["p_value"] for s in SEEDS]
-        adjusted = {str(s): holm[s][f"{split}/{name}"] for s in SEEDS}
+        raw = [entry["mcnemar_by_seed"][str(s)]["p_value"] for s in seeds]
+        adjusted = {str(s): holm[s][f"{split}/{name}"] for s in seeds}
         entry["p_min"] = float(min(raw))
         entry["p_max"] = float(max(raw))
         entry["p_holm_by_seed"] = adjusted
         entry["n_seeds_significant"] = int(sum(1 for v in adjusted.values() if v < ALPHA))
-        entry["n_seeds"] = len(SEEDS)
+        entry["n_seeds"] = len(seeds)
 
     return {
         "protocol": {
             "config": CONFIG,
             "models": list(MODELS),
-            "seeds": list(SEEDS),
+            "seeds": list(seeds),
             "splits": list(SPLITS),
             "metric": "macro_f1",
             "B": int(B),
@@ -431,16 +439,16 @@ def build_statistics(inputs: Mapping[str, Any], B: int, seed: int) -> dict[str, 
             "mcnemar": (
                 "exact McNemar per seed pairing (seed s of A against seed s of B); Holm-Bonferroni inside each "
                 "seed family over the 8 tests (4 pairs x 2 splits). p_min / p_max are the smallest and largest "
-                "raw p over the 3 seeds; n_seeds_significant counts the seeds with Holm-adjusted p < alpha."
+                f"raw p over the {len(seeds)} seeds; n_seeds_significant counts the seeds with Holm-adjusted p < alpha."
             ),
             "difference_sign": "every delta is A - B",
         },
         "recipes": inputs["recipes"],
         "run_dirs": {
-            recipe: {model: {str(s): _rel(runs[recipe][model][s]["run_dir"]) for s in SEEDS} for model in MODELS}
+            recipe: {model: {str(s): _rel(runs[recipe][model][s]["run_dir"]) for s in seeds} for model in MODELS}
             for recipe in RECIPES
         },
-        "environment": _environment(runs),
+        "environment": _environment(runs, seeds),
         "n": {split: int(len(reference[split]["y"])) for split in SPLITS},
         "max_abs_diff_vs_result_json_macro_f1": float(stored_gap),
         "scores": scores,
@@ -468,14 +476,14 @@ def _recipe_txt(spec: Mapping[str, Any]) -> str:
     return f"learning rate {format_learning_rate(spec['learning_rate'])}, batch size {spec['batch_size']}"
 
 
-def _environment_txt(env: Mapping[str, Any]) -> str:
+def _environment_txt(env: Mapping[str, Any], n_runs: int) -> str:
     def describe(entry: Mapping[str, Any]) -> str:
         versions = ", ".join(f"{k} {v}" for k, v in sorted(entry["versions"].items())) or "no versions recorded"
         return f"device `{entry['device']}`; {versions}"
 
     if env["identical_across_all_runs"]:
         return (
-            "All 12 runs (fixed and tuned) record the same device and library versions in their `result.json`: "
+            f"All {n_runs} runs (fixed and tuned) record the same device and library versions in their `result.json`: "
             f"{describe(env['fixed'][0])}. The fixed-vs-tuned comparison is therefore inside one software environment."
         )
     lines = ["The runs do NOT all record the same device and library versions, so the fixed-vs-tuned "
@@ -505,7 +513,9 @@ def _sentence(split: str, entry: Mapping[str, Any]) -> str:
 
 def render_report(stats: Mapping[str, Any]) -> str:
     protocol, recipes = stats["protocol"], stats["recipes"]
-    seeds = [str(s) for s in protocol["seeds"]]
+    seed_ids = protocol["seeds"]
+    seeds = [str(s) for s in seed_ids]
+    seed_count = "three" if len(seeds) == 3 else str(len(seeds))
     lines = [
         "# Step 4: tuned recipe against the fixed Step 2 recipe",
         "",
@@ -515,9 +525,16 @@ def render_report(stats: Mapping[str, Any]) -> str:
         "",
         f"Models `bert_base` (BERT) and `finbert_mlm` (FinBERT) on `{protocol['config']}`, seeds "
         f"{', '.join(seeds)}. Fixed recipe = the Step 2 runs; tuned recipe = the recipe that "
-        "`results/tuning/selection.json` selected on validation Macro-F1 with seed 42, retrained for all three seeds.",
+        f"`results/tuning/selection.json` selected on validation Macro-F1 with seed 42, retrained for all {seed_count} seeds.",
         "",
     ]
+    added = [str(s) for s in seed_ids if s not in SEEDS]
+    if added:
+        prespecified = ", ".join(str(s) for s in seed_ids if s in SEEDS) or "none"
+        lines.extend([
+            f"Pre-specified seeds in this analysis were {prespecified}. Seeds added later were {', '.join(added)}.",
+            "",
+        ])
     for model in MODELS:
         tuned = recipes["tuned"][model]
         val = "" if tuned.get("val_macro_f1") is None else f" (selection validation Macro-F1 {tuned['val_macro_f1']:.4f})"
@@ -527,7 +544,7 @@ def render_report(stats: Mapping[str, Any]) -> str:
         )
     lines += [
         "",
-        _environment_txt(stats["environment"]),
+        _environment_txt(stats["environment"], len(seeds) * len(MODELS) * len(RECIPES)),
         "",
         f"Splits: {SPLIT_LABELS['test']} (n = {stats['n']['test']}) and {SPLIT_LABELS['external']} "
         f"(n = {stats['n']['external']}). All runs were checked to share the same sentence ids and labels per split.",
@@ -536,7 +553,7 @@ def render_report(stats: Mapping[str, Any]) -> str:
         f"random seed {protocol['seed']}, 95% percentile interval, two-sided p. McNemar: exact test per seed "
         "pairing, Holm-Bonferroni inside each seed family over the 8 tests (4 pairs x 2 splits), "
         f"alpha = {protocol['alpha']}. Every difference is A - B. In every interval, including the gap-change "
-        "interval, the seeds of each run set are resampled independently of the other run sets. With three seeds the seed-to-seed spread is "
+        f"interval, the seeds of each run set are resampled independently of the other run sets. With {seed_count} seeds the seed-to-seed spread is "
         "estimated from very few runs, so the intervals are approximate.",
         "",
         "## Scores",
@@ -632,15 +649,30 @@ def _equal(left: Any, right: Any, tolerance: float = CHECK_TOLERANCE) -> bool:
     return left == right
 
 
+def _parse_seeds(value: str) -> tuple[int, ...]:
+    try:
+        seeds = tuple(int(token) for token in value.split(","))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("expected comma-separated seed integers") from exc
+    if len(seeds) != len(set(seeds)) or any(seed < 0 for seed in seeds):
+        raise argparse.ArgumentTypeError("seeds must be distinct, nonnegative integers")
+    return seeds
+
+
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--tuning-dir", default=DEFAULT_TUNING_DIR)
     parser.add_argument("--step2-runs", default=DEFAULT_STEP2_RUNS)
+    parser.add_argument("--fixed-extra-dir", default=DEFAULT_FIXED_EXTRA_DIR,
+                        help="fallback directory for fixed-recipe runs missing from --step2-runs")
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
+    parser.add_argument("--seeds", type=_parse_seeds, default=SEEDS,
+                        help="comma-separated training seeds (default: 42,100,2026)")
+    parser.add_argument("--suffix", default="", help="suffix before the JSON and Markdown extensions")
     parser.add_argument("--B", type=int, default=10000, help="bootstrap resamples")
     parser.add_argument("--seed", type=int, default=2026, help="bootstrap random seed")
     parser.add_argument("--check", action="store_true",
-                        help=f"recompute and compare with the existing {JSON_NAME}; write nothing")
+                        help="recompute and compare with the existing statistics JSON; write nothing")
     return parser.parse_args(argv)
 
 
@@ -649,13 +681,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.B < 1:
         print("refused: --B must be at least 1.", file=sys.stderr)
         return 2
+    if os.sep in args.suffix or (os.altsep and os.altsep in args.suffix):
+        print("refused: --suffix must not contain path separators.", file=sys.stderr)
+        return 2
     try:
-        inputs = load_inputs(args.tuning_dir, args.step2_runs)
+        inputs = load_inputs(args.tuning_dir, args.step2_runs, args.seeds, args.fixed_extra_dir)
     except Refuse as exc:
         print(f"refused: {exc}", file=sys.stderr)
         return 2
     stats = json.loads(json.dumps(build_statistics(inputs, args.B, args.seed)))
-    json_path = os.path.join(args.out_dir, JSON_NAME)
+    json_stem, json_ext = os.path.splitext(JSON_NAME)
+    json_path = os.path.join(args.out_dir, f"{json_stem}{args.suffix}{json_ext}")
 
     if args.check:
         if not os.path.isfile(json_path):
@@ -673,7 +709,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     with open(json_path, "w", encoding="utf-8") as handle:
         json.dump(stats, handle, indent=2, sort_keys=True)
         handle.write("\n")
-    report_path = os.path.join(args.out_dir, REPORT_NAME)
+    report_stem, report_ext = os.path.splitext(REPORT_NAME)
+    report_path = os.path.join(args.out_dir, f"{report_stem}{args.suffix}{report_ext}")
     with open(report_path, "w", encoding="utf-8") as handle:
         handle.write(render_report(stats))
     print(f"wrote {json_path}")
