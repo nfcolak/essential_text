@@ -1,0 +1,723 @@
+{
+  "comparisons": {
+    "external": {
+      "fixed_bert_vs_fixed_finbert": {
+        "a": {
+          "model": "bert_base",
+          "recipe": "fixed"
+        },
+        "b": {
+          "model": "finbert_mlm",
+          "recipe": "fixed"
+        },
+        "ci_high": 0.04966653756638562,
+        "ci_low": -0.016408734210592458,
+        "delta_macro_f1": 0.01590320657474087,
+        "interval_contains_zero": true,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 154.660518444666,
+            "n01": 724,
+            "n10": 1282,
+            "p_value": 5.956634152876055e-36
+          },
+          "2026": {
+            "chi2": 0.7460414129110841,
+            "n01": 803,
+            "n10": 839,
+            "p_value": 0.3877385817382612
+          },
+          "42": {
+            "chi2": 20.887728459530027,
+            "n01": 1058,
+            "n10": 857,
+            "p_value": 4.778594435975584e-06
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 2,
+        "p_bootstrap": 0.3586,
+        "p_holm_by_seed": {
+          "100": 4.765307322300844e-35,
+          "2026": 0.9764656241470595,
+          "42": 2.8671566615853504e-05
+        },
+        "p_max": 0.3877385817382612,
+        "p_min": 5.956634152876055e-36,
+        "per_seed_delta": {
+          "100": 0.0664644677709515,
+          "2026": 0.00444948957046043,
+          "42": -0.023204337617188986
+        }
+      },
+      "tuned_bert_vs_tuned_finbert": {
+        "a": {
+          "model": "bert_base",
+          "recipe": "tuned"
+        },
+        "b": {
+          "model": "finbert_mlm",
+          "recipe": "tuned"
+        },
+        "ci_high": 0.00484930323809659,
+        "ci_low": -0.044414569459528624,
+        "delta_macro_f1": -0.017133736070562455,
+        "interval_contains_zero": true,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 0.5685730149916713,
+            "n01": 884,
+            "n10": 917,
+            "p_value": 0.45083557502537003
+          },
+          "2026": {
+            "chi2": 0.9667673716012085,
+            "n01": 848,
+            "n10": 807,
+            "p_value": 0.32548854138235317
+          },
+          "42": {
+            "chi2": 93.31064483111567,
+            "n01": 1191,
+            "n10": 763,
+            "p_value": 3.0613850809040544e-22
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 1,
+        "p_bootstrap": 0.1838,
+        "p_holm_by_seed": {
+          "100": 1.0,
+          "2026": 0.9764656241470595,
+          "42": 2.4491080647232435e-21
+        },
+        "p_max": 0.45083557502537003,
+        "p_min": 3.0613850809040544e-22,
+        "per_seed_delta": {
+          "100": 0.003475632511715343,
+          "2026": -0.005695768121895983,
+          "42": -0.049181072601506504
+        }
+      },
+      "tuned_vs_fixed_bert": {
+        "a": {
+          "model": "bert_base",
+          "recipe": "tuned"
+        },
+        "b": {
+          "model": "bert_base",
+          "recipe": "fixed"
+        },
+        "ci_high": 0.008333262189453666,
+        "ci_low": -0.029696675818971896,
+        "delta_macro_f1": -0.007196291140175171,
+        "interval_contains_zero": true,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 66.81930415263749,
+            "n01": 568,
+            "n10": 323,
+            "p_value": 1.9350240660137356e-16
+          },
+          "2026": {
+            "chi2": 9.038109756097562,
+            "n01": 289,
+            "n10": 367,
+            "p_value": 0.0026173857085732065
+          },
+          "42": {
+            "chi2": 0.026016260162601626,
+            "n01": 305,
+            "n10": 310,
+            "p_value": 0.8718774192467214
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 2,
+        "p_bootstrap": 0.5462,
+        "p_holm_by_seed": {
+          "100": 1.1610144396082413e-15,
+          "2026": 0.015704314251439238,
+          "42": 1.0
+        },
+        "p_max": 0.8718774192467214,
+        "p_min": 1.9350240660137356e-16,
+        "per_seed_delta": {
+          "100": -0.030133139130553932,
+          "2026": 0.008948761230647584,
+          "42": -0.00040449552061927463
+        }
+      },
+      "tuned_vs_fixed_finbert": {
+        "a": {
+          "model": "finbert_mlm",
+          "recipe": "tuned"
+        },
+        "b": {
+          "model": "finbert_mlm",
+          "recipe": "fixed"
+        },
+        "ci_high": 0.06139114850435032,
+        "ci_low": -0.007732110741249459,
+        "delta_macro_f1": 0.025840651505128154,
+        "interval_contains_zero": true,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 130.60570469798657,
+            "n01": 158,
+            "n10": 438,
+            "p_value": 2.1941212464718705e-31
+          },
+          "2026": {
+            "chi2": 42.425760286225405,
+            "n01": 202,
+            "n10": 357,
+            "p_value": 5.5687994016411867e-11
+          },
+          "42": {
+            "chi2": 78.70353982300885,
+            "n01": 223,
+            "n10": 455,
+            "p_value": 3.246928903559261e-19
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 3,
+        "p_bootstrap": 0.1534,
+        "p_holm_by_seed": {
+          "100": 1.5358848725303093e-30,
+          "2026": 4.4550395213129493e-10,
+          "42": 2.2728502324914827e-18
+        },
+        "p_max": 5.5687994016411867e-11,
+        "p_min": 2.1941212464718705e-31,
+        "per_seed_delta": {
+          "100": 0.03285569612868222,
+          "2026": 0.019094018923003997,
+          "42": 0.025572239463698243
+        }
+      }
+    },
+    "test": {
+      "fixed_bert_vs_fixed_finbert": {
+        "a": {
+          "model": "bert_base",
+          "recipe": "fixed"
+        },
+        "b": {
+          "model": "finbert_mlm",
+          "recipe": "fixed"
+        },
+        "ci_high": 0.05719522539526403,
+        "ci_low": 0.006073209666988919,
+        "delta_macro_f1": 0.02947045363261447,
+        "interval_contains_zero": false,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 0.6428571428571429,
+            "n01": 5,
+            "n10": 9,
+            "p_value": 0.4239501953125
+          },
+          "2026": {
+            "chi2": 8.1,
+            "n01": 0,
+            "n10": 10,
+            "p_value": 0.001953125
+          },
+          "42": {
+            "chi2": 4.083333333333333,
+            "n01": 2,
+            "n10": 10,
+            "p_value": 0.03857421875
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 1,
+        "p_bootstrap": 0.0138,
+        "p_holm_by_seed": {
+          "100": 1.0,
+          "2026": 0.013671875,
+          "42": 0.19287109375
+        },
+        "p_max": 0.4239501953125,
+        "p_min": 0.001953125,
+        "per_seed_delta": {
+          "100": 0.014580643546554972,
+          "2026": 0.04365316441332956,
+          "42": 0.030177552937958874
+        }
+      },
+      "tuned_bert_vs_tuned_finbert": {
+        "a": {
+          "model": "bert_base",
+          "recipe": "tuned"
+        },
+        "b": {
+          "model": "finbert_mlm",
+          "recipe": "tuned"
+        },
+        "ci_high": 0.04252581038404626,
+        "ci_low": -0.004972487256499206,
+        "delta_macro_f1": 0.01661486076647478,
+        "interval_contains_zero": true,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 1.4545454545454546,
+            "n01": 3,
+            "n10": 8,
+            "p_value": 0.2265625
+          },
+          "2026": {
+            "chi2": 1.7777777777777777,
+            "n01": 2,
+            "n10": 7,
+            "p_value": 0.1796875
+          },
+          "42": {
+            "chi2": 0.125,
+            "n01": 3,
+            "n10": 5,
+            "p_value": 0.7265625
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 0,
+        "p_bootstrap": 0.123,
+        "p_holm_by_seed": {
+          "100": 1.0,
+          "2026": 0.8984375,
+          "42": 1.0
+        },
+        "p_max": 0.7265625,
+        "p_min": 0.1796875,
+        "per_seed_delta": {
+          "100": 0.02181975464131336,
+          "2026": 0.021343943294379053,
+          "42": 0.006680884363732265
+        }
+      },
+      "tuned_vs_fixed_bert": {
+        "a": {
+          "model": "bert_base",
+          "recipe": "tuned"
+        },
+        "b": {
+          "model": "bert_base",
+          "recipe": "fixed"
+        },
+        "ci_high": 0.017966862162612143,
+        "ci_low": -0.022720203120012602,
+        "delta_macro_f1": -0.003295437894511366,
+        "interval_contains_zero": true,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 0.0,
+            "n01": 4,
+            "n10": 5,
+            "p_value": 1.0
+          },
+          "2026": {
+            "chi2": 1.5,
+            "n01": 5,
+            "n10": 1,
+            "p_value": 0.21875
+          },
+          "42": {
+            "chi2": 0.0,
+            "n01": 2,
+            "n10": 1,
+            "p_value": 1.0
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 0,
+        "p_bootstrap": 0.7492,
+        "p_holm_by_seed": {
+          "100": 1.0,
+          "2026": 0.8984375,
+          "42": 1.0
+        },
+        "p_max": 1.0,
+        "p_min": 0.21875,
+        "per_seed_delta": {
+          "100": 0.0033617161394735584,
+          "2026": -0.013601193492774,
+          "42": 0.00035316366976634317
+        }
+      },
+      "tuned_vs_fixed_finbert": {
+        "a": {
+          "model": "finbert_mlm",
+          "recipe": "tuned"
+        },
+        "b": {
+          "model": "finbert_mlm",
+          "recipe": "fixed"
+        },
+        "ci_high": 0.031225964333231958,
+        "ci_low": -0.009509463459921843,
+        "delta_macro_f1": 0.00956015497162832,
+        "interval_contains_zero": true,
+        "mcnemar_by_seed": {
+          "100": {
+            "chi2": 0.0,
+            "n01": 5,
+            "n10": 5,
+            "p_value": 1.0
+          },
+          "2026": {
+            "chi2": 0.0,
+            "n01": 1,
+            "n10": 2,
+            "p_value": 1.0
+          },
+          "42": {
+            "chi2": 3.2,
+            "n01": 0,
+            "n10": 5,
+            "p_value": 0.0625
+          }
+        },
+        "n_seeds": 3,
+        "n_seeds_significant": 0,
+        "p_bootstrap": 0.3084,
+        "p_holm_by_seed": {
+          "100": 1.0,
+          "2026": 1.0,
+          "42": 0.25
+        },
+        "p_max": 1.0,
+        "p_min": 0.0625,
+        "per_seed_delta": {
+          "100": -0.0038773949552848297,
+          "2026": 0.008708027626176507,
+          "42": 0.023849832243992952
+        }
+      }
+    }
+  },
+  "environment": {
+    "fixed": [
+      {
+        "device": "mps",
+        "versions": {
+          "numpy": "1.26.2",
+          "python": "3.9.6",
+          "sklearn": "1.6.1",
+          "torch": "2.8.0",
+          "transformers": "4.57.6"
+        }
+      }
+    ],
+    "identical_across_all_runs": true,
+    "tuned": [
+      {
+        "device": "mps",
+        "versions": {
+          "numpy": "1.26.2",
+          "python": "3.9.6",
+          "sklearn": "1.6.1",
+          "torch": "2.8.0",
+          "transformers": "4.57.6"
+        }
+      }
+    ]
+  },
+  "gap_change": {
+    "external": {
+      "ci_high": 0.006580390463904406,
+      "ci_low": -0.07338260843263633,
+      "definition": "(tuned bert_base - tuned finbert_mlm) - (fixed bert_base - fixed finbert_mlm)",
+      "delta_macro_f1": -0.033036942645303324,
+      "interval_contains_zero": true,
+      "p_bootstrap": 0.1096,
+      "per_seed_delta": {
+        "100": -0.06298883525923615,
+        "2026": -0.010145257692356413,
+        "42": -0.025976734984317518
+      }
+    },
+    "test": {
+      "ci_high": 0.01300876485616947,
+      "ci_low": -0.038670895952859455,
+      "definition": "(tuned bert_base - tuned finbert_mlm) - (fixed bert_base - fixed finbert_mlm)",
+      "delta_macro_f1": -0.012855592866139687,
+      "interval_contains_zero": true,
+      "p_bootstrap": 0.284,
+      "per_seed_delta": {
+        "100": 0.007239111094758388,
+        "2026": -0.022309221118950506,
+        "42": -0.02349666857422661
+      }
+    }
+  },
+  "max_abs_diff_vs_result_json_macro_f1": 0.0,
+  "n": {
+    "external": 9460,
+    "test": 339
+  },
+  "protocol": {
+    "B": 10000,
+    "alpha": 0.05,
+    "bootstrap": "seed+sentence two-level bootstrap (src.evaluation.multiseed.seed_sentence_bootstrap): per resample the sentences and, independently for each side, the seeds are drawn with replacement; 95% percentile interval; two-sided p = 2 * the smaller tail share at or beyond zero. The gap change has its own bootstrap (stream default_rng([seed, 2])): per resample one sentence draw shared by the four run sets (tuned BERT, tuned FinBERT, fixed BERT, fixed FinBERT) and an independent seed draw for each set, because tuned and fixed runs with the same seed number are different trainings and are not paired.",
+    "config": "sentences_allagree",
+    "difference_sign": "every delta is A - B",
+    "mcnemar": "exact McNemar per seed pairing (seed s of A against seed s of B); Holm-Bonferroni inside each seed family over the 8 tests (4 pairs x 2 splits). p_min / p_max are the smallest and largest raw p over the 3 seeds; n_seeds_significant counts the seeds with Holm-adjusted p < alpha.",
+    "metric": "macro_f1",
+    "models": [
+      "bert_base",
+      "finbert_mlm"
+    ],
+    "seed": 2026,
+    "seeds": [
+      42,
+      100,
+      2026
+    ],
+    "splits": [
+      "test",
+      "external"
+    ]
+  },
+  "recipes": {
+    "fixed": {
+      "bert_base": {
+        "batch_size": 16,
+        "learning_rate": 2e-05
+      },
+      "finbert_mlm": {
+        "batch_size": 16,
+        "learning_rate": 2e-05
+      }
+    },
+    "tuned": {
+      "bert_base": {
+        "batch_size": 32,
+        "learning_rate": 3e-05,
+        "val_macro_f1": 0.9575527824503188
+      },
+      "finbert_mlm": {
+        "batch_size": 32,
+        "learning_rate": 3e-05,
+        "val_macro_f1": 0.9567836350445047
+      }
+    }
+  },
+  "run_dirs": {
+    "fixed": {
+      "bert_base": {
+        "100": "results/step2/runs/sentences_allagree/bert_base/seed100",
+        "2026": "results/step2/runs/sentences_allagree/bert_base/seed2026",
+        "42": "results/step2/runs/sentences_allagree/bert_base/seed42"
+      },
+      "finbert_mlm": {
+        "100": "results/step2/runs/sentences_allagree/finbert_mlm/seed100",
+        "2026": "results/step2/runs/sentences_allagree/finbert_mlm/seed2026",
+        "42": "results/step2/runs/sentences_allagree/finbert_mlm/seed42"
+      }
+    },
+    "tuned": {
+      "bert_base": {
+        "100": "results/tuning/final/sentences_allagree/bert_base/lr3e-05_bs32_seed100",
+        "2026": "results/tuning/final/sentences_allagree/bert_base/lr3e-05_bs32_seed2026",
+        "42": "results/tuning/final/sentences_allagree/bert_base/lr3e-05_bs32_seed42"
+      },
+      "finbert_mlm": {
+        "100": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed100",
+        "2026": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed2026",
+        "42": "results/tuning/final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed42"
+      }
+    }
+  },
+  "scores": {
+    "bert_base": {
+      "fixed": {
+        "external": {
+          "accuracy": {
+            "mean": 0.6841085271317829,
+            "n": 3,
+            "sd": 0.018681770460622377
+          },
+          "accuracy_by_seed": {
+            "100": 0.7056025369978859,
+            "2026": 0.6717758985200846,
+            "42": 0.6749471458773785
+          },
+          "macro_f1": {
+            "mean": 0.6850107530221791,
+            "n": 3,
+            "sd": 0.020545854581621604
+          },
+          "macro_f1_by_seed": {
+            "100": 0.7086678532043876,
+            "2026": 0.671636774603441,
+            "42": 0.6747276312587087
+          }
+        },
+        "test": {
+          "accuracy": {
+            "mean": 0.9803343166175024,
+            "n": 3,
+            "sd": 0.009482449125853453
+          },
+          "accuracy_by_seed": {
+            "100": 0.9734513274336283,
+            "2026": 0.9911504424778761,
+            "42": 0.976401179941003
+          },
+          "macro_f1": {
+            "mean": 0.9739296019101786,
+            "n": 3,
+            "sd": 0.013162744524727281
+          },
+          "macro_f1_by_seed": {
+            "100": 0.9638638197960233,
+            "2026": 0.9888249402419443,
+            "42": 0.9691000456925684
+          }
+        }
+      },
+      "tuned": {
+        "external": {
+          "accuracy": {
+            "mean": 0.678400281888654,
+            "n": 3,
+            "sd": 0.0025377318646977965
+          },
+          "accuracy_by_seed": {
+            "100": 0.6797040169133193,
+            "2026": 0.6800211416490486,
+            "42": 0.6754756871035941
+          },
+          "macro_f1": {
+            "mean": 0.6778144618820039,
+            "n": 3,
+            "sd": 0.0031927239397525602
+          },
+          "macro_f1_by_seed": {
+            "100": 0.6785347140738337,
+            "2026": 0.6805855358340885,
+            "42": 0.6743231357380894
+          }
+        },
+        "test": {
+          "accuracy": {
+            "mean": 0.976401179941003,
+            "n": 3,
+            "sd": 0.002949852507374673
+          },
+          "accuracy_by_seed": {
+            "100": 0.976401179941003,
+            "2026": 0.9793510324483776,
+            "42": 0.9734513274336283
+          },
+          "macro_f1": {
+            "mean": 0.9706341640156673,
+            "n": 3,
+            "sd": 0.0041278123110083074
+          },
+          "macro_f1_by_seed": {
+            "100": 0.9672255359354969,
+            "2026": 0.9752237467491703,
+            "42": 0.9694532093623347
+          }
+        }
+      }
+    },
+    "finbert_mlm": {
+      "fixed": {
+        "external": {
+          "accuracy": {
+            "mean": 0.670260747004933,
+            "n": 3,
+            "sd": 0.024867813206025723
+          },
+          "accuracy_by_seed": {
+            "100": 0.6466173361522198,
+            "2026": 0.6679704016913319,
+            "42": 0.6961945031712473
+          },
+          "macro_f1": {
+            "mean": 0.6691075464474382,
+            "n": 3,
+            "sd": 0.027913873003414295
+          },
+          "macro_f1_by_seed": {
+            "100": 0.6422033854334361,
+            "2026": 0.6671872850329805,
+            "42": 0.6979319688758977
+          }
+        },
+        "test": {
+          "accuracy": {
+            "mean": 0.9587020648967552,
+            "n": 3,
+            "sd": 0.005109294417607315
+          },
+          "accuracy_by_seed": {
+            "100": 0.9616519174041298,
+            "2026": 0.9616519174041298,
+            "42": 0.9528023598820059
+          },
+          "macro_f1": {
+            "mean": 0.9444591482775642,
+            "n": 3,
+            "sd": 0.00521697413641734
+          },
+          "macro_f1_by_seed": {
+            "100": 0.9492831762494683,
+            "2026": 0.9451717758286148,
+            "42": 0.9389224927546095
+          }
+        }
+      },
+      "tuned": {
+        "external": {
+          "accuracy": {
+            "mean": 0.6937632135306554,
+            "n": 3,
+            "sd": 0.023696337019258565
+          },
+          "accuracy_by_seed": {
+            "100": 0.676215644820296,
+            "2026": 0.6843551797040169,
+            "42": 0.7207188160676533
+          },
+          "macro_f1": {
+            "mean": 0.6949481979525663,
+            "n": 3,
+            "sd": 0.025358802530530845
+          },
+          "macro_f1_by_seed": {
+            "100": 0.6750590815621184,
+            "2026": 0.6862813039559845,
+            "42": 0.7235042083395959
+          }
+        },
+        "test": {
+          "accuracy": {
+            "mean": 0.9646017699115044,
+            "n": 3,
+            "sd": 0.0029498525073746173
+          },
+          "accuracy_by_seed": {
+            "100": 0.9616519174041298,
+            "2026": 0.9646017699115044,
+            "42": 0.967551622418879
+          },
+          "macro_f1": {
+            "mean": 0.9540193032491925,
+            "n": 3,
+            "sd": 0.008684112228883942
+          },
+          "macro_f1_by_seed": {
+            "100": 0.9454057812941835,
+            "2026": 0.9538798034547913,
+            "42": 0.9627723249986024
+          }
+        }
+      }
+    }
+  }
+}

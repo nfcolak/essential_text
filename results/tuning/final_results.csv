@@ -1,0 +1,7 @@
+model_key,learning_rate,batch_size,seed,best_epoch,val_macro_f1,test_accuracy,test_macro_f1,test_f1_negative,test_f1_neutral,test_f1_positive,external_accuracy,external_macro_f1,external_f1_negative,external_f1_neutral,external_f1_positive,run_dir
+bert_base,3e-05,32,42,4,0.960670,0.973451,0.969453,0.977778,0.983213,0.947368,0.675476,0.674323,0.695401,0.689458,0.638110,final/sentences_allagree/bert_base/lr3e-05_bs32_seed42
+bert_base,3e-05,32,100,2,0.960481,0.976401,0.967226,0.954545,0.988067,0.959064,0.679704,0.678535,0.694401,0.692677,0.648526,final/sentences_allagree/bert_base/lr3e-05_bs32_seed100
+bert_base,3e-05,32,2026,4,0.957883,0.979351,0.975224,0.977778,0.987893,0.960000,0.680021,0.680586,0.694167,0.683747,0.663843,final/sentences_allagree/bert_base/lr3e-05_bs32_seed2026
+finbert_mlm,3e-05,32,42,3,0.956784,0.967552,0.962772,0.967033,0.978102,0.943182,0.720719,0.723504,0.733646,0.694586,0.742281,final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed42
+finbert_mlm,3e-05,32,100,4,0.950062,0.961652,0.945406,0.921348,0.983051,0.931818,0.676216,0.675059,0.663473,0.677108,0.684597,final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed100
+finbert_mlm,3e-05,32,2026,4,0.949165,0.964602,0.953880,0.943820,0.980676,0.937143,0.684355,0.686281,0.702808,0.679603,0.676433,final/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed2026

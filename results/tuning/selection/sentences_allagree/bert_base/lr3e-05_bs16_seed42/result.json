@@ -1,0 +1,121 @@
+{
+  "status": "completed",
+  "stage": "finetune",
+  "config": "sentences_allagree",
+  "model_key": "bert_base",
+  "model_name": "google-bert/bert-base-uncased",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "max_length": 128,
+    "batch_size": 16,
+    "eval_batch_size": 64,
+    "learning_rate": 3e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_epochs": 5,
+    "patience": 2,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "device": null
+  },
+  "best_epoch": 3,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6630971540510654,
+      "val_macro_f1": 0.8996125864848303,
+      "seconds": 19.47474503517151
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.14021494009997695,
+      "val_macro_f1": 0.9374826541742989,
+      "seconds": 17.75730586051941
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.04870702931890264,
+      "val_macro_f1": 0.9468961188624109,
+      "seconds": 17.694352865219116
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.030273409179062582,
+      "val_macro_f1": 0.9385004333555487,
+      "seconds": 17.56191396713257
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.013699779177550227,
+      "val_macro_f1": 0.941128583833922,
+      "seconds": 17.69880223274231
+    }
+  ],
+  "metrics": {
+    "val": {
+      "accuracy": 0.9558823529411765,
+      "macro_f1": 0.9468961188624109,
+      "per_class": {
+        "negative": {
+          "precision": 0.9545454545454546,
+          "recall": 0.9333333333333333,
+          "f1": 0.9438202247191011,
+          "support": 45
+        },
+        "neutral": {
+          "precision": 0.9758454106280193,
+          "recall": 0.9665071770334929,
+          "f1": 0.9711538461538461,
+          "support": 209
+        },
+        "positive": {
+          "precision": 0.9101123595505618,
+          "recall": 0.9418604651162791,
+          "f1": 0.9257142857142857,
+          "support": 86
+        }
+      },
+      "confusion_matrix": [
+        [
+          42,
+          1,
+          2
+        ],
+        [
+          1,
+          202,
+          6
+        ],
+        [
+          1,
+          4,
+          81
+        ]
+      ],
+      "neutral_to_negative_rate": 0.004784688995215311,
+      "ece": 0.0345067255637225
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1585,
+    "val": 340,
+    "test": null,
+    "external": null
+  },
+  "device": "mps",
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 92.82683634757996,
+  "timestamp": "2026-11-19T13:07:46.983905+00:00"
+}

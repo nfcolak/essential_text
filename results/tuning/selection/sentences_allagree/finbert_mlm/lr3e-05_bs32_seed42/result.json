@@ -1,0 +1,121 @@
+{
+  "status": "completed",
+  "stage": "finetune",
+  "config": "sentences_allagree",
+  "model_key": "finbert_mlm",
+  "model_name": "yiyanghkust/finbert-pretrain",
+  "seed": 42,
+  "fold": null,
+  "hyperparams": {
+    "max_length": 128,
+    "batch_size": 32,
+    "eval_batch_size": 64,
+    "learning_rate": 3e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_epochs": 5,
+    "patience": 2,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "device": null
+  },
+  "best_epoch": 3,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6138832020759583,
+      "val_macro_f1": 0.9320026088338622,
+      "seconds": 15.816972732543945
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.11313702998682856,
+      "val_macro_f1": 0.9367232555922366,
+      "seconds": 14.88946008682251
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.03797240677755326,
+      "val_macro_f1": 0.9567836350445047,
+      "seconds": 14.602659940719604
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.01531810409622267,
+      "val_macro_f1": 0.932769273303162,
+      "seconds": 14.532433986663818
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.006285768041852862,
+      "val_macro_f1": 0.9485763029545852,
+      "seconds": 14.480349063873291
+    }
+  ],
+  "metrics": {
+    "val": {
+      "accuracy": 0.9676470588235294,
+      "macro_f1": 0.9567836350445047,
+      "per_class": {
+        "negative": {
+          "precision": 0.9130434782608695,
+          "recall": 0.9333333333333333,
+          "f1": 0.9230769230769231,
+          "support": 45
+        },
+        "neutral": {
+          "precision": 0.9853658536585366,
+          "recall": 0.9665071770334929,
+          "f1": 0.9758454106280193,
+          "support": 209
+        },
+        "positive": {
+          "precision": 0.9550561797752809,
+          "recall": 0.9883720930232558,
+          "f1": 0.9714285714285714,
+          "support": 86
+        }
+      },
+      "confusion_matrix": [
+        [
+          42,
+          2,
+          1
+        ],
+        [
+          4,
+          202,
+          3
+        ],
+        [
+          0,
+          1,
+          85
+        ]
+      ],
+      "neutral_to_negative_rate": 0.019138755980861243,
+      "ece": 0.02499017136938434
+    },
+    "test": null,
+    "external": null
+  },
+  "n": {
+    "train": 1585,
+    "val": 340,
+    "test": null,
+    "external": null
+  },
+  "device": "mps",
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.2",
+    "sklearn": "1.6.1",
+    "torch": "2.8.0",
+    "transformers": "4.57.6"
+  },
+  "manifest_sha256": "a60a1434dcf3fe1c891b94c4ec950c02a76bc26a2808daadc6f6b27f8e1a11a3",
+  "external_sha256": null,
+  "probe": false,
+  "wall_seconds": 77.28602313995361,
+  "timestamp": "2026-11-19T13:12:04.735559+00:00"
+}

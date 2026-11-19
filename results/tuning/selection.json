@@ -1,0 +1,104 @@
+{
+  "phrasebank_config": "sentences_allagree",
+  "selection_seed": 42,
+  "selection_metric": "val_macro_f1",
+  "tie_break": [
+    "max val_macro_f1",
+    "min learning_rate",
+    "min batch_size"
+  ],
+  "selected": {
+    "bert_base": {
+      "learning_rate": 3e-05,
+      "batch_size": 32,
+      "val_macro_f1": 0.9575527824503188
+    },
+    "finbert_mlm": {
+      "learning_rate": 3e-05,
+      "batch_size": 32,
+      "val_macro_f1": 0.9567836350445047
+    }
+  },
+  "candidates": [
+    {
+      "model_key": "bert_base",
+      "learning_rate": "2e-05",
+      "batch_size": "16",
+      "seed": "42",
+      "val_macro_f1": "0.956042",
+      "val_accuracy": "0.967647",
+      "selected": "0",
+      "run_dir": "selection/sentences_allagree/bert_base/seed42"
+    },
+    {
+      "model_key": "bert_base",
+      "learning_rate": "2e-05",
+      "batch_size": "32",
+      "seed": "42",
+      "val_macro_f1": "0.955894",
+      "val_accuracy": "0.967647",
+      "selected": "0",
+      "run_dir": "selection/sentences_allagree/bert_base/lr2e-05_bs32_seed42"
+    },
+    {
+      "model_key": "bert_base",
+      "learning_rate": "3e-05",
+      "batch_size": "16",
+      "seed": "42",
+      "val_macro_f1": "0.946896",
+      "val_accuracy": "0.955882",
+      "selected": "0",
+      "run_dir": "selection/sentences_allagree/bert_base/lr3e-05_bs16_seed42"
+    },
+    {
+      "model_key": "bert_base",
+      "learning_rate": "3e-05",
+      "batch_size": "32",
+      "seed": "42",
+      "val_macro_f1": "0.957553",
+      "val_accuracy": "0.967647",
+      "selected": "1",
+      "run_dir": "selection/sentences_allagree/bert_base/lr3e-05_bs32_seed42"
+    },
+    {
+      "model_key": "finbert_mlm",
+      "learning_rate": "2e-05",
+      "batch_size": "16",
+      "seed": "42",
+      "val_macro_f1": "0.948576",
+      "val_accuracy": "0.961765",
+      "selected": "0",
+      "run_dir": "selection/sentences_allagree/finbert_mlm/seed42"
+    },
+    {
+      "model_key": "finbert_mlm",
+      "learning_rate": "2e-05",
+      "batch_size": "32",
+      "seed": "42",
+      "val_macro_f1": "0.951275",
+      "val_accuracy": "0.964706",
+      "selected": "0",
+      "run_dir": "selection/sentences_allagree/finbert_mlm/lr2e-05_bs32_seed42"
+    },
+    {
+      "model_key": "finbert_mlm",
+      "learning_rate": "3e-05",
+      "batch_size": "16",
+      "seed": "42",
+      "val_macro_f1": "0.946084",
+      "val_accuracy": "0.961765",
+      "selected": "0",
+      "run_dir": "selection/sentences_allagree/finbert_mlm/lr3e-05_bs16_seed42"
+    },
+    {
+      "model_key": "finbert_mlm",
+      "learning_rate": "3e-05",
+      "batch_size": "32",
+      "seed": "42",
+      "val_macro_f1": "0.956784",
+      "val_accuracy": "0.967647",
+      "selected": "1",
+      "run_dir": "selection/sentences_allagree/finbert_mlm/lr3e-05_bs32_seed42"
+    }
+  ]
+}

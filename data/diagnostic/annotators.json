@@ -1,6 +1,7 @@
 {
   "a": "Claude Sonnet 5.5 (claude-sonnet-5-5, Anthropic) - LLM agent, not a human annotator",
   "b": "Gemini 3.8 Flash (gemini-3.8-flash-medium, Google, via Antigravity CLI) - LLM agent, not a human annotator",
+  "c": "Qiyao Zheng (team member) - human annotator; tagged all 300 items by hand with annotation/GUIDELINES.md (file annotations_qiyao.csv). The team's report states the pass was done without seeing the model tags; which guideline version was used for context_dependent is not recorded.",
   "protocol": "Blind and independent: each agent saw only diagnostic_items.csv (diag_id,text) and annotation/GUIDELINES.md, never the other annotator's file, gold labels, model predictions or rule tags. Each read the sentences in chunks (about 25 to 75 sentences per read) and wrote the tags by hand, without keyword scripts or the rule tagger. Blindness refers to the labels, predictions and rule tags withheld in this run: both models may have seen Financial PhraseBank sentences during pretraining. These process claims were verified by the supervising agent from the session transcripts; the transcripts are not part of the repository.",
   "rounds": {
     "v1": "2026-10-20, all five tags with guideline v1 (annotations_a_v1.csv, annotations_b_v1.csv).",

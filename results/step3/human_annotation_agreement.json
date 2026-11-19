@@ -1,0 +1,146 @@
+{
+  "agreement": {
+    "context_dependent": {
+      "disagreements_h_consensus": [
+        "d042",
+        "d099",
+        "d172",
+        "d251",
+        "d299"
+      ],
+      "kappa_ab": 0.9752004629246921,
+      "kappa_h_a": 0.9363759755683746,
+      "kappa_h_b": 0.9374791597199066,
+      "kappa_h_consensus": 0.9363759755683746,
+      "kappa_h_rule": 0.656393169512703,
+      "n": 300,
+      "prevalence_a": 0.15666666666666668,
+      "prevalence_b": 0.16333333333333333,
+      "prevalence_consensus": 0.15666666666666668,
+      "prevalence_h": 0.15333333333333332,
+      "prevalence_rule": 0.08666666666666667,
+      "raw_agreement_h_a": 0.9833333333333333,
+      "raw_agreement_h_b": 0.9833333333333333,
+      "raw_agreement_h_consensus": 0.9833333333333333,
+      "raw_agreement_h_rule": 0.9266666666666666
+    },
+    "financial_terminology": {
+      "disagreements_h_consensus": [
+        "d061",
+        "d075"
+      ],
+      "kappa_ab": 0.9612202688728024,
+      "kappa_h_a": 0.8913043478260869,
+      "kappa_h_b": 0.9250936329588015,
+      "kappa_h_consensus": 0.9250936329588015,
+      "kappa_h_rule": 0.9637681159420289,
+      "n": 300,
+      "prevalence_a": 0.04666666666666667,
+      "prevalence_b": 0.043333333333333335,
+      "prevalence_consensus": 0.043333333333333335,
+      "prevalence_h": 0.05,
+      "prevalence_rule": 0.04666666666666667,
+      "raw_agreement_h_a": 0.99,
+      "raw_agreement_h_b": 0.9933333333333333,
+      "raw_agreement_h_consensus": 0.9933333333333333,
+      "raw_agreement_h_rule": 0.9966666666666667
+    },
+    "hedging": {
+      "disagreements_h_consensus": [
+        "d018",
+        "d069",
+        "d140",
+        "d155",
+        "d172",
+        "d194",
+        "d219",
+        "d232",
+        "d288",
+        "d295"
+      ],
+      "kappa_ab": 0.893139559734986,
+      "kappa_h_a": 0.837473879730671,
+      "kappa_h_b": 0.8171707168431477,
+      "kappa_h_consensus": 0.8800863378367575,
+      "kappa_h_rule": 0.834577536477774,
+      "n": 300,
+      "prevalence_a": 0.19,
+      "prevalence_b": 0.19666666666666666,
+      "prevalence_consensus": 0.17666666666666667,
+      "prevalence_h": 0.15666666666666668,
+      "prevalence_rule": 0.15333333333333332,
+      "raw_agreement_h_a": 0.9533333333333334,
+      "raw_agreement_h_b": 0.9466666666666667,
+      "raw_agreement_h_consensus": 0.9666666666666667,
+      "raw_agreement_h_rule": 0.9566666666666667
+    },
+    "negation": {
+      "disagreements_h_consensus": [
+        "d253"
+      ],
+      "kappa_ab": 1.0,
+      "kappa_h_a": 0.9456521739130435,
+      "kappa_h_b": 0.9456521739130435,
+      "kappa_h_consensus": 0.9456521739130435,
+      "kappa_h_rule": 0.9456521739130435,
+      "n": 300,
+      "prevalence_a": 0.03333333333333333,
+      "prevalence_b": 0.03333333333333333,
+      "prevalence_consensus": 0.03333333333333333,
+      "prevalence_h": 0.03,
+      "prevalence_rule": 0.03333333333333333,
+      "raw_agreement_h_a": 0.9966666666666667,
+      "raw_agreement_h_b": 0.9966666666666667,
+      "raw_agreement_h_consensus": 0.9966666666666667,
+      "raw_agreement_h_rule": 0.9966666666666667
+    },
+    "numerical_comparison": {
+      "disagreements_h_consensus": [
+        "d069",
+        "d082",
+        "d139",
+        "d140",
+        "d180",
+        "d192",
+        "d200",
+        "d219",
+        "d257",
+        "d272"
+      ],
+      "kappa_ab": 0.9648382559774965,
+      "kappa_h_a": 0.9110056363097003,
+      "kappa_h_b": 0.8991935483870968,
+      "kappa_h_consensus": 0.887218045112782,
+      "kappa_h_rule": 0.8543906810035842,
+      "n": 300,
+      "prevalence_a": 0.17333333333333334,
+      "prevalence_b": 0.17,
+      "prevalence_consensus": 0.16666666666666666,
+      "prevalence_h": 0.19333333333333333,
+      "prevalence_rule": 0.17,
+      "raw_agreement_h_a": 0.9733333333333334,
+      "raw_agreement_h_b": 0.97,
+      "raw_agreement_h_consensus": 0.9666666666666667,
+      "raw_agreement_h_rule": 0.9566666666666667
+    }
+  },
+  "annotators": {
+    "a": "Claude Sonnet 5.5 (claude-sonnet-5-5, Anthropic) - LLM agent, not a human annotator",
+    "b": "Gemini 3.8 Flash (gemini-3.8-flash-medium, Google, via Antigravity CLI) - LLM agent, not a human annotator",
+    "c": "Qiyao Zheng (team member) - human annotator; tagged all 300 items by hand with annotation/GUIDELINES.md (file annotations_qiyao.csv). The team's report states the pass was done without seeing the model tags; which guideline version was used for context_dependent is not recorded.",
+    "protocol": "Blind and independent: each agent saw only diagnostic_items.csv (diag_id,text) and annotation/GUIDELINES.md, never the other annotator's file, gold labels, model predictions or rule tags. Each read the sentences in chunks (about 25 to 75 sentences per read) and wrote the tags by hand, without keyword scripts or the rule tagger. Blindness refers to the labels, predictions and rule tags withheld in this run: both models may have seen Financial PhraseBank sentences during pretraining. These process claims were verified by the supervising agent from the session transcripts; the transcripts are not part of the repository.",
+    "rounds": {
+      "v1": "2026-10-20, all five tags with guideline v1 (annotations_a_v1.csv, annotations_b_v1.csv).",
+      "v2": "2026-10-20, context_dependent only, re-annotated blind by the same two models with guideline v2 (widened definition; context_v2_a.csv, context_v2_b.csv). annotations_a.csv and annotations_b.csv hold the v1 tags for the other four phenomena and the v2 context_dependent tag."
+    }
+  },
+  "mean_kappa": {
+    "ab": 0.9588797095019954,
+    "h_a": 0.9043624026695752,
+    "h_b": 0.9049178463643992,
+    "h_consensus": 0.9148852330779518,
+    "h_rule": 0.8509563353698267
+  },
+  "n_items": 300,
+  "note": "Annotators a and b are LLM agents; c is a human team member. The Step 3 analysis still uses the A-B consensus; this file only measures how well the LLM tags match a human pass."
+}

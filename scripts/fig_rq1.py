@@ -19,7 +19,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.font_manager import FontProperties
+from matplotlib.font_manager import FontProperties, findfont
 from matplotlib.patches import PathPatch
 from matplotlib.path import Path
 
@@ -49,9 +49,49 @@ TEXT_WIDTH_IN = 15.0 / 2.54
 LM_DIR = os.environ.get("LM_FONT_DIR", "/usr/share/texmf/fonts/opentype/public/lm")
 
 
+LM_FILES = {False: "lmroman10-regular.otf", True: "lmroman10-italic.otf"}
+LM_FAMILIES = ("Latin Modern Roman", "LM Roman 10")
+_FONT_FILES: dict = {}
+
+
+def _font_files() -> dict:
+    """Font file per style (False = upright, True = italic); None means generic serif.
+
+    Order: the files in LM_DIR, then a Latin Modern Roman that matplotlib's font manager
+    knows, then matplotlib's "serif" family with one warning line on stderr.
+    """
+    if _FONT_FILES:
+        return _FONT_FILES
+    paths = {italic: os.path.join(LM_DIR, name) for italic, name in LM_FILES.items()}
+    missing = [path for path in paths.values() if not os.path.isfile(path)]
+    if missing:
+        paths = {}
+        for italic in LM_FILES:
+            style = "italic" if italic else "normal"
+            for family in LM_FAMILIES:
+                try:
+                    paths[italic] = findfont(
+                        FontProperties(family=family, style=style), fallback_to_default=False
+                    )
+                    break
+                except ValueError:
+                    continue
+        if len(paths) < len(LM_FILES):
+            print(
+                f"warning: Latin Modern Roman not found ({missing[0]} is missing); "
+                "using matplotlib's serif family instead.",
+                file=sys.stderr,
+            )
+            paths = {italic: None for italic in LM_FILES}
+    _FONT_FILES.update(paths)
+    return _FONT_FILES
+
+
 def lm(size: float, italic: bool = False) -> FontProperties:
-    name = "lmroman10-italic.otf" if italic else "lmroman10-regular.otf"
-    return FontProperties(fname=os.path.join(LM_DIR, name), size=size)
+    fname = _font_files()[italic]
+    if fname is None:
+        return FontProperties(family="serif", style="italic" if italic else "normal", size=size)
+    return FontProperties(fname=fname, size=size)
 
 
 def neutral_shares(model: str, seeds: list[str], split: str) -> tuple[int, np.ndarray]:

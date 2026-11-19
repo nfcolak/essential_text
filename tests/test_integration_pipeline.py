@@ -267,7 +267,7 @@ class TestTuningNotebookStructure(unittest.TestCase):
         self.assertIn("colab.research.google.com/assets/colab-badge.svg", all_cell_text)
         self.assertIn("essential_text.git", code_text)
         self.assertIn('REPO_DIR = "/content/essential_text"', code_text)
-        self.assertIn('BRANCH = "qiyao/hyperparameter-tuning"', code_text)
+        self.assertIn('BRANCH = "main"', code_text)
         self.assertIn('os.path.join(REPO_DIR, ".git")', code_text)
         self.assertIn('["git", "clone", "--branch", BRANCH, REPO_URL, REPO_DIR]', code_text)
         self.assertIn('["git", "-C", REPO_DIR, "fetch", "origin", BRANCH]', code_text)
@@ -351,7 +351,7 @@ class TestTuningNotebookStructure(unittest.TestCase):
         self._git("push", "-u", "origin", branch, cwd=seed)
 
     def test_setup_cell_stays_on_the_absolute_directory(self) -> None:
-        branch = "qiyao/hyperparameter-tuning"
+        branch = "main"
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as tmp:
             remote = os.path.join(tmp, "remote.git")
             repo_dir = os.path.join(tmp, "content", "essential_text")
@@ -390,7 +390,7 @@ class TestTuningNotebookStructure(unittest.TestCase):
                 sys.path[:] = previous_path
 
     def test_setup_cell_reports_a_missing_checkout_or_script(self) -> None:
-        branch = "qiyao/hyperparameter-tuning"
+        branch = "main"
         previous_cwd = os.getcwd()
         previous_path = list(sys.path)
         try:
@@ -414,7 +414,7 @@ class TestTuningNotebookStructure(unittest.TestCase):
 
                 wrong_remote = os.path.join(tmp, "wrong.git")
                 wrong_dir = os.path.join(tmp, "content", "wrong_repo")
-                self._publish_branch(wrong_remote, "main", {"scripts/run_tuning.py": "# tuning\n"})
+                self._publish_branch(wrong_remote, "not-main", {"scripts/run_tuning.py": "# tuning\n"})
                 wrong_source = self._setup_cell_source(wrong_dir, wrong_remote)
                 with self.assertRaises(RuntimeError) as wrong_branch:
                     exec(compile(wrong_source, "<tuning-cell-1>", "exec"), {"__name__": "__main__"})

@@ -13,7 +13,8 @@ so the folder carries the dataset's licence (see "Licence and citation" below).
 | `rule_tags.csv` | Phenomenon tags from the rule tagger (`src/analysis/phenomena.py`), one row per item: financial_terminology, negation, hedging, numerical_comparison, context_dependent (0 or 1). Regenerated from the v2 tagger with `scripts/build_diagnostic_set.py --rule-tags-only --execute`, which keeps `diagnostic_items.csv` and the key unchanged. |
 | `annotations_a.csv` | Tags from annotator A (LLM, see below) for the same five phenomena, with an optional `note`. `context_dependent` holds the v2 re-annotation. |
 | `annotations_b.csv` | Tags from annotator B (LLM, see below), same format and same v2 re-annotation of `context_dependent`. |
-| `annotators.json` | Who the two annotators are and the blind protocol they followed. |
+| `annotations_qiyao.csv` | Tags from annotator C, a human team member (Qiyao Zheng), for the same five phenomena and the same 300 items. Not used for the Step 3 consensus; see "Human annotation pass" below. |
+| `annotators.json` | Who the annotators are (`a`, `b`: the two LLM annotators; `c`: the human annotator) and the blind protocol the LLM annotators followed. |
 | `annotations_a_v1.csv`, `annotations_b_v1.csv` | The first-round annotations, kept for the record, before the widened `context_dependent` definition (guideline v1). |
 | `context_v2_a.csv`, `context_v2_b.csv` | The raw v2 re-annotation of `context_dependent` only (`diag_id,context_dependent,note`), merged into `annotations_{a,b}.csv`. |
 
@@ -32,7 +33,8 @@ The tagging rules are in `annotation/GUIDELINES.md` (repository root, changelog 
 
 ## Annotators (not human)
 
-Both annotators are large language model agents, **not human annotators**. No human annotation was done for this set.
+Both annotators are large language model agents, **not human annotators**. The Step 3 consensus uses only these two; a later human pass is described in
+"Human annotation pass" below.
 
 - Annotator A: Claude Sonnet 5.5 (`claude-sonnet-5-5`, Anthropic).
 - Annotator B: Gemini 3.8 Flash (`gemini-3.8-flash-medium`, Google, run through the Antigravity CLI).
@@ -50,6 +52,14 @@ widens it: a direction word (for example "fell", "rose", "cut") applied to a pol
 example "profit" versus "costs"), plus job-cut patterns. Only this one tag was re-annotated, blind, by both annotators
 with the v2 guideline. The other four tags are unchanged from round one. The round-one files are kept as
 `annotations_*_v1.csv`.
+
+## Human annotation pass
+
+A team member (annotator C in `annotators.json`) later tagged all 300 items by hand; the tags are in
+`annotations_qiyao.csv`. `scripts/analyze_human_annotation.py` compares them with annotators A and B, the A-B consensus
+and the rule tags (Cohen's kappa and raw agreement per phenomenon) and writes
+`results/step3/human_annotation_agreement.json`. The Step 3 analysis still uses the A-B consensus; the human pass only
+measures how well the LLM tags match a human reading.
 
 ## Licence and citation
 
