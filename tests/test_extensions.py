@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import os
 import shutil
@@ -146,6 +148,113 @@ class ExtraExternalPrepTests(unittest.TestCase):
         plan = rx.build_plan()
         self.assertEqual(len(plan), 24 + 18 + 1)
         self.assertEqual({r.stage for r in plan}, {"baselines", "finetune", "zeroshot"})
+
+
+STEP1_SPLIT_FILES = ["sentences_allagree_manifest.json", "sentences_75agree_manifest.json",
+                     "sentences_50agree_manifest.json", "sentfin_dedup.json"]
+
+
+class ExtraExternalChecksumTests(unittest.TestCase):
+    """The extension file is hashed in SHA256SUMS.extra; SHA256SUMS stays the locked list of Step 1 splits."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.splits = os.path.join(self.tmp, "splits")
+        os.makedirs(self.splits)
+        # main() only hashes the inputs before it prints the plan, so placeholder JSON is enough.
+        for k, name in enumerate(STEP1_SPLIT_FILES + [prep.OUT_FILE]):
+            with open(os.path.join(self.splits, name), "w", encoding="utf-8") as handle:
+                json.dump({"placeholder": k}, handle)
+        self.extra_path = os.path.join(self.splits, prep.OUT_FILE)
+        self.sums_path = os.path.join(self.splits, rx.rs.SHA256SUMS_FILE)
+        self.extra_sums_path = os.path.join(self.splits, prep.EXTRA_SHA256SUMS_FILE)
+        self._write_sums(self.sums_path, STEP1_SPLIT_FILES)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+    def _line(self, name, digest=None):
+        return f"{digest or prep.file_sha256(os.path.join(self.splits, name))}  {name}\n"
+
+    def _write_sums(self, path, names):
+        with open(path, "w", encoding="utf-8") as handle:
+            handle.write("".join(self._line(n) for n in names))
+
+    def _read_bytes(self, path):
+        with open(path, "rb") as handle:
+            return handle.read()
+
+    def _plan(self):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = rx.main(["--splits-dir", self.splits, "--out-dir", os.path.join(self.tmp, "runs")])
+        return code, out.getvalue(), err.getvalue()
+
+    def test_append_writes_only_the_extra_file(self):
+        self.assertEqual(prep.EXTRA_SHA256SUMS_FILE, "SHA256SUMS.extra")
+        before = self._read_bytes(self.sums_path)
+        with open(self.extra_sums_path, "w", encoding="utf-8") as handle:
+            handle.write(self._line(prep.OUT_FILE, "0" * 64) + f"{'1' * 64}  other.json\n")
+        prep.append_sha256sum(self.splits, self.extra_path)
+        self.assertEqual(self._read_bytes(self.sums_path), before)
+        self.assertEqual(self._read_bytes(self.extra_sums_path).decode("utf-8"),
+                         f"{'1' * 64}  other.json\n" + self._line(prep.OUT_FILE))
+        self.assertEqual(sorted(os.listdir(self.splits)),
+                         sorted(STEP1_SPLIT_FILES + [prep.OUT_FILE, "SHA256SUMS", "SHA256SUMS.extra"]))
+
+    def test_append_creates_the_extra_file(self):
+        before = self._read_bytes(self.sums_path)
+        prep.append_sha256sum(self.splits, self.extra_path)
+        self.assertEqual(self._read_bytes(self.extra_sums_path).decode("utf-8"), self._line(prep.OUT_FILE))
+        self.assertEqual(self._read_bytes(self.sums_path), before)
+
+    def test_runner_plan_passes_when_both_sum_files_match(self):
+        prep.append_sha256sum(self.splits, self.extra_path)
+        code, out, err = self._plan()
+        self.assertEqual((code, err), (0, ""))
+        self.assertIn("plan: 43 runs", out)
+        self.assertFalse(os.path.exists(os.path.join(self.tmp, "runs")))
+
+    def test_runner_rejects_extra_file_listed_only_in_sha256sums(self):
+        self._write_sums(self.sums_path, STEP1_SPLIT_FILES + [prep.OUT_FILE])
+        code, _, err = self._plan()  # no SHA256SUMS.extra at all
+        self.assertEqual(code, 2)
+        self.assertIn("SHA256SUMS.extra", err)
+        with open(self.extra_sums_path, "w", encoding="utf-8") as handle:
+            handle.write(f"{'1' * 64}  other.json\n")
+        code, _, err = self._plan()  # SHA256SUMS.extra exists but does not list the file
+        self.assertEqual(code, 2)
+        self.assertIn("not in SHA256SUMS.extra", err)
+        self.assertIn(prep.OUT_FILE, err)
+
+    def test_runner_rejects_wrong_extra_hash(self):
+        with open(self.extra_sums_path, "w", encoding="utf-8") as handle:
+            handle.write(self._line(prep.OUT_FILE, "0" * 64))
+        code, _, err = self._plan()
+        self.assertEqual(code, 2)
+        self.assertIn("SHA-256 mismatch against SHA256SUMS.extra", err)
+        self.assertIn(prep.OUT_FILE, err)
+
+    def test_runner_still_checks_step1_files_against_sha256sums(self):
+        prep.append_sha256sum(self.splits, self.extra_path)
+        with open(os.path.join(self.splits, "sentfin_dedup.json"), "w", encoding="utf-8") as handle:
+            handle.write("{}")
+        code, _, err = self._plan()
+        self.assertEqual(code, 2)
+        self.assertIn("SHA-256 mismatch against SHA256SUMS ", err)
+        self.assertIn("sentfin_dedup.json", err)
+        self._write_sums(self.sums_path, STEP1_SPLIT_FILES[:3])
+        code, _, err = self._plan()
+        self.assertEqual(code, 2)
+        self.assertIn("not in SHA256SUMS ", err)
+
+    def test_tracked_sha256sums_lists_only_the_step1_splits(self):
+        """Guards the tuning notebook (Cell 5), which requires every file listed in SHA256SUMS to exist."""
+        splits = os.path.join(prep.REPO_ROOT, "data", "splits")
+        self.assertEqual(list(rx.rs._read_sha256sums(os.path.join(splits, "SHA256SUMS"))), STEP1_SPLIT_FILES)
+        extra = rx.rs._read_sha256sums(os.path.join(splits, prep.EXTRA_SHA256SUMS_FILE))
+        self.assertEqual(list(extra), [prep.OUT_FILE])
+        self.assertRegex(extra[prep.OUT_FILE], r"^[0-9a-f]{64}$")
 
 
 class ExtraExternalAnalysisTests(unittest.TestCase):

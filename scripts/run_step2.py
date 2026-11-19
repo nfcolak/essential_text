@@ -4,6 +4,11 @@
 Plan-only by default; `--execute` runs the matrix. Every run is written atomically to
 `<out-dir>/<config>/<model_key>/<tag>/` (`result.json` + `predictions.npz`), completed runs
 are skipped on resume, and an error in one run is journalled without stopping the others.
+Fine-tune tags stay `seed<N>` for the shared recipe (learning rate 2e-5, batch size 16).
+`--learning-rate` and `--batch-size` override that recipe; any other pair is written into
+the tag so sweeps cannot overwrite each other or the existing Step 2 runs.
+A normal fine-tune scores the test split and the external holdout once, after early
+stopping. `--val-only` scores validation only and does not load or save those holdouts.
 This script never downloads anything: models come from the Hugging Face cache and the
 datasets from `--splits-dir`.
 """
@@ -14,6 +19,7 @@ import argparse
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
+import math
 import os
 import platform
 import shutil
@@ -76,15 +82,62 @@ ALL_KEYS = tuple(BASELINE_KEYS) + tuple(FINETUNE_KEYS) + tuple(ZERO_SHOT_KEYS)
 CV_CONFIG = "sentences_allagree"
 CV_FOLDS = (0, 1, 2, 3, 4)
 
+# Shared Step 2 recipe. These match FinetuneConfig; only an explicit CLI override changes them.
+DEFAULT_LEARNING_RATE = 2e-5
+DEFAULT_BATCH_SIZE = 16
+
+
+def format_learning_rate(learning_rate: float) -> str:
+    """Filesystem-safe learning-rate token. 2e-5 -> ``2e-05``; extra digits are kept."""
+    mantissa, exponent = format(float(learning_rate), ".8e").split("e")
+    mantissa = mantissa.rstrip("0").rstrip(".")
+    return f"{mantissa}e{exponent}"
+
+
+def is_default_recipe(learning_rate: float, batch_size: int) -> bool:
+    return (
+        math.isclose(float(learning_rate), DEFAULT_LEARNING_RATE, rel_tol=0.0, abs_tol=1e-15)
+        and int(batch_size) == DEFAULT_BATCH_SIZE
+    )
+
+
+def finetune_tag(
+    seed: int,
+    learning_rate: float = DEFAULT_LEARNING_RATE,
+    batch_size: int = DEFAULT_BATCH_SIZE,
+) -> str:
+    """Directory tag for one fine-tune.
+
+    The shared recipe keeps the historical ``seed<N>`` name. Every other pair gets a
+    ``lr<rate>_bs<size>_`` prefix so two configurations cannot share a directory.
+    """
+    seed_tag = f"seed{int(seed)}"
+    if is_default_recipe(learning_rate, batch_size):
+        return seed_tag
+    return f"lr{format_learning_rate(learning_rate)}_bs{int(batch_size)}_{seed_tag}"
+
+
+def cv_tag(
+    fold: int,
+    model_key: str,
+    learning_rate: float = DEFAULT_LEARNING_RATE,
+    batch_size: int = DEFAULT_BATCH_SIZE,
+) -> str:
+    """CV tag. Baseline folds never include a fine-tune recipe; transformer folds do when it differs."""
+    base = f"cv_fold{int(fold)}"
+    if model_key in FINETUNE_KEYS and not is_default_recipe(learning_rate, batch_size):
+        return f"lr{format_learning_rate(learning_rate)}_bs{int(batch_size)}_{base}"
+    return base
+
 
 @dataclass
 class _FallbackConfig:
     """Same fields as `FinetuneConfig`; used only if src.transformer.finetune cannot be imported."""
 
     max_length: int = 128
-    batch_size: int = 16
+    batch_size: int = DEFAULT_BATCH_SIZE
     eval_batch_size: int = 64
-    learning_rate: float = 2e-5
+    learning_rate: float = DEFAULT_LEARNING_RATE
     weight_decay: float = 0.01
     warmup_ratio: float = 0.1
     max_epochs: int = 5
@@ -97,12 +150,19 @@ class _FallbackConfig:
         return asdict(self)
 
 
-def _make_config(seed: int, max_epochs: int | None) -> Any:
+def _make_config(
+    seed: int,
+    max_epochs: int | None,
+    learning_rate: float = DEFAULT_LEARNING_RATE,
+    batch_size: int = DEFAULT_BATCH_SIZE,
+) -> Any:
     try:
         from src.transformer.finetune import FinetuneConfig as config_cls
     except ImportError:
         config_cls = _FallbackConfig
     config = config_cls(seed=seed)
+    config.learning_rate = float(learning_rate)
+    config.batch_size = int(batch_size)
     if max_epochs is not None:
         config.max_epochs = int(max_epochs)
     return config
@@ -116,6 +176,9 @@ class Run:
     tag: str
     seed: int
     fold: int | None = None
+    learning_rate: float = DEFAULT_LEARNING_RATE
+    batch_size: int = DEFAULT_BATCH_SIZE
+    evaluate_holdout: bool = True
 
     def run_dir(self, out_dir: str) -> str:
         return os.path.join(out_dir, self.config, self.model_key, self.tag)
@@ -126,11 +189,23 @@ def build_plan(
     configs: Sequence[str],
     models: Sequence[str] | None,
     seeds: Sequence[int],
+    learning_rate: float = DEFAULT_LEARNING_RATE,
+    batch_size: int = DEFAULT_BATCH_SIZE,
+    evaluate_holdout: bool = True,
 ) -> list[Run]:
     """Return the ordered run matrix (baselines, finetune, cv, zeroshot)."""
 
     def keys_for(valid: Sequence[str]) -> list[str]:
         return [k for k in valid if models is None or k in models]
+
+    def make(
+        stage_name: str, cfg: str, key: str, tag: str, seed: int, fold: int | None = None, *,
+        holdout: bool = True,
+    ) -> Run:
+        return Run(
+            stage_name, cfg, key, tag, seed, fold,
+            learning_rate=learning_rate, batch_size=batch_size, evaluate_holdout=holdout,
+        )
 
     stages = ("baselines", "finetune", "cv", "zeroshot") if stage == "all" else (stage,)
     runs: list[Run] = []
@@ -138,20 +213,27 @@ def build_plan(
         if st == "baselines":
             for cfg in configs:
                 for key in keys_for(tuple(BASELINE_KEYS)):
-                    runs.append(Run("baselines", cfg, key, f"seed{BASELINE_SEED}", BASELINE_SEED))
+                    runs.append(make("baselines", cfg, key, f"seed{BASELINE_SEED}", BASELINE_SEED))
         elif st == "finetune":
             for cfg in configs:
                 for key in keys_for(tuple(FINETUNE_KEYS)):
                     for seed in seeds:
-                        runs.append(Run("finetune", cfg, key, f"seed{seed}", int(seed)))
+                        runs.append(make(
+                            "finetune", cfg, key,
+                            finetune_tag(int(seed), learning_rate, batch_size), int(seed),
+                            holdout=evaluate_holdout,
+                        ))
         elif st == "cv":
             if CV_CONFIG in configs:
                 for key in keys_for(CV_KEYS):
                     for fold in CV_FOLDS:
-                        runs.append(Run("cv", CV_CONFIG, key, f"cv_fold{fold}", BASELINE_SEED, fold))
+                        runs.append(make(
+                            "cv", CV_CONFIG, key,
+                            cv_tag(fold, key, learning_rate, batch_size), BASELINE_SEED, fold,
+                        ))
         elif st == "zeroshot":
             for key in keys_for(tuple(ZERO_SHOT_KEYS)):
-                runs.append(Run("zeroshot", EXTERNAL_DIR, key, "zeroshot", BASELINE_SEED))
+                runs.append(make("zeroshot", EXTERNAL_DIR, key, "zeroshot", BASELINE_SEED))
     return runs
 
 
@@ -290,8 +372,8 @@ def _execute_run(
     finetune_fn: Callable[..., dict[str, Any]],
     zero_shot_fn: Callable[..., Any],
     baseline_factory: Callable[..., Any],
-) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
-    """Run one matrix entry; return (result dict, predictions.npz arrays)."""
+) -> tuple[dict[str, Any], dict[str, np.ndarray], dict[str, Any] | None]:
+    """Run one matrix entry; return (result dict, predictions, optional FinBERT tokenizer receipt)."""
     started = time.time()
     ids: dict[str, list[str]] = {}
     ys: dict[str, list[int]] = {}
@@ -300,6 +382,7 @@ def _execute_run(
     best_epoch: int | None = None
     history: list[Any] = []
     device: str | None = None
+    tokenizer_check: dict[str, Any] | None = None
     manifest_sha: str | None = None
     external_sha: str | None = None
     n_train: int | None = None
@@ -311,7 +394,7 @@ def _execute_run(
         ext_ids, ext_texts, ext_y = data.external()
         external_sha = file_sha256(data.external_path)
         model_name = ZERO_SHOT_KEYS[run.model_key]
-        config = _make_config(run.seed, None)
+        config = _make_config(run.seed, None, run.learning_rate, run.batch_size)
         full_config = config.to_dict()
         prob = zero_shot_fn(model_name, ext_texts, config, revision=MODEL_REVISIONS.get(model_name))
         ids["external"], ys["external"] = ext_ids, ext_y
@@ -332,10 +415,12 @@ def _execute_run(
         else:
             _, tr_texts, tr_y = split_arrays(manifest, "train")
             val_ids, va_texts, va_y = split_arrays(manifest, "val")
-            te_ids, te_texts, te_y = split_arrays(manifest, "test")
-            ext_ids, ext_texts, ext_y = data.external()
-            external_sha = file_sha256(data.external_path)
-            n_test, n_ext = len(te_texts), len(ext_texts)
+            # Validation-only fine-tunes never read the locked test split or SEntFiN.
+            if run.stage != "finetune" or run.evaluate_holdout:
+                te_ids, te_texts, te_y = split_arrays(manifest, "test")
+                ext_ids, ext_texts, ext_y = data.external()
+                external_sha = file_sha256(data.external_path)
+                n_test, n_ext = len(te_texts), len(ext_texts)
         tr_texts, tr_y = _limit_train(tr_texts, tr_y, args.limit_train, run.seed)
         n_train, n_val = len(tr_texts), len(va_texts)
         ids["val"], ys["val"] = val_ids, va_y
@@ -350,9 +435,22 @@ def _execute_run(
                 probs["external"] = _check_prob(model.predict_proba(ext_texts), n_ext, "external")
         else:
             model_name = FINETUNE_KEYS[run.model_key]
-            config = _make_config(run.seed, args.max_epochs)
+            if run.model_key == "finbert_mlm":
+                from src.transformer.finetune import (
+                    finetune_and_predict,
+                    injected_finbert_tokenizer_check,
+                    prepare_finbert_tokenizer_check,
+                )
+
+                if finetune_fn is finetune_and_predict:
+                    tokenizer_check = prepare_finbert_tokenizer_check(
+                        model_name, MODEL_REVISIONS.get(model_name)
+                    )
+                else:
+                    tokenizer_check = injected_finbert_tokenizer_check()
+            config = _make_config(run.seed, args.max_epochs, run.learning_rate, run.batch_size)
             eval_sets: dict[str, list[str]] = {}
-            if run.stage == "finetune":
+            if run.stage == "finetune" and run.evaluate_holdout:
                 eval_sets = {"test": te_texts, "external": ext_texts}
             out = finetune_fn(
                 model_name, tr_texts, tr_y, va_texts, va_y, eval_sets, config,
@@ -360,7 +458,7 @@ def _execute_run(
             )
             probs["val"] = _check_prob(out["val_prob"], n_val, "val")
             _check_not_degenerate(probs["val"], "val")
-            if run.stage == "finetune":
+            if run.stage == "finetune" and run.evaluate_holdout:
                 probs["test"] = _check_prob(out["eval_probs"]["test"], n_test, "test")
                 probs["external"] = _check_prob(out["eval_probs"]["external"], n_ext, "external")
             hyperparams = dict(out.get("config") or config.to_dict())
@@ -403,10 +501,11 @@ def _execute_run(
         "wall_seconds": time.time() - started,
         "timestamp": _now(),
     }
-    return result, arrays
+    return result, arrays, tokenizer_check
 
 
-def _write_run(run_dir: str, result: dict[str, Any], arrays: dict[str, np.ndarray]) -> None:
+def _write_run(run_dir: str, result: dict[str, Any], arrays: dict[str, np.ndarray],
+               tokenizer_check: dict[str, Any] | None = None) -> None:
     tmp_dir = run_dir + ".tmp"
     if os.path.isdir(tmp_dir):
         shutil.rmtree(tmp_dir)
@@ -414,6 +513,11 @@ def _write_run(run_dir: str, result: dict[str, Any], arrays: dict[str, np.ndarra
     try:
         with open(os.path.join(tmp_dir, "result.json"), "w", encoding="utf-8") as handle:
             json.dump(result, handle, indent=2, default=_jsonable)
+        if tokenizer_check is not None:
+            from src.transformer.finetune import TOKENIZER_CHECK_NAME
+
+            with open(os.path.join(tmp_dir, TOKENIZER_CHECK_NAME), "w", encoding="utf-8") as handle:
+                json.dump(tokenizer_check, handle, indent=2)
         np.savez_compressed(os.path.join(tmp_dir, "predictions.npz"), **arrays)
         if os.path.isdir(run_dir):
             shutil.rmtree(run_dir)
@@ -436,6 +540,18 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--limit-train", type=int, default=None,
                         help="Probe only: first N train rows after a seeded shuffle.")
     parser.add_argument("--max-epochs", type=int, default=None, help="Probe only: override the maximum epochs.")
+    parser.add_argument(
+        "--learning-rate", type=float, default=DEFAULT_LEARNING_RATE,
+        help="AdamW learning rate for transformer runs (default: 2e-5, the shared Step 2 recipe).",
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=DEFAULT_BATCH_SIZE,
+        help="Training batch size for transformer runs (default: 16). The evaluation batch size is unchanged.",
+    )
+    parser.add_argument(
+        "--val-only", action="store_true", default=False,
+        help="Fine-tune runs score the validation split only. The test split and SEntFiN are not loaded or saved.",
+    )
     return parser.parse_args(argv)
 
 
@@ -455,6 +571,16 @@ def _default_baseline_factory() -> Callable[..., Any]:
     from src.baselines.registry import make_baseline
 
     return make_baseline
+
+
+def _plan_needs_external(plan: Sequence[Run]) -> bool:
+    """True when any run reads the SEntFiN holdout. Validation-only fine-tunes do not."""
+    return any(
+        run.stage == "zeroshot"
+        or run.stage == "baselines"
+        or (run.stage == "finetune" and run.evaluate_holdout)
+        for run in plan
+    )
 
 
 def _free_memory() -> None:
@@ -490,6 +616,12 @@ def main(
         if unknown:
             print(f"error: unknown model key(s) {unknown}; valid: {list(ALL_KEYS)}", file=sys.stderr)
             return 2
+    if args.batch_size < 1:
+        print("error: --batch-size must be a positive integer.", file=sys.stderr)
+        return 2
+    if not math.isfinite(args.learning_rate) or args.learning_rate <= 0.0:
+        print("error: --learning-rate must be a positive finite number.", file=sys.stderr)
+        return 2
 
     probe = args.limit_train is not None or args.max_epochs is not None
     if probe and os.path.abspath(args.out_dir) == os.path.abspath(DEFAULT_OUT_DIR):
@@ -499,12 +631,23 @@ def main(
             file=sys.stderr,
         )
         return 2
+    if args.val_only and os.path.abspath(args.out_dir) == os.path.abspath(DEFAULT_OUT_DIR):
+        print(
+            "error: --val-only must not write into the default "
+            f"--out-dir ({DEFAULT_OUT_DIR}); pass a different --out-dir.",
+            file=sys.stderr,
+        )
+        return 2
 
-    plan = build_plan(args.stage, args.configs, args.models, args.seeds)
+    plan = build_plan(
+        args.stage, args.configs, args.models, args.seeds,
+        learning_rate=args.learning_rate, batch_size=args.batch_size,
+        evaluate_holdout=not args.val_only,
+    )
 
     data = _Data(args.splits_dir)
     needed = [data.manifest_path(cfg) for cfg in sorted({r.config for r in plan if r.config != EXTERNAL_DIR})]
-    if any(r.stage != "cv" for r in plan):
+    if _plan_needs_external(plan):
         needed.append(data.external_path)
     missing = [p for p in needed if not os.path.isfile(p)]
     if missing:
@@ -546,9 +689,11 @@ def main(
         _journal(args.out_dir, "start", run_dir, None, None)
         started = time.time()
         try:
-            result, arrays = _execute_run(run, data, args, finetune_fn, zero_shot_fn, baseline_factory)
+            result, arrays, tokenizer_check = _execute_run(
+                run, data, args, finetune_fn, zero_shot_fn, baseline_factory
+            )
             os.makedirs(os.path.dirname(run_dir), exist_ok=True)
-            _write_run(run_dir, result, arrays)
+            _write_run(run_dir, result, arrays, tokenizer_check)
             _journal(args.out_dir, "end", run_dir, time.time() - started, None)
             print(f"done {run_dir} ({time.time() - started:.1f}s)")
         except Exception as exc:  # per-run isolation: log and continue

@@ -5,8 +5,9 @@ The Step 2 fine-tuned models were not saved, so scoring a new test set means tra
 uses exactly the Step 2 code path: the same locked splits (checked against ``SHA256SUMS``), the same baseline
 factory, the same ``finetune_and_predict`` recipe and seeds, and the same SEntFiN holdout. The only change is that
 two more evaluation sets are scored after training: FiQA 2018 and Twitter Financial News
-(``data/splits/extra_external.json``, built by ``scripts/prepare_extra_external.py``). Adding evaluation sets does
-not touch training (they are scored after the best epoch is restored).
+(``data/splits/extra_external.json``, built by ``scripts/prepare_extra_external.py`` and checked against
+``SHA256SUMS.extra``). Adding evaluation sets does not touch training (they are scored after the best epoch is
+restored).
 
 Each run also records how closely it reproduces the stored Step 2 run (``results/step2/runs``): the share of test /
 SEntFiN sentences with the same predicted label and the largest probability difference.
@@ -33,6 +34,7 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 from scripts import run_step2 as rs  # noqa: E402
+from scripts.prepare_extra_external import EXTRA_SHA256SUMS_FILE  # noqa: E402
 from scripts.prepare_extra_external import OUT_FILE as EXTRA_FILE  # noqa: E402
 from scripts.prepare_extra_external import load_extra_external  # noqa: E402
 from src.data.io import file_sha256, split_arrays  # noqa: E402
@@ -190,17 +192,25 @@ def main(argv: list[str] | None = None) -> int:
     plan = build_plan(args.dapt_model)
     data = rs._Data(args.splits_dir)
     extra_path = os.path.join(args.splits_dir, EXTRA_FILE)
-    needed = [data.manifest_path(c) for c in rs.CONFIGS] + [data.external_path, extra_path]
-    missing = [p for p in needed if not os.path.isfile(p)]
+    step1 = [data.manifest_path(c) for c in rs.CONFIGS] + [data.external_path]
+    # The Step 1 inputs are locked in SHA256SUMS; the extension file has its own SHA256SUMS.extra.
+    checks = ((rs.SHA256SUMS_FILE, step1), (EXTRA_SHA256SUMS_FILE, [extra_path]))
+    missing = [p for _, paths in checks for p in paths if not os.path.isfile(p)]
     if missing:
         print(f"error: missing input files: {missing}", file=sys.stderr)
         return 2
-    sums = rs._read_sha256sums(os.path.join(args.splits_dir, rs.SHA256SUMS_FILE))
-    unlisted = [p for p in needed if os.path.basename(p) not in sums]
-    mismatched = rs.verify_split_hashes(needed, args.splits_dir)
-    if unlisted or mismatched:
-        print(f"error: not in SHA256SUMS {unlisted} / SHA-256 mismatch {mismatched}", file=sys.stderr)
-        return 2
+    for sums_name, paths in checks:
+        sums_path = os.path.join(args.splits_dir, sums_name)
+        if not os.path.isfile(sums_path):
+            print(f"error: missing checksum file: {sums_path}", file=sys.stderr)
+            return 2
+        sums = rs._read_sha256sums(sums_path)
+        unlisted = [p for p in paths if os.path.basename(p) not in sums]
+        mismatched = [p for p in paths if p not in unlisted and file_sha256(p) != sums[os.path.basename(p)]]
+        if unlisted or mismatched:
+            print(f"error: not in {sums_name} {unlisted} / SHA-256 mismatch against {sums_name} {mismatched}",
+                  file=sys.stderr)
+            return 2
 
     selected = list(enumerate(plan)) if args.only is None else [(args.only, plan[args.only])]
     for k, run in selected:

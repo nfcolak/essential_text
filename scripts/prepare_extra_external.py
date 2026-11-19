@@ -16,8 +16,9 @@ Leakage control: rows whose normalised text duplicates an earlier row are droppe
 (normalised SHA-256) or near duplicate (token Jaccard >= 0.80) in Financial PhraseBank (all 4,846 sentences, the
 training source of every model, incl. ``ProsusAI/finbert``) is removed, using ``deduplicate_external_holdout``.
 
-Writes ``<splits-dir>/extra_external.json`` (git-ignored like the other split files; its SHA-256 is appended to
-``SHA256SUMS``) and prints the counts.
+Writes ``<splits-dir>/extra_external.json`` (git-ignored like the other split files) and prints the counts. Its
+SHA-256 is recorded in ``SHA256SUMS.extra``, not in ``SHA256SUMS``: that file lists only the locked Step 1 splits,
+and the Colab notebooks require every file listed there to exist.
 """
 
 from __future__ import annotations
@@ -42,6 +43,7 @@ from src.data.io import file_sha256  # noqa: E402
 
 LABEL_NAMES = ("negative", "neutral", "positive")
 OUT_FILE = "extra_external.json"
+EXTRA_SHA256SUMS_FILE = "SHA256SUMS.extra"
 
 FIQA_REPO, FIQA_REV = "pauri32/fiqa-2018", "74b7dd5d4fc61e0fa5d979bef2c53111ea69c58a"
 TWITTER_REPO, TWITTER_REV = "zeroshot/twitter-financial-news-sentiment", "ccbe24de388e287beb92dd393a335c376b350ac3"
@@ -179,13 +181,19 @@ def load_extra_external(path: str, name: str) -> tuple[list[str], list[str], lis
     return [r["id"] for r in records], [r["text"] for r in records], [int(r["label"]) for r in records]
 
 
-def append_sha256sum(splits_dir: str, path: str) -> None:
-    sums = os.path.join(splits_dir, "SHA256SUMS")
+def append_sha256sum(splits_dir: str, path: str, sums_name: str = EXTRA_SHA256SUMS_FILE) -> None:
+    """Record the SHA-256 of ``path`` in ``<splits_dir>/<sums_name>``.
+
+    A line for the same file name is replaced, other lines are kept. The default is ``SHA256SUMS.extra``, so the
+    locked ``SHA256SUMS`` of the Step 1 splits is never rewritten.
+    """
+    sums = os.path.join(splits_dir, sums_name)
     name = os.path.basename(path)
     lines = []
     if os.path.isfile(sums):
         with open(sums, encoding="utf-8") as handle:
-            lines = [ln for ln in handle.read().splitlines() if ln.strip() and not ln.rstrip().endswith(name)]
+            lines = [ln for ln in handle.read().splitlines()
+                     if ln.strip() and os.path.basename(ln.split(None, 1)[-1].strip().lstrip("*")) != name]
     lines.append(f"{file_sha256(path)}  {name}")
     with open(sums, "w", encoding="utf-8") as handle:
         handle.write("\n".join(lines) + "\n")
