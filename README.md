@@ -51,7 +51,8 @@ The following table reports the original Step 2 results under a shared fine-tuni
   - With the three pre-specified seeds the fixed-recipe gap was +0.030 [+0.006, +0.057].
 - **On SEntFiN the tuned FinBERT-MLM is ahead:** +0.023 [+0.002, +0.048] with five seeds, against +0.017 [−0.004, +0.044]
   with three. This is the only BERT-vs-FinBERT interval that excludes zero, and it just does.
-- **Interpretation:** part of FinBERT-MLM's Step 2 lag came from the shared recipe. Financial pretraining gives at most
+- **Interpretation (post hoc, five seeds; the three pre-specified seeds show no difference after tuning on either
+  test set):** part of FinBERT-MLM's Step 2 lag came from the shared recipe. Financial pretraining gives at most
   a small out-of-domain advantage after tuning, and no in-domain one (see
   [Step 4](#step-4-results-independent-hyperparameter-tuning-rq2)).
 
@@ -366,6 +367,10 @@ recorded. A second human pass can be added without code changes: instructions in
 [`annotation/HUMAN_ANNOTATOR_2.md`](annotation/HUMAN_ANNOTATOR_2.md), template
 `data/diagnostic/annotations_human2_template.csv`. `analyze_human_annotation.py` then also reports human-human κ.
 
+Using the human tags instead of the LLM consensus changes the per-phenomenon error rates of the five headline models
+by at most 9.6 points and none of the conclusions (`scripts/analyze_human_tag_errors.py`,
+[`results/step3/human_tag_error_rates.json`](results/step3/human_tag_error_rates.json)).
+
 #### Full 50agree test split (726 sentences)
 
 The 300-item set has too few negation and financial-terminology sentences for any conclusion. The other 426
@@ -502,10 +507,12 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 - **Phenomenon deltas.** Defined on F1 in the proposal; Step 3 reports them on accuracy because several subsets
   have very few sentences of one class, where per-class F1 is undefined or unstable.
 - **Work plan and effort.** The 55-hour, five-work-package plan was removed from the 2-page `proposal.pdf` for the
-  page limit (commit `0d55c01`); it is kept in [`proposal/rubric_compliance_matrix.md`](proposal/rubric_compliance_matrix.md),
-  section 2. Actual per-member hours are not recorded in this repository.
+  page limit (commit `0d55c01`). Planned hours: WP1 data, hash-locked splits and deduplication 8; WP2 lexicon and
+  TF-IDF baselines 10; WP3 controlled transformer fine-tuning and external holdout 14; WP4 phenomenon annotation and
+  statistics 13; WP5 reproducible codebase and final report 10 (total 55). Actual per-member hours are not recorded
+  in this repository.
 - **Fine-tuning recipe.** The proposal promises identical AdamW settings and validation early stopping (met). The
-  companion `proposal/methodology_and_rubric_audit.md` sketched lr ∈ {2e-5, 3e-5}, batch 32 and 4 epochs; the runs
+  team's methodology notes (not part of the submitted proposal) sketched lr ∈ {2e-5, 3e-5}, batch 32 and 4 epochs; the runs
   use one fixed recipe, lr 2e-5, batch 16, up to 5 epochs with patience 2, without a learning-rate search.
 - **Diagnostic split.** The proposal says "from the locked test split"; the set comes from the 50agree test split
   (reason above), so it is scored with 50agree-trained models only.
@@ -884,6 +891,7 @@ python3 scripts/build_diagnostic_set.py --execute          # 300-sentence subset
 python3 scripts/build_diagnostic_set.py --execute --rule-tags-only   # recompute rule tags only
 python3 scripts/run_step3_analysis.py                      # needs data/diagnostic/annotations_{a,b}.csv
 python3 scripts/analyze_human_annotation.py                # human vs LLM agreement (--check: recompute only)
+python3 scripts/analyze_human_tag_errors.py                # error rates with the human tags (--check: recompute only)
 python3 scripts/build_diagnostic_extension.py --execute    # the other 426 test sentences -> data/diagnostic/extension/
 python3 scripts/analyze_diagnostic_extension.py            # full 726-sentence split (needs extension/annotations_{a,b}.csv)
 ```
@@ -945,7 +953,7 @@ essential_text/
 │   ├── splits/assignments/    # Text-free split / CV-fold / SEntFiN-holdout assignments
 │   └── diagnostic/            # 300-sentence diagnostic set (items, key, rule tags, LLM annotations A/B, human pass);
 │                              # extension/ = the other 426 test sentences with their LLM annotations
-├── proposal/                  # Revised proposal (LaTeX/PDF), rubric audit, verification script
+├── proposal/                  # Submitted proposals: original (v1 PDF) and revised (LaTeX/PDF)
 ├── results/
 │   ├── step1/                 # Step 1 outputs from Google Colab
 │   ├── step2/                 # Step 2 report, statistics, attribution, figures, runs/ with per-run predictions
@@ -971,6 +979,7 @@ essential_text/
 │   ├── build_diagnostic_set.py
 │   ├── run_step3_analysis.py  # Cohen's kappa, per-phenomenon errors and attribution, RQ1 analysis
 │   ├── analyze_human_annotation.py  # Human vs LLM annotation agreement (Cohen's kappa)
+│   ├── analyze_human_tag_errors.py  # Step 3 error rates with the human tags instead of the LLM consensus
 │   ├── build_diagnostic_extension.py    # Blind item file for the other 426 50agree test sentences
 │   ├── analyze_diagnostic_extension.py  # Phenomenon analysis on the full 726-sentence test split
 │   ├── run_llm_zeroshot.py          # Extension: zero-shot LLM baseline (local Ollama)
@@ -1020,3 +1029,19 @@ Hand-off files (read-only for the other parts):
 4. **B → A:** diagnostic items and the two independent annotation files in `data/diagnostic/`.
 
 Each part keeps its own tests in `tests/`; the full suite must pass before a change is merged.
+
+---
+
+## License
+
+The code is released under the [MIT License](LICENSE). Data files derived from public datasets keep the licence of
+their source:
+
+| Source | Licence | Files in this repository |
+|---|---|---|
+| Financial PhraseBank v1.0 (`takala/financial_phrasebank`) | CC BY-NC-SA 3.0 (non-commercial, share-alike) | `data/diagnostic/` sentences; per-run predictions keyed by sentence id |
+| SEntFiN 1.0 (`pyRis/SEntFiN`) | MIT | none (downloaded and checksummed at run time) |
+| Twitter Financial News (`zeroshot/twitter-financial-news-sentiment`) | MIT | none (downloaded at run time) |
+| FiQA 2018 Task 1 (`pauri32/fiqa-2018`) | no licence stated on the dataset page; check the original FiQA 2018 terms | none (downloaded at run time) |
+| Loughran–McDonald Master Dictionary | free for academic use (SRAF terms) | none (git-ignored, SHA-256 checked) |
+| EDGAR-CORPUS (`eloukas/edgar-corpus`) | Apache-2.0 | none (DAPT corpus is git-ignored) |

@@ -34,5 +34,12 @@ data/splits/*
 # Local work logs, quarantined runs and helper scripts (never committed)
 logs/
 
+# Proposal working notes (local only; the submitted proposal PDFs and LaTeX stay tracked)
+proposal/CHANGELOG_AND_RESPONSE.md
+proposal/methodology_and_rubric_audit.md
+proposal/rubric_compliance_matrix.md
+proposal/verify_proposal.py
+proposal/proposal_v1_original.txt
+
 # Final report (local only)
 report/

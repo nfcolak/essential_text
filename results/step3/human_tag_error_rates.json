@@ -1,0 +1,227 @@
+{
+  "config": "sentences_50agree",
+  "n_items": 300,
+  "note": "Raw error rate (1 - accuracy, seed mean per sentence) on the sentences carrying each tag; LLM consensus = annotators A and B both mark the tag (Step 3 mode 'both'); human = annotations_qiyao.csv.",
+  "max_abs_diff_points": 9.59,
+  "models": {
+    "vader_official": {
+      "seeds": [
+        "seed42"
+      ],
+      "error_all": 0.426667,
+      "phenomena": {
+        "financial_terminology": {
+          "n_llm_consensus": 13,
+          "n_human": 15,
+          "error_llm_consensus": 0.538462,
+          "error_human": 0.6,
+          "abs_diff_points": 6.15
+        },
+        "negation": {
+          "n_llm_consensus": 10,
+          "n_human": 9,
+          "error_llm_consensus": 0.2,
+          "error_human": 0.111111,
+          "abs_diff_points": 8.89
+        },
+        "hedging": {
+          "n_llm_consensus": 53,
+          "n_human": 47,
+          "error_llm_consensus": 0.339623,
+          "error_human": 0.340426,
+          "abs_diff_points": 0.08
+        },
+        "numerical_comparison": {
+          "n_llm_consensus": 50,
+          "n_human": 58,
+          "error_llm_consensus": 0.6,
+          "error_human": 0.551724,
+          "abs_diff_points": 4.83
+        },
+        "context_dependent": {
+          "n_llm_consensus": 47,
+          "n_human": 46,
+          "error_llm_consensus": 0.553191,
+          "error_human": 0.586957,
+          "abs_diff_points": 3.38
+        }
+      }
+    },
+    "lm_official": {
+      "seeds": [
+        "seed42"
+      ],
+      "error_all": 0.383333,
+      "phenomena": {
+        "financial_terminology": {
+          "n_llm_consensus": 13,
+          "n_human": 15,
+          "error_llm_consensus": 0.615385,
+          "error_human": 0.6,
+          "abs_diff_points": 1.54
+        },
+        "negation": {
+          "n_llm_consensus": 10,
+          "n_human": 9,
+          "error_llm_consensus": 0.4,
+          "error_human": 0.444444,
+          "abs_diff_points": 4.44
+        },
+        "hedging": {
+          "n_llm_consensus": 53,
+          "n_human": 47,
+          "error_llm_consensus": 0.339623,
+          "error_human": 0.319149,
+          "abs_diff_points": 2.05
+        },
+        "numerical_comparison": {
+          "n_llm_consensus": 50,
+          "n_human": 58,
+          "error_llm_consensus": 0.82,
+          "error_human": 0.724138,
+          "abs_diff_points": 9.59
+        },
+        "context_dependent": {
+          "n_llm_consensus": 47,
+          "n_human": 46,
+          "error_llm_consensus": 0.829787,
+          "error_human": 0.847826,
+          "abs_diff_points": 1.8
+        }
+      }
+    },
+    "tfidf_svm": {
+      "seeds": [
+        "seed42"
+      ],
+      "error_all": 0.2,
+      "phenomena": {
+        "financial_terminology": {
+          "n_llm_consensus": 13,
+          "n_human": 15,
+          "error_llm_consensus": 0.230769,
+          "error_human": 0.2,
+          "abs_diff_points": 3.08
+        },
+        "negation": {
+          "n_llm_consensus": 10,
+          "n_human": 9,
+          "error_llm_consensus": 0.2,
+          "error_human": 0.222222,
+          "abs_diff_points": 2.22
+        },
+        "hedging": {
+          "n_llm_consensus": 53,
+          "n_human": 47,
+          "error_llm_consensus": 0.207547,
+          "error_human": 0.234043,
+          "abs_diff_points": 2.65
+        },
+        "numerical_comparison": {
+          "n_llm_consensus": 50,
+          "n_human": 58,
+          "error_llm_consensus": 0.12,
+          "error_human": 0.12069,
+          "abs_diff_points": 0.07
+        },
+        "context_dependent": {
+          "n_llm_consensus": 47,
+          "n_human": 46,
+          "error_llm_consensus": 0.06383,
+          "error_human": 0.086957,
+          "abs_diff_points": 2.31
+        }
+      }
+    },
+    "bert_base": {
+      "seeds": [
+        "seed100",
+        "seed2026",
+        "seed42"
+      ],
+      "error_all": 0.128889,
+      "phenomena": {
+        "financial_terminology": {
+          "n_llm_consensus": 13,
+          "n_human": 15,
+          "error_llm_consensus": 0.25641,
+          "error_human": 0.244444,
+          "abs_diff_points": 1.2
+        },
+        "negation": {
+          "n_llm_consensus": 10,
+          "n_human": 9,
+          "error_llm_consensus": 0.133333,
+          "error_human": 0.148148,
+          "abs_diff_points": 1.48
+        },
+        "hedging": {
+          "n_llm_consensus": 53,
+          "n_human": 47,
+          "error_llm_consensus": 0.08805,
+          "error_human": 0.092199,
+          "abs_diff_points": 0.41
+        },
+        "numerical_comparison": {
+          "n_llm_consensus": 50,
+          "n_human": 58,
+          "error_llm_consensus": 0.033333,
+          "error_human": 0.057471,
+          "abs_diff_points": 2.41
+        },
+        "context_dependent": {
+          "n_llm_consensus": 47,
+          "n_human": 46,
+          "error_llm_consensus": 0.014184,
+          "error_human": 0.014493,
+          "abs_diff_points": 0.03
+        }
+      }
+    },
+    "finbert_mlm": {
+      "seeds": [
+        "seed100",
+        "seed2026",
+        "seed42"
+      ],
+      "error_all": 0.145556,
+      "phenomena": {
+        "financial_terminology": {
+          "n_llm_consensus": 13,
+          "n_human": 15,
+          "error_llm_consensus": 0.179487,
+          "error_human": 0.2,
+          "abs_diff_points": 2.05
+        },
+        "negation": {
+          "n_llm_consensus": 10,
+          "n_human": 9,
+          "error_llm_consensus": 0.133333,
+          "error_human": 0.148148,
+          "abs_diff_points": 1.48
+        },
+        "hedging": {
+          "n_llm_consensus": 53,
+          "n_human": 47,
+          "error_llm_consensus": 0.138365,
+          "error_human": 0.148936,
+          "abs_diff_points": 1.06
+        },
+        "numerical_comparison": {
+          "n_llm_consensus": 50,
+          "n_human": 58,
+          "error_llm_consensus": 0.066667,
+          "error_human": 0.08046,
+          "abs_diff_points": 1.38
+        },
+        "context_dependent": {
+          "n_llm_consensus": 47,
+          "n_human": 46,
+          "error_llm_consensus": 0.014184,
+          "error_human": 0.021739,
+          "abs_diff_points": 0.76
+        }
+      }
+    }
+  }
+}
