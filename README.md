@@ -1,9 +1,25 @@
 # Evaluating Domain Adaptation in Financial Sentiment Analysis
 
 **FinBERT vs. Traditional NLP Baselines**  
-*Authors: Qiyao Zheng, Benjamin Donick, Necati Furkan Colak*
+*Authors: Qiyao Zheng, Benjamin Donick, Necati Furkan Colak*  
+Course project, *Essentials in Text and Speech Processing*, University of Zurich, autumn semester 2026.
 
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](requirements.txt)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Tests: 298](https://img.shields.io/badge/tests-298%20offline-brightgreen.svg)](tests/)
+[![Hugging Face model](https://img.shields.io/badge/%F0%9F%A4%97%20model-essential--text--bert--dapt-yellow.svg)](https://huggingface.co/necatifcolak/essential-text-bert-dapt)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nfcolak/essential_text/blob/main/notebooks/step1_data_and_baselines_colab.ipynb)
+
+**Contents:** [Results at a glance](#results-at-a-glance) ·
+[Step 1](#step-1-experimental-results-leakage-free-splits--tier-12-baselines) ·
+[Step 2](#step-2-results-controlled-transformer-fine-tuning-rq2) ·
+[Step 3](#step-3-results-linguistic-phenomenon-attribution-rq1-rq3) ·
+[Step 4](#step-4-results-independent-hyperparameter-tuning-rq2) ·
+[Extensions](#extensions-post-hoc-robustness-checks) ·
+[Quick start](#quick-start) ·
+[Repository structure](#repository-structure) ·
+[Citation](#citation) ·
+[License](#license)
 
 ## Overview
 
@@ -72,6 +88,12 @@ The following table reports the original Step 2 results under a shared fine-tuni
 - **The whole 50agree test split (726 sentences) is now phenomenon-annotated,** with the same blind LLM annotators.
   Negation grows from about 10 to 25 sentences and financial terminology to 38; the domain effect stays
   indistinguishable from zero in every phenomenon ([Step 3](#full-50agree-test-split-726-sentences)).
+
+**What others can reuse:** the text-free split assignments in [`data/splits/assignments/`](data/splits/assignments/)
+(leakage-checked train/val/test of all three PhraseBank levels and the deduplicated SEntFiN holdout), the
+phenomenon-tagged diagnostic set in [`data/diagnostic/`](data/diagnostic/), and every run's predictions and statistics
+in [`results/`](results/).
+
 ---
 
 ## Step 1 Experimental Results (Leakage-Free Splits & Tier 1/2 Baselines)
@@ -870,6 +892,21 @@ and Twitter the references are the models trained on allagree.
 
 ## Quick Start
 
+### 0. Installation
+
+```bash
+git clone https://github.com/nfcolak/essential_text.git
+cd essential_text
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt        # or requirements-lock.txt for the exact versions behind results/
+HF_HUB_OFFLINE=1 python3 -m unittest discover -s tests   # 298 offline tests, about one minute
+```
+
+The results were produced with Python 3.9.6 on an Apple-silicon Mac (PyTorch MPS); the scripts also run on CUDA or
+CPU. Datasets are downloaded at pinned revisions (Hugging Face Hub; the Loughran–McDonald dictionary via the link in
+Step 2) and checked against SHA-256 hashes. The
+statistics can be recomputed from the committed run files without retraining (the `--check` flags below).
+
 ### 1. Step 1 (data, splits, baselines)
 
 ```bash
@@ -946,11 +983,14 @@ HF_HUB_OFFLINE=1 python3 -m unittest discover -s tests -v
 ```text
 essential_text/
 ├── AGENTS.md                  # Shared project rules and leakage-free methodology constraints
+├── CITATION.cff               # How to cite this repository
+├── LICENSE                    # MIT (code); data files keep their source licence, see below
 ├── README.md                  # Project overview, results, and usage instructions
 ├── requirements.txt           # Python dependencies (imports only)
 ├── requirements-lock.txt      # Exact versions of the original Step 2 environment
 ├── annotation/
-│   └── GUIDELINES.md          # Five-phenomenon annotation guideline
+│   ├── GUIDELINES.md          # Five-phenomenon annotation guideline
+│   └── HUMAN_ANNOTATOR_2.md   # Instructions for an optional second human annotation pass
 ├── data/
 │   ├── dataset_audit_verdict.json  # Pinned SHA-256 dataset provenance and row-level audit
 │   ├── splits/SHA256SUMS      # SHA-256 of the locked split files (the files themselves are regenerated)
@@ -1034,6 +1074,23 @@ Hand-off files (read-only for the other parts):
 4. **B → A:** diagnostic items and the two independent annotation files in `data/diagnostic/`.
 
 Each part keeps its own tests in `tests/`; the full suite must pass before a change is merged.
+
+---
+
+## Citation
+
+If you use the splits, the diagnostic set or the code, please cite the repository (metadata in
+[`CITATION.cff`](CITATION.cff)):
+
+```bibtex
+@misc{zheng2026domainadaptation,
+  title        = {Evaluating Domain Adaptation in Financial Sentiment Analysis: FinBERT vs. Traditional NLP Baselines},
+  author       = {Zheng, Qiyao and Donick, Benjamin and Colak, Necati Furkan},
+  year         = {2026},
+  howpublished = {\url{https://github.com/nfcolak/essential_text}},
+  note         = {Course project, Essentials in Text and Speech Processing, University of Zurich}
+}
+```
 
 ---
 

@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below."
+title: "Evaluating Domain Adaptation in Financial Sentiment Analysis: FinBERT vs. Traditional NLP Baselines"
+type: software
+authors:
+  - family-names: Zheng
+    given-names: Qiyao
+  - family-names: Donick
+    given-names: Benjamin
+  - family-names: Colak
+    given-names: Necati Furkan
+repository-code: "https://github.com/nfcolak/essential_text"
+license: MIT
+date-released: "2026-11-20"
+keywords:
+  - financial sentiment analysis
+  - domain adaptation
+  - FinBERT
+  - BERT
+  - Financial PhraseBank
+  - SEntFiN
+abstract: >-
+  Leakage-checked comparison of sentiment lexicons, TF-IDF classifiers, BERT-base and the domain-pretrained
+  FinBERT-MLM on Financial PhraseBank and the external SEntFiN 1.0 headlines, with a phenomenon-tagged
+  diagnostic set and paired statistical tests. Course project, Essentials in Text and Speech Processing,
+  University of Zurich.
