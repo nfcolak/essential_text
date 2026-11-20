@@ -31,15 +31,18 @@ The following table reports the original Step 2 results under a shared fine-tuni
 | `ProsusAI/finbert` (off-the-shelf, zero-shot; SEntFiN only) | – | **0.727** |
 
 - **The pretrained encoder drives the gain:** BERT beats TF-IDF by about +0.10 in-domain and +0.20 to +0.24 on SEntFiN (all intervals exclude zero).
-- **Financial pretraining adds nothing measurable** under one shared recipe: FinBERT-MLM is 0.01–0.03 below BERT in-domain; the only positive cell is SEntFiN after 50agree training (+0.03).
-- **RQ1:** the general-purpose VADER lexicon recovers 14–34 points fewer gold-neutral sentences than Loughran–McDonald; the fine-tuned encoders show no such gap.
-- **Domain shift remains large:** the best controlled model reaches about 0.69 Macro-F1 on SEntFiN.
+- **Financial pretraining shows no consistent effect** under one shared recipe: FinBERT-MLM is 0.01–0.03 below BERT in-domain; the only positive cell is SEntFiN after 50agree training (+0.028 [+0.007, +0.049], McNemar significant in all three seeds).
+- **RQ1:** the general-purpose VADER lexicon recovers 14–34 points fewer gold-neutral sentences than Loughran–McDonald,
+  and the missing sentences are mostly called positive, not negative (allagree test: 33% vs 3% positive, 8% vs 7%
+  negative). The expected false-negative effect appears only on the small group of term-bearing SEntFiN headlines
+  (4% of neutral headlines), and there for both lexicons. The fine-tuned encoders show no neutral-recall gap.
+- **Domain shift remains large:** the best controlled models reach about 0.69 to 0.70 Macro-F1 on SEntFiN.
 - **Main open question from Step 2:** FinBERT-MLM was not tuned separately, so its lag may reflect the shared recipe. It also
   uses its own vocabulary (only about 42% of BERT's word pieces are shared), so `Δdomain` measures corpus,
   vocabulary and pretraining budget together. A controlled arm (BERT further pretrained on 42M tokens of 10-K text,
   same vocabulary) moves BERT by at most about 0.03 with no consistent sign; where FinBERT-MLM wins (Twitter
-  Financial News, +0.03 to +0.05), the gain comes from its own vocabulary and much larger corpus
-  (see [Extensions](#extensions-post-hoc-robustness-checks)).
+  Financial News, +0.03 to +0.05), the 10-K arm does not reproduce the gain, so it lies in FinBERT's own vocabulary
+  and/or much larger corpus (see [Extensions](#extensions-post-hoc-robustness-checks)).
 
 **Step 4 follow-up findings (independent tuning, same environment as Step 2):**
 
@@ -50,10 +53,11 @@ The following table reports the original Step 2 results under a shared fine-tuni
   - tuned recipe: +0.012 [−0.010, +0.034].
   - With the three pre-specified seeds the fixed-recipe gap was +0.030 [+0.006, +0.057].
 - **On SEntFiN the tuned FinBERT-MLM is ahead:** +0.023 [+0.002, +0.048] with five seeds, against +0.017 [−0.004, +0.044]
-  with three. This is the only BERT-vs-FinBERT interval that excludes zero, and it just does.
+  with three. This is the only five-seed BERT-vs-FinBERT interval that excludes zero, and it just does.
 - **Interpretation (post hoc, five seeds; the three pre-specified seeds show no difference after tuning on either
-  test set):** part of FinBERT-MLM's Step 2 lag came from the shared recipe. Financial pretraining gives at most
-  a small out-of-domain advantage after tuning, and no in-domain one (see
+  test set):** the point estimates move in FinBERT-MLM's favour after tuning, but no tuned-vs-fixed interval and
+  neither gap-change interval excludes zero, so a recipe effect is suggested, not shown. Financial pretraining gives
+  at most a small out-of-domain advantage after tuning, and no in-domain one (see
   [Step 4](#step-4-results-independent-hyperparameter-tuning-rq2)).
 
 **Upgrade round (post hoc):**
@@ -164,7 +168,7 @@ validation split (and 3-token negation handling for Loughran–McDonald); and th
 Step 1. TF-IDF models tune C ∈ {0.01, 0.1, 1, 10} and the class weight on validation (C = 1 or 10 was chosen in every
 run). Hugging Face revisions are pinned in `src/transformer/finetune.py`; split files are checked against
 `data/splits/SHA256SUMS` before every run. Runs: 93 (24 baseline, 18 fine-tune, 50 CV, 1 zero-shot); the 28
-transformer runs on Apple MPS, the 65 lexicon and TF-IDF runs on CPU (Python 3.9.6, torch 2.8.0, transformers 4.57.6, scikit-learn 1.6.1; exact versions in `requirements-lock.txt`).
+fine-tuning runs on Apple MPS, the zero-shot run and the 64 lexicon and TF-IDF runs on CPU (Python 3.9.6, torch 2.8.0, transformers 4.57.6, scikit-learn 1.6.1; exact versions in `requirements-lock.txt`).
 
 ### Transformer Setup: Independent Hyperparameter Tuning
 
@@ -263,7 +267,7 @@ the discrete score (P − N) / (P + N + 1) leaves the sweep at the default ±0.0
 
 ### RQ1: the neutral/negative boundary (neutral recall R_neu, negative precision P_neg)
 
-As planned in the proposal's RQ1 traceability matrix: R_neu and P_neg per model, Δ with the seed + sentence
+As planned in our RQ1 traceability matrix (internal planning notes, not published): R_neu and P_neg per model, Δ with the seed + sentence
 bootstrap (B = 10,000) and McNemar on gold-neutral sentences only (correct = predicted neutral), Holm within each
 seed family. Full tables for every config: `STEP2_REPORT.md`, section "RQ1: neutral/negative boundary", and
 `results/step2/rq1_boundary.json`.
@@ -376,7 +380,7 @@ by at most 9.6 points and none of the conclusions (`scripts/analyze_human_tag_er
 The 300-item set has too few negation and financial-terminology sentences for any conclusion. The other 426
 sentences of the 50agree test split were therefore annotated as well (`data/diagnostic/extension/`, blind file
 `items.csv`, seeded order). The annotators were the same two blind LLMs (Claude Sonnet 5.5 and Gemini 3.8 Flash) under
-guideline v2. Agreement A-B on the extension: κ 0.88 to 1.00. `scripts/analyze_diagnostic_extension.py` analyses
+guideline v2. Agreement A-B on the 426 extension sentences: κ 0.88 to 1.00 (0.92 to 1.00 over all 726). `scripts/analyze_diagnostic_extension.py` analyses
 the whole split with the Step 3 method
 ([`results/step3/full_split/REPORT.md`](results/step3/full_split/REPORT.md)).
 
@@ -437,8 +441,8 @@ word:** 47 of the 142 headlines contain *loss/losses*, and most models tag them 
 labels most reported losses negative, so this part reflects a label-convention difference between the datasets as
 much as model error. Without the loss-only headlines (n = 96) the gap shrinks to VADER (official) 0.375 vs 0.078,
 Loughran–McDonald (official) 0.229 vs 0.073, BERT 0.083–0.108 vs 0.029–0.043, FinBERT-MLM 0.069–0.191 vs
-0.031–0.081, ProsusAI 0.167 vs 0.109 (interval includes zero). So the RQ1 mechanism is clear for the
-general-purpose lexicons, small for the fine-tuned encoders. Inside the PhraseBank test splits the term subsets hold
+0.031–0.081, ProsusAI 0.167 vs 0.109 (interval includes zero). So the RQ1 mechanism is clear for both
+lexicons, including the finance-specific one, and small for the fine-tuned encoders. Inside the PhraseBank test splits the term subsets hold
 only 6–15 gold-neutral sentences, too few for a conclusion.
 
 ![Phenomenon error heatmap](results/step3/step3_phenomenon_error_heatmap.png)
@@ -449,8 +453,9 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
 
 ### Caveats
 
-- One shared fine-tuning recipe, no per-model hyperparameter search; FinBERT-MLM may need a different learning
-  rate or more epochs, so `Δdomain` measures "domain pretraining under the BERT recipe".
+- Step 2 uses one shared fine-tuning recipe, no per-model hyperparameter search; FinBERT-MLM may need a different
+  learning rate or more epochs, so Step 2's `Δdomain` measures "domain pretraining under the BERT recipe" (Step 4
+  adds a small per-model search).
 - `Δdomain` is not a pure corpus effect. FinBERT-MLM has its own uncased vocabulary (30,868 entries without special
   tokens vs 29,523 for BERT; 12,493 shared) and a different pretraining corpus and budget (4.9B tokens of 10-K/10-Q
   reports, earnings calls and analyst reports vs BooksCorpus + Wikipedia), so the contrast mixes all three. The
@@ -496,8 +501,8 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
   with rerun models.
 - **Cross-validation.** 5-fold stratified CV is run on the allagree training partition only (all baselines and both
   encoders); the 75agree and 50agree levels use the single locked 70/15/15 split with three seeds.
-- **SEntFiN size.** The proposal planned a 2,000-sentence holdout; all 9,460 unambiguous, deduplicated headlines
-  are used.
+- **SEntFiN size.** Our planning notes foresaw a 2,000-sentence holdout (the proposal gives no size); all 9,460
+  unambiguous, deduplicated headlines are used.
 - **SEntFiN single-entity filter.** The proposal filters SEntFiN to "unambiguous single-entity" headlines; the
   pipeline keeps every headline whose entities share one label, so 1,607 of the 9,460 name two or more entities.
   The single-entity subset (7,853) is reported in [Extensions](#extensions-post-hoc-robustness-checks); on it every
@@ -520,8 +525,8 @@ only 6–15 gold-neutral sentences, too few for a conclusion.
   binomial version (the corrected χ² is stored).
 - **Corpus size.** The proposal gives 4,845 sentences for the full corpus; the pinned release has 4,846
   (`data/dataset_audit_verdict.json`).
-- **Not delivered.** The audit's lexicon-domain effect Δlex-domain and a `pyproject.toml` (requirements files are
-  provided instead); the manifest file name in the audit (`splits/fpb_splits_sha256.json`) is replaced by
+- **Not delivered.** The lexicon-domain effect Δlex-domain of our internal planning audit (not published) and a
+  `pyproject.toml` (requirements files are provided instead); the manifest file name in that audit (`splits/fpb_splits_sha256.json`) is replaced by
   `data/splits/SHA256SUMS` and `data/splits/assignments/`.
 
 **Step 4 follow-up.** The original fixed-recipe Step 2 experiment remains unchanged. Independent learning-rate and batch-size selection was subsequently performed in Step 4 to address the hyperparameter sensitivity question identified above.
@@ -673,8 +678,8 @@ What the two extra seeds change:
   five it just excludes it (+0.023 [+0.002, +0.048]). This is post hoc and marginal, so it is a small out-of-domain
   advantage at most.
 - **Answer to RQ2 after Step 4.** Within this small grid, financial-domain pretraining gives no demonstrated
-  advantage over general-domain BERT for three-class sentence sentiment. Part of FinBERT-MLM's Step 2 lag was
-  recipe-related.
+  advantage over general-domain BERT for three-class sentence sentiment. The point estimates suggest that part of
+  FinBERT-MLM's Step 2 lag was recipe-related, but neither gap-change interval excludes zero.
 - **Caveat: checkpoints, not a controlled ablation.** The comparison is between two checkpoints, not a controlled
   domain ablation; vocabulary, corpus and pretraining budget differ (see Extensions §1 and §4).
 
@@ -709,7 +714,7 @@ Selection never reads the test split or SEntFiN; the selection runs contain vali
 
 ## Extensions: Post-hoc Robustness Checks
 
-Four analyses added after the Step 2 and Step 3 results were known, so they are robustness checks, not
+Five analyses added after the Step 2 and Step 3 results were known, so they are robustness checks, not
 pre-registered tests. Sections 1 and 2 refit nothing and re-read the stored per-sentence predictions in
 `results/step2/runs/`; sections 3 and 4 retrain the encoders (same recipe) into `results/extensions/runs/`.
 Outputs: [`results/extensions/`](results/extensions/).
@@ -1043,5 +1048,5 @@ their source:
 | SEntFiN 1.0 (`pyRis/SEntFiN`) | MIT | none (downloaded and checksummed at run time) |
 | Twitter Financial News (`zeroshot/twitter-financial-news-sentiment`) | MIT | none (downloaded at run time) |
 | FiQA 2018 Task 1 (`pauri32/fiqa-2018`) | no licence stated on the dataset page; check the original FiQA 2018 terms | none (downloaded at run time) |
-| Loughran–McDonald Master Dictionary | free for academic use (SRAF terms) | none (git-ignored, SHA-256 checked) |
+| Loughran–McDonald Master Dictionary | free for academic use (SRAF terms) | the full dictionary is git-ignored (SHA-256 checked); the custom word lists `LM_FIN_POS` / `LM_FIN_NEG` in `src/baselines/lexicon.py` are derived from it and keep its terms (not covered by the MIT licence) |
 | EDGAR-CORPUS (`eloukas/edgar-corpus`) | Apache-2.0 | none (DAPT corpus is git-ignored) |

@@ -26,3 +26,7 @@ This licence covers the code in this repository. Data files derived from public
 datasets keep the licence of their source; see the "License" section of
 README.md (for example, files containing Financial PhraseBank sentences are
 CC BY-NC-SA 3.0, non-commercial use only).
+The word lists LM_FIN_POS and LM_FIN_NEG in src/baselines/lexicon.py are derived
+from the Loughran-McDonald Master Dictionary and keep its terms (free for academic
+research; commercial use needs a licence from the authors); the MIT licence does
+not cover these two lists.
