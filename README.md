@@ -52,7 +52,7 @@ The following table reports the original Step 2 results under a shared fine-tuni
   - fixed recipe: +0.023 [−0.002, +0.050];
   - tuned recipe: +0.012 [−0.010, +0.034].
   - With the three pre-specified seeds the fixed-recipe gap was +0.030 [+0.006, +0.057].
-- **On SEntFiN the tuned FinBERT-MLM is ahead:** +0.023 [+0.002, +0.048] with five seeds, against +0.017 [−0.004, +0.044]
+- **On SEntFiN the tuned FinBERT-MLM is ahead:** +0.023 [+0.002, +0.048] with five seeds, against +0.017 [−0.005, +0.044]
   with three. This is the only five-seed BERT-vs-FinBERT interval that excludes zero, and it just does.
 - **Interpretation (post hoc, five seeds; the three pre-specified seeds show no difference after tuning on either
   test set):** the point estimates move in FinBERT-MLM's favour after tuning, but no tuned-vs-fixed interval and
